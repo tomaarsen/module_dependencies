@@ -195,14 +195,14 @@ class ParserVisitor(ParentedNodeVisitor):
         # e.g. for fixing `import numpy as np`
         # TODO: Check whether there is a need for having these keys be tuples
         # TODO: Can this be multiple tokens? e.g. `import numpy as num.py`?
-        if head_token in self.aliases:
+        if variable[:1] in self.aliases:
             variable = self.aliases[head_token] + variable[1:]
 
         # e.g. for fixing `from nltk import word_tokenize`
         # TODO: Check whether there is a need for having these keys be tuples
         # TODO: Can this be multiple tokens? e.g. `from nltk import tokenize.TweetTokenizer`?
-        if head_token in self.prefixes:
-            variable = self.prefixes[head_token] + variable
+        if variable[:1] in self.prefixes:
+            variable = self.prefixes[variable[:1]] + variable
 
         self.uses.add(variable)
 
