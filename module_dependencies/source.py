@@ -8,38 +8,43 @@ from module_dependencies.visitor import ParserVisitor
 
 
 class Source:
-    def __init__(self, path: str) -> None:
-        if os.path.isfile(path):
-            filenames = [path]
-        elif os.path.isdir(path):
-            filenames = glob(os.path.join(path, "**", "*.py"), recursive=True)
+    # TODO: Normalize outputs in some way. Perhaps sorting.
+    def __init__(self, source: str) -> None:
+        tree = ast.parse(source)
+        self.visitor = ParserVisitor(tree)
 
-        self.visitors = self.visit_all_files(filenames)
+    def imports(self) -> List[str]:
+        return [detokenize(importname) for importname in self.visitor.get_imports()]
 
-    def visit_all_files(self, filenames: List[str]):
-        return {filename: self.visit_file(filename) for filename in filenames}
-
-    def visit_file(self, filename: str, module: str = None):
-        with open(filename, encoding="utf8") as file:
-            return self.visit_code(file.read())
-
-    def visit_code(self, code: str):
-        tree = ast.parse(code)
-        visitor = ParserVisitor(tree)
-        return visitor
-
-    def dependencies(self, module: Union[Iterable[str], str] = None) -> List[str]:
-        return list(
-            {use for uses in self.dependencies_mapping(module).values() for use in uses}
-        )
-
-    def dependencies_mapping(
+    def dependencies(
         self, module: Union[Iterable[str], str] = None
     ) -> Dict[str, List[str]]:
-        return {
-            filename: [detokenize(usage) for usage in visitor.get_uses(module)]
-            for filename, visitor in self.visitors.items()
+        return [detokenize(usage) for usage in self.visitor.get_uses(module)]
+
+
+class SourceBase64(Source):
+    def __init__(self, encoded: str) -> None:
+        import base64
+
+        source = base64.b64decode(encoded).decode("ascii")
+        super().__init__(source)
+
+
+class SourceFile(Source):
+    def __init__(self, filename: str) -> None:
+        with open(filename, encoding="utf8") as file:
+            super().__init__(file.read())
+
+
+class SourceFolder:
+    def __init__(self, path: str) -> None:
+        self.files = {
+            filename: SourceFile(filename)
+            for filename in glob(os.path.join(path, "**", "*.py"), recursive=True)
         }
+
+    def imports_mapping(self) -> Dict[str, List[str]]:
+        return {filename: source.imports() for filename, source in self.files.items()}
 
     def imports(self) -> List[str]:
         return list(
@@ -50,8 +55,18 @@ class Source:
             }
         )
 
-    def imports_mapping(self) -> Dict[str, List[str]]:
+    def dependencies_mapping(
+        self, module: Union[Iterable[str], str] = None
+    ) -> Dict[str, List[str]]:
         return {
-            filename: [detokenize(importname) for importname in visitor.get_imports()]
-            for filename, visitor in self.visitors.items()
+            filename: source.dependencies() for filename, source in self.files.items()
         }
+
+    def dependencies(self, module: Union[Iterable[str], str] = None) -> List[str]:
+        return list(
+            {
+                importname
+                for imports in self.dependencies_mapping(module).values()
+                for importname in imports
+            }
+        )
