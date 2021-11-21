@@ -1,7 +1,7 @@
-
 from typing import Tuple
 
 Variable = Tuple[str, ...]
+
 
 def tokenize(tokens: str) -> Variable:
     """Convert e.g. `"nltk.tokenize"` into `('nltk', 'tokenize')`.
@@ -10,6 +10,7 @@ def tokenize(tokens: str) -> Variable:
     :return Variable: Tuple of tokens.
     """
     return tuple(tokens.split("."))
+
 
 def detokenize(variable: Variable) -> str:
     """Convert e.g. `('nltk', 'tokenize')` into `"nltk.tokenize"`.

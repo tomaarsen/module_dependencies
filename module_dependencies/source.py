@@ -1,9 +1,10 @@
-from typing import Dict, Iterable, List, Union
-import os
 import ast
+import os
 from glob import glob
-from module_dependencies.visitor import ParserVisitor
+from typing import Dict, Iterable, List, Union
+
 from module_dependencies.tokenize import detokenize
+from module_dependencies.visitor import ParserVisitor
 
 
 class Source:
@@ -19,7 +20,7 @@ class Source:
         return {filename: self.visit_file(filename) for filename in filenames}
 
     def visit_file(self, filename: str, module: str = None):
-        with open(filename, "r", encoding="utf8") as file:
+        with open(filename, encoding="utf8") as file:
             return self.visit_code(file.read())
 
     def visit_code(self, code: str):
@@ -28,11 +29,9 @@ class Source:
         return visitor
 
     def dependencies(self, module: Union[Iterable[str], str] = None) -> List[str]:
-        return list({
-            use
-            for uses in self.dependencies_mapping(module).values()
-            for use in uses
-        })
+        return list(
+            {use for uses in self.dependencies_mapping(module).values() for use in uses}
+        )
 
     def dependencies_mapping(
         self, module: Union[Iterable[str], str] = None
@@ -43,11 +42,13 @@ class Source:
         }
 
     def imports(self) -> List[str]:
-        return list({
-            importname
-            for imports in self.imports_mapping().values()
-            for importname in imports
-        })
+        return list(
+            {
+                importname
+                for imports in self.imports_mapping().values()
+                for importname in imports
+            }
+        )
 
     def imports_mapping(self) -> Dict[str, List[str]]:
         return {
