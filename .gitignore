@@ -122,3 +122,5 @@ archived
 data
 # Ignore a test.py file for easier testing
 test.py
+# A RELEASE-GUIDE for me
+RELEASE-GUIDE.txt
