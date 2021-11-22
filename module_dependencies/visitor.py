@@ -94,6 +94,7 @@ class ParserVisitor(ParentedNodeVisitor):
             Set of objects from `module` used in an AST.
 
         TODO: Some kind of warning when `from nltk import *` is used
+        TODO: Tests for `from .mongo import db` and `from .. import mongo`
         """
         self.import_names: Set[Variable] = set()
         self.import_modules = set()
@@ -155,7 +156,10 @@ class ParserVisitor(ParentedNodeVisitor):
 
         :param ast.ImportFrom node: The node with the import-from information.
         """
-        module = tokenize(node.module)
+        module = ("",) * node.level
+        if node.module:
+            module += tokenize(node.module)
+
         self.import_modules.add(module)
 
         for name_obj in node.names:
