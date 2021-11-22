@@ -14,12 +14,14 @@ class Source:
         self.visitor = ParserVisitor(tree)
 
     def imports(self) -> List[str]:
-        return [detokenize(importname) for importname in self.visitor.get_imports()]
+        return sorted(
+            detokenize(importname) for importname in self.visitor.get_imports()
+        )
 
     def dependencies(
         self, module: Union[Iterable[str], str] = None
     ) -> Dict[str, List[str]]:
-        return [detokenize(usage) for usage in self.visitor.get_uses(module)]
+        return sorted(detokenize(usage) for usage in self.visitor.get_uses(module))
 
 
 class SourceBase64(Source):
@@ -47,7 +49,7 @@ class SourceFolder:
         return {filename: source.imports() for filename, source in self.files.items()}
 
     def imports(self) -> List[str]:
-        return list(
+        return sorted(
             {
                 importname
                 for imports in self.imports_mapping().values()
@@ -63,7 +65,7 @@ class SourceFolder:
         }
 
     def dependencies(self, module: Union[Iterable[str], str] = None) -> List[str]:
-        return list(
+        return sorted(
             {
                 importname
                 for imports in self.dependencies_mapping(module).values()
