@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="module_dependencies",
-    version="0.1.4",
+    version="0.1.5",
     url="https://github.com/tomaarsen/module_dependencies",
     license="MIT",
     author="Tom Aarsen",
