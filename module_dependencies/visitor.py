@@ -1,7 +1,7 @@
 # Source code inspired by Dockerizeme: https://github.com/dockerizeme/dockerizeme
 
 import ast
-from typing import Set, Tuple
+from typing import Iterable, Iterator, Set, Tuple, Union
 
 from module_dependencies.tokenize import tokenize
 
@@ -95,6 +95,9 @@ class ParserVisitor(ParentedNodeVisitor):
 
         TODO: Some kind of warning when `from nltk import *` is used
         TODO: Tests for `from .mongo import db` and `from .. import mongo`
+        TODO: value[0] = ...
+        TODO: value["hello"] = ...
+        TODO: a, b = ...
         """
         self.import_names: Set[Variable] = set()
         self.import_modules = set()
@@ -200,7 +203,7 @@ class ParserVisitor(ParentedNodeVisitor):
         # TODO: Check whether there is a need for having these keys be tuples
         # TODO: Can this be multiple tokens? e.g. `import numpy as num.py`?
         if variable[:1] in self.aliases:
-            variable = self.aliases[head_token] + variable[1:]
+            variable = self.aliases[variable[:1]] + variable[1:]
 
         # e.g. for fixing `from nltk import word_tokenize`
         # TODO: Check whether there is a need for having these keys be tuples
@@ -210,12 +213,48 @@ class ParserVisitor(ParentedNodeVisitor):
 
         self.uses.add(variable)
 
-    def get_imports(self):
+        self.generic_visit(node)
+
+    def get_imports(self) -> Set[Variable]:
+        """Return the set of names of modules from which objects are imported, e.g.::
+
+            {('itertools',), ('nltk', 'tokenize'), ('numpy',)}
+
+            when the file used to create the AST contains::
+
+                from itertools import chain, groupby, product
+                from nltk.tokenize import word_tokenize
+                import numpy as np
+
+        :return: Set of names of modules from which objects are imported.
+        :rtype: Set[Variable]
+        """
         return self.import_modules
 
-    def get_uses(self, module: str = None):
-        # Only if the variable seems to have been imported by our module of interest
-        modules = [tokenize(module)] if module else self.import_modules
+    def get_uses(self, modules: Union[Iterable[str], str] = None) -> Iterator[Variable]:
+        """Generate the reported uses of objects imported from modules in `modules`.
+        If `modules` is None, then all uses of objects that were imported are yielded.
+
+        For example::
+
+            >>> tree = ast.parse("from nltk.tokenize import word_tokenize\nword_tokenize('Hello there!')")
+            >>> visitor = ParserVisitor(tree)
+            >>> list(visitor.get_uses("nltk"))
+            [('nltk', 'tokenize', 'word_tokenize')]
+
+        :param module: Module string or list of module strings.
+            For example: `'nltk'`, `'nltk.parse'` or `['nltk.parse', 'nltk.stem']`.
+            If `module` is None, then all uses of imported variables, functions and classes
+            are returned. Defaults to None.
+        :type module: Union[Iterable[str], str], optional
+        :yield: A tuple of tokens representing the use of an imported object.
+        :rtype: Iterator[Variable]
+        """
+        if modules is None:
+            modules = self.import_modules
+        if isinstance(modules, str):
+            modules = [modules]
+        modules = [tokenize(module) for module in modules]
         for variable in self.uses:
             for module in modules:
                 if variable[: len(module)] == module:
