@@ -9,14 +9,13 @@ Variable = Tuple[str, ...]
 
 
 class ParentedNodeVisitor(ast.NodeVisitor):
-    """Subclass of NodeVisitor which adds the `parent` attribute
-    to every node traversed via `generic_visit`. This attribute
-    points to the parent node in the AST.
-    """
+    """Subclass of NodeVisitor which adds the ``parent`` attribute
+    to every node traversed via ``generic_visit``. This attribute
+    points to the parent node in the AST."""
 
     def generic_visit(self, node: ast.AST):
         """Called if no explicit visitor function exists for a node.
-        Places `parent` attribute on the child node.
+        Places ``parent`` attribute on the child node.
 
         :param ast.AST node: Node in an AST.
         """
@@ -28,11 +27,11 @@ class ParentedNodeVisitor(ast.NodeVisitor):
                 self.traverse(node, child=value)
 
     def traverse(self, node: ast.AST, child: ast.AST):
-        """Traverse from `node` to `child`, giving `child` a
-        `parent` attribute with a reference to `node`.
+        """Traverse from ``node`` to ``child``, giving ``child`` a
+        ``parent`` attribute with a reference to ``node``.
 
         :param ast.AST node: Node in an AST.
-        :param ast.AST child: Child node of `node`.
+        :param ast.AST child: Child node of ``node``.
         """
         if isinstance(child, ast.AST):
             child.parent = node
@@ -45,10 +44,10 @@ class ParserVisitor(ParentedNodeVisitor):
     def __init__(self, tree: ast.AST):
         """
         Initialize a ParserVisitor responsible for determining usage of
-        the `module` module in an AST.
+        the ``module`` module in an AST.
 
         :param str module: The name of the module to determine the usage of, e.g.
-            `"nltk"` or `"nltk.tokenize"`, optional.
+            ``"nltk"`` or ``"nltk.tokenize"``, optional.
             If None, then the usage of all imported modules is gathered.
         :var Set[Variable] import_names:
             Set of names of imported objects, e.g.::
@@ -91,10 +90,10 @@ class ParserVisitor(ParentedNodeVisitor):
                 from nltk.tokenize import word_tokenize
                 import numpy as np
         :var Set[Variable] uses:
-            Set of objects from `module` used in an AST.
+            Set of objects from ``module`` used in an AST.
 
-        TODO: Some kind of warning when `from nltk import *` is used
-        TODO: Tests for `from .mongo import db` and `from .. import mongo`
+        TODO: Some kind of warning when ``from nltk import *`` is used
+        TODO: Tests for ``from .mongo import db`` and ``from .. import mongo``
         TODO: value[0] = ...
         TODO: value["hello"] = ...
         TODO: a, b = ...
@@ -108,14 +107,14 @@ class ParserVisitor(ParentedNodeVisitor):
         self.visit(tree)
 
     def propagate_attributes(self, node: ast.AST) -> Variable:
-        """Recursively propagate upwards through the AST starting from `node`,
+        """Recursively propagate upwards through the AST starting from ``node``,
         gathering the full name of the variable. This method is meant to be called
-        from the parent of an `ast.Name` node, which helps produce e.g.
-        `('nltk', 'tokenize', 'PunktSentenceTokenizer')` when the `ast.Name` only
-        contained `'PunktSentenceTokenizer'`.
+        from the parent of an ``ast.Name`` node, which helps produce e.g.
+        ``('nltk', 'tokenize', 'PunktSentenceTokenizer')`` when the ``ast.Name`` only
+        contained ``'PunktSentenceTokenizer'``.
 
         :param ast.AST node: The node where we start propogating upwards.
-        :return Variable: The names of the tokens that occur before `node`,
+        :return Variable: The names of the tokens that occur before ``node``,
             if any.
         """
         if isinstance(node, ast.Attribute):
@@ -127,9 +126,9 @@ class ParserVisitor(ParentedNodeVisitor):
 
             import numpy as np
 
-        In this example, `('numpy',)` is added to `self.import_modules`,
-        `('np',)` is added to `self.import_names`, and the mapping of
-        `('numpy',)` to `('np',)` is added to `self.aliases`.
+        In this example, ``('numpy',)`` is added to ``self.import_modules``,
+        ``('np',)`` is added to ``self.import_names``, and the mapping of
+        ``('numpy',)`` to ``('np',)`` is added to ``self.aliases``.
 
         :param ast.Import node: The node with the import information.
         """
@@ -152,10 +151,10 @@ class ParserVisitor(ParentedNodeVisitor):
 
             from nltk.corpus import wordnet as wn
 
-        In this example, `('nltk', 'corpus')` is added to `self.import_modules`,
-        ('wn',) is added to `self.import_names`, the mapping of `('wn',)`
-        to `('wordnet',)` is added to `self.aliases`, and the mapping of
-        `('wordnet',)` to `('nltk', 'corpus')` is added to `self.prefixes`.
+        In this example, ``('nltk', 'corpus')`` is added to ``self.import_modules``,
+        ('wn',) is added to ``self.import_names``, the mapping of ``('wn',)``
+        to ``('wordnet',)`` is added to ``self.aliases``, and the mapping of
+        ``('wordnet',)`` to ``('nltk', 'corpus')`` is added to ``self.prefixes``.
 
         :param ast.ImportFrom node: The node with the import-from information.
         """
@@ -182,15 +181,15 @@ class ParserVisitor(ParentedNodeVisitor):
     def visit_Name(self, node: ast.Name):
         """Called when encountering a Name node, which exists whenever
         a variable is used in some capacity. This Name node consists
-        only of the most left-most part of a variable, e.g. `'nltk'`
-        when the variable was `nltk.tokenize.TweetTokenizer`.
+        only of the most left-most part of a variable, e.g. ``'nltk'``
+        when the variable was ``nltk.tokenize.TweetTokenizer``.
 
         This method extracts the full Variable, e.g.
-        `('nltk', 'tokenize', 'TweetTokenizer')`. It uses `self.aliases`
-        and `self.prefixes` from `visit_Import` and `visit_ImportFrom` to
-        deal with aliases (e.g. `('np',)` to `('numpy',)`) and extending
-        prefixes, e.g. `('word_tokenize',)` to
-        `('nltk', 'tokenize', 'word_tokenize')`.
+        ``('nltk', 'tokenize', 'TweetTokenizer')``. It uses ``self.aliases``
+        and ``self.prefixes`` from ``visit_Import`` and ``visit_ImportFrom`` to
+        deal with aliases (e.g. ``('np',)`` to ``('numpy',)``) and extending
+        prefixes, e.g. ``('word_tokenize',)`` to
+        ``('nltk', 'tokenize', 'word_tokenize')``.
 
         :param ast.Name node: The Name node representing the use of a
             variable in an AST.
@@ -199,15 +198,15 @@ class ParserVisitor(ParentedNodeVisitor):
         # TODO: There's options for faster pruning here too.
         head_token = (node.id,)
         variable = head_token + self.propagate_attributes(node.parent)
-        # e.g. for fixing `import numpy as np`
+        # e.g. for fixing ``import numpy as np``
         # TODO: Check whether there is a need for having these keys be tuples
-        # TODO: Can this be multiple tokens? e.g. `import numpy as num.py`?
+        # TODO: Can this be multiple tokens? e.g. ``import numpy as num.py``?
         if variable[:1] in self.aliases:
             variable = self.aliases[variable[:1]] + variable[1:]
 
-        # e.g. for fixing `from nltk import word_tokenize`
+        # e.g. for fixing ``from nltk import word_tokenize``
         # TODO: Check whether there is a need for having these keys be tuples
-        # TODO: Can this be multiple tokens? e.g. `from nltk import tokenize.TweetTokenizer`?
+        # TODO: Can this be multiple tokens? e.g. ``from nltk import tokenize.TweetTokenizer``?
         if variable[:1] in self.prefixes:
             variable = self.prefixes[variable[:1]] + variable
 
@@ -232,8 +231,8 @@ class ParserVisitor(ParentedNodeVisitor):
         return self.import_modules
 
     def get_uses(self, modules: Union[Iterable[str], str] = None) -> Iterator[Variable]:
-        """Generate the reported uses of objects imported from modules in `modules`.
-        If `modules` is None, then all uses of objects that were imported are yielded.
+        """Generate the reported uses of objects imported from modules in ``modules``.
+        If ``modules`` is None, then all uses of objects that were imported are yielded.
 
         For example::
 
@@ -243,8 +242,8 @@ class ParserVisitor(ParentedNodeVisitor):
             [('nltk', 'tokenize', 'word_tokenize')]
 
         :param module: Module string or list of module strings.
-            For example: `'nltk'`, `'nltk.parse'` or `['nltk.parse', 'nltk.stem']`.
-            If `module` is None, then all uses of imported variables, functions and classes
+            For example: ``'nltk'``, ``'nltk.parse'`` or ``['nltk.parse', 'nltk.stem']``.
+            If ``module`` is None, then all uses of imported variables, functions and classes
             are returned. Defaults to None.
         :type module: Union[Iterable[str], str], optional
         :yield: A tuple of tokens representing the use of an imported object.

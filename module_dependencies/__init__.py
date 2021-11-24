@@ -6,7 +6,7 @@ Expected usage of module_dependencies::
     >>> src.dependencies("ast")
     ['ast.AST', 'ast.Attribute', 'ast.Import', 'ast.ImportFrom', 'ast.Name', 'ast.NodeVisitor', 'ast.iter_fields', 'ast.parse']
 
-Now we know which objects from the "ast" module are used in all code from `"my_folder"`.
+Now we know which objects from the "ast" module are used in all code from ``"my_folder"``.
 
 How to initialize a Source instance:
 
@@ -42,9 +42,9 @@ from module_dependencies.source import (  # isort:skip
 )
 
 __all__ = [
-    Source,
-    SourceFile,
-    SourceBase64,
-    SourceFolder,
-    SourceString,
+    "Source",
+    "SourceFile",
+    "SourceBase64",
+    "SourceFolder",
+    "SourceString",
 ]

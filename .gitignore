@@ -124,3 +124,7 @@ data
 test.py
 # A RELEASE-GUIDE for me
 RELEASE-GUIDE.txt
+# app.py for easily launching the docs as a website locally
+app.py
+# Generated files for documentation
+docs/api/*.rst

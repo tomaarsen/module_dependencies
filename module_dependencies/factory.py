@@ -11,14 +11,14 @@ from module_dependencies.source import (  # isort:skip
 
 
 class Source(SourceI):
-    """Factory class for instances of the `SourceI` interface.
-    The specific subclass of `SourceI` is chosen based on the
-    contents of the `source` input parameter.
+    """Factory class for instances of the ``SourceI`` interface.
+    The specific subclass of ``SourceI`` is chosen based on the
+    contents of the ``source`` input parameter.
 
     Example usage::
 
         >>> from module_dependencies import Source
-        >>> src = Source("from nltk import word_tokenize\nword_tokenize('Hello there!')")
+        >>> src = Source(r"from nltk import word_tokenize\\nword_tokenize('Hello there!')")
         >>> src
         <module_dependencies.source.SourceString object at 0x...>
         >>> src = Source("my_file.py")
@@ -31,8 +31,8 @@ class Source(SourceI):
         >>> src
         <module_dependencies.source.SourceBase64 object at 0x...>
 
-    The class methods `Source.from_...` can also be used to initialize
-    specific subclasses of the `SourceI` interface.
+    The class methods ``Source.from_...`` can also be used to initialize
+    specific subclasses of the ``SourceI`` interface.
     """
 
     def __new__(cls, source: str) -> None:

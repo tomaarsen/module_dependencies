@@ -12,7 +12,7 @@ from module_dependencies.visitor import ParserVisitor
 
 
 class SourceString(SourceI):
-    """Implementation of `SourceI` interface. Reads a string which
+    """Implementation of ``SourceI`` interface. Reads a string which
     represents Python source code, and parses it for dependencies
     and import statements."""
 
@@ -22,7 +22,7 @@ class SourceString(SourceI):
         Example usage::
 
             >>> from module_dependencies import Source
-            >>> src = Source("from nltk import word_tokenize\nword_tokenize('Hello there!')")
+            >>> src = Source("from nltk import word_tokenize\\nword_tokenize('Hello there!')")
             >>> src.dependencies()
             ['nltk.word_tokenize']
             >>> src.imports()
@@ -114,8 +114,7 @@ class SourceFolder(SourceI):
                                                'ast.NodeVisitor',
                                                'ast.iter_fields']}
 
-        :param path: [description]
-        :type path: str
+        :param str path: String path to a folder containing Python code.
         """
         self.files = {
             filename: SourceFile(filename)

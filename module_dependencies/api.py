@@ -2,19 +2,20 @@ from typing import Dict, Iterable, List, Union
 
 
 class SourceI:
-    """Interface for `Source` classes.
+    """
+    Interface for ``Source`` classes.
     Provides the following methods:
 
-    - `imports()`
-    - `imports_mapping()`
-    - `dependencies(module)`
-    - `dependencies_mapping(module)`
+    - ``imports()``
+    - ``imports_mapping()``
+    - ``dependencies(module)``
+    - ``dependencies_mapping(module)``
     """
 
     def imports_mapping(self) -> Dict[str, List[str]]:
-        """Return a mapping from filenames to a list of modules that were imported from in `source`.
+        """Return a mapping from filenames to a list of modules that were imported from in ``source``.
 
-        Only defined for `SourceFolder`, i.e. instances returned from `Source.from_folder()`.
+        Only defined for ``SourceFolder``, i.e. instances returned from ``Source.from_folder()``.
 
         Example usage::
 
@@ -40,18 +41,18 @@ class SourceI:
                                                'module_dependencies.tokenize',
                                                'typing']}
 
-        :return: Mapping of filenames to `Source.from_file(filename).imports()`.
+        :return: Mapping of filenames to ``Source.from_file(filename).imports()``.
         :rtype: Dict[str, List[str]]
         """
         raise NotImplementedError
 
     def imports(self) -> List[str]:
-        """Return a list of modules that were imported from in `source`.
+        """Return a list of modules that were imported from in ``source``.
 
         Example usage::
 
             >>> from module_dependencies import Source
-            >>> src = Source("from nltk import word_tokenize\nword_tokenize('Hello there!')")
+            >>> src = Source("from nltk import word_tokenize\\nword_tokenize('Hello there!')")
             >>> src.imports()
             ['nltk']
 
@@ -64,9 +65,9 @@ class SourceI:
         self, module: Union[Iterable[str], str] = None
     ) -> Dict[str, List[str]]:
         """Return a mapping from filenames to a list of variables, functions and classes
-        originating from `module` that were used in that file.
+        originating from ``module`` that were used in that file.
 
-        Only defined for `SourceFolder`, i.e. instances returned from `Source.from_folder()`.
+        Only defined for ``SourceFolder``, i.e. instances returned from ``Source.from_folder()``.
 
         Example usage::
 
@@ -86,17 +87,17 @@ class SourceI:
                                                'ast.iter_fields']}
 
         :param module: Module string or list of module strings.
-            For example: `'nltk'`, `'nltk.parse'` or `['nltk.parse', 'nltk.stem']`.
-            If `module` is None, then all uses of imported variables, functions and classes
+            For example: ``'nltk'``, ``'nltk.parse'`` or ``['nltk.parse', 'nltk.stem']``.
+            If ``module`` is None, then all uses of imported variables, functions and classes
             are returned. Defaults to None.
         :type module: Union[Iterable[str], str], optional
-        :return: Mapping of filenames to `Source.from_file(filename).dependencies(module)`.
+        :return: Mapping of filenames to ``Source.from_file(filename).dependencies(module)``.
         :rtype: Dict[str, List[str]]
         """
         raise NotImplementedError
 
     def dependencies(self, module: Union[Iterable[str], str] = None) -> List[str]:
-        """Return a list of variables, functions and classes originating from `module`.
+        """Return a list of variables, functions and classes originating from ``module``.
 
         Example usage::
 
@@ -105,8 +106,8 @@ class SourceI:
             ['os.path.isdir', 'os.path.isfile', 'os.path.join']
 
         :param module: Module string or list of module strings.
-            For example: `'nltk'`, `'nltk.parse'` or `['nltk.parse', 'nltk.stem']`.
-            If `module` is None, then all uses of imported variables, functions and classes
+            For example: ``'nltk'``, ``'nltk.parse'`` or ``['nltk.parse', 'nltk.stem']``.
+            If ``module`` is None, then all uses of imported variables, functions and classes
             are returned. Defaults to None.
         :type module: Union[Iterable[str], str], optional
         :return: List of dot-separated modules, variables, functions and classes.
