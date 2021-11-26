@@ -1,8 +1,8 @@
 import os
 
-from module_dependencies.api import SourceI
+from module_dependencies.source.api import SourceI
 
-from module_dependencies.source import (  # isort:skip
+from module_dependencies.source.source import (  # isort:skip
     SourceBase64,
     SourceFile,
     SourceFolder,

@@ -6,9 +6,9 @@ import os
 from glob import glob
 from typing import Dict, Iterable, List, Union
 
-from module_dependencies.api import SourceI
-from module_dependencies.tokenize import detokenize
-from module_dependencies.visitor import ParserVisitor
+from module_dependencies.source.api import SourceI
+from module_dependencies.source.tokenize import detokenize
+from module_dependencies.source.visitor import ParserVisitor
 
 
 class SourceString(SourceI):

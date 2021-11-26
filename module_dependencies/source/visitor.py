@@ -3,7 +3,7 @@
 import ast
 from typing import Iterable, Iterator, Set, Tuple, Union
 
-from module_dependencies.tokenize import tokenize
+from module_dependencies.source.tokenize import tokenize
 
 Variable = Tuple[str, ...]
 
