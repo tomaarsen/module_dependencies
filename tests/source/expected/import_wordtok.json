@@ -1,0 +1,4 @@
+{
+    "dependencies": ["nltk.word_tokenize"],
+    "imports": ["nltk"]
+}

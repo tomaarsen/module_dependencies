@@ -1,0 +1,9 @@
+{
+    "dependencies": [
+        "nltk.corpus.brown.raw",
+        "nltk.tokenize.TextTilingTokenizer"
+    ],
+    "imports": [
+        "nltk"
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "dependencies": [
+        "nltk.corpus.brown.raw",
+        "nltk.stopwords",
+        "nltk.tokenize.TextTilingTokenizer"
+    ],
+    "imports": [
+        "nltk"
+    ]
+}

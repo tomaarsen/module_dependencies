@@ -1,0 +1,8 @@
+{
+    "dependencies": [
+        "nltk.tokenize.sent_tokenize"
+    ],
+    "imports": [
+        "nltk"
+    ]
+}
