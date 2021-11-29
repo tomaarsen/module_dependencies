@@ -3,7 +3,7 @@
 import ast
 from typing import Iterable, Iterator, Set, Tuple, Union
 
-from module_dependencies.source.tokenize import tokenize
+from module_dependencies.util.tokenize import tokenize
 
 Variable = Tuple[str, ...]
 
@@ -97,6 +97,24 @@ class ParserVisitor(ParentedNodeVisitor):
         TODO: value[0] = ...
         TODO: value["hello"] = ...
         TODO: a, b = ...
+        TODO: What if a user does:
+        import module
+        ...
+        module = ...
+        Solution: Maybe add to ``self.uses`` sometimes?
+        This might happen in practice with:
+        ```
+        def ...():
+            from nltk.corpus import words
+            ...
+
+        def ...():
+            words = ...
+            words.split()
+        ```
+        Solution: Maybe add and then remove when we leave the recursion
+        Maybe clear everything when leaving a ClassDef or FuncDef
+        Solution: Map all variables to types, which are appropriately scoped
         """
         self.import_names: Set[Variable] = set()
         self.import_modules = set()
@@ -251,9 +269,19 @@ class ParserVisitor(ParentedNodeVisitor):
         """
         if modules is None:
             modules = self.import_modules
-        if isinstance(modules, str):
-            modules = [modules]
-        modules = [tokenize(module) for module in modules]
+        else:
+            if isinstance(modules, str):
+                modules = [modules]
+            modules = [tokenize(module) for module in modules]
+            modules = [
+                module
+                for module in modules
+                if any(
+                    module == variable[: len(module)]
+                    for variable in self.import_modules
+                )
+            ]
+
         for variable in self.uses:
             for module in modules:
                 if variable[: len(module)] == module:

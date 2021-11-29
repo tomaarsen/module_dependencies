@@ -5,8 +5,10 @@ from module_dependencies.source import (  # isort:skip
     SourceFolder,
     SourceString,
 )
+from module_dependencies.module import Module
 
 __all__ = [
+    "Module",
     "Source",
     "SourceFile",
     "SourceBase64",

@@ -7,8 +7,8 @@ from glob import glob
 from typing import Dict, Iterable, List, Union
 
 from module_dependencies.source.api import SourceI
-from module_dependencies.source.tokenize import detokenize
 from module_dependencies.source.visitor import ParserVisitor
+from module_dependencies.util.tokenize import detokenize
 
 
 class SourceString(SourceI):
