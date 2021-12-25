@@ -143,8 +143,42 @@ class Module:
                 projects[name] = {**result["repository"], "files": [result["file"]]}
         return projects
 
-    def n_files(self):
-        pass
+    def n_matches(self) -> int:
+        """Return the number of matches found.
 
-    def n_projects(self):
-        pass
+        >>> module = Module("nltk", count="100")
+        >>> module.n_matches()
+        137
+
+        :return: The number of matches, i.e. the number of times
+            `self.module` was imported in the fetched files.
+        :rtype: int
+        """
+        return self.data["matchCount"]
+
+    def n_files(self) -> int:
+        """Return the number of files fetched.
+
+        >>> module = Module("nltk", count="100")
+        >>> module.n_files()
+        100
+
+        :return: The number of fetched files in which `self.module` was
+            imported. Generally equivalent or similar to `count` if it
+            was provided.
+        :rtype: int
+        """
+        return len(self.data["results"])
+
+    def n_repositories(self) -> int:
+        """Return the number of repositories fetched.
+
+        >>> module = Module("nltk", count="100")
+        >>> module.n_repositories()
+        52
+
+        :return: The number of fetched repositories in which `self.module`
+            was imported.
+        :rtype: int
+        """
+        return self.data["repositoriesCount"]
