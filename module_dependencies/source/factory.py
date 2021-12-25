@@ -1,3 +1,4 @@
+import binascii
 import os
 
 from module_dependencies.source.api import SourceI
@@ -42,7 +43,7 @@ class Source(SourceI):
             return cls.from_folder(source)
         try:
             return cls.from_base64(source)
-        except UnicodeDecodeError as e:
+        except (UnicodeDecodeError, binascii.Error) as e:
             try:
                 return cls.from_string(source)
             except SyntaxError as e:
