@@ -1,0 +1,9 @@
+{
+    "dependencies": [
+        "nltk.corpus.words",
+        "nltk.corpus.words.words"
+    ],
+    "imports": [
+        "nltk.corpus"
+    ]
+}
