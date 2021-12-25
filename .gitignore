@@ -120,8 +120,8 @@ dmypy.json
 archived
 # Data folder for testing purposes
 data
-# Ignore a test.py file for easier testing
-test.py
+# Ignore a demo.py file for easier testing
+demo.py
 # A RELEASE-GUIDE for me
 RELEASE-GUIDE.txt
 # app.py for easily launching the docs as a website locally
