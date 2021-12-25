@@ -22,20 +22,13 @@ class ParentedNodeVisitor(ast.NodeVisitor):
         for _field, value in ast.iter_fields(node):
             if isinstance(value, list):
                 for item in value:
-                    self.traverse(node, child=item)
+                    if isinstance(item, ast.AST):
+                        item.parent = node
+                        self.visit(item)
             else:
-                self.traverse(node, child=value)
-
-    def traverse(self, node: ast.AST, child: ast.AST):
-        """Traverse from ``node`` to ``child``, giving ``child`` a
-        ``parent`` attribute with a reference to ``node``.
-
-        :param ast.AST node: Node in an AST.
-        :param ast.AST child: Child node of ``node``.
-        """
-        if isinstance(child, ast.AST):
-            child.parent = node
-            self.visit(child)
+                if isinstance(value, ast.AST):
+                    value.parent = node
+                    self.visit(value)
 
 
 class ParserVisitor(ParentedNodeVisitor):
