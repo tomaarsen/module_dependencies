@@ -39,6 +39,7 @@ class Module:
             }
         }
         TODO: Export repository and file count
+        TODO: Alert users of `alert`, output `limitHit`
         """
         with ModuleSession() as session:
             response = session.post(self.module, count=self.count, timeout=self.timeout)
