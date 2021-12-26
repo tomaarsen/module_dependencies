@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D2D2D" />
+  
+  <title>Home :: module_dependencies.module.session module</title>
+  
+  <link rel="index" title="Index" href="../genindex.html"/>
+
+  <link rel="stylesheet" href="../_static/css/nltk_theme.css"/>
+  <link rel="stylesheet" href="../_static/css/custom.css"/>
+
+  <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+  
+
+  <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
+</head>
+
+<body>
+  <div id="nltk-theme-container">
+    <header>
+      <div id="logo-container">
+          
+          <h1>
+            <a href="../index.html">Home</a>
+          </h1>
+          
+      </div>
+      <div id="project-container">
+        
+        <h1>Documentation</h1>
+        
+      </div>
+
+      <a id="menu-toggle" class="fa fa-bars" aria-hidden="true"></a>
+
+      <script type="text/javascript">
+        $("#menu-toggle").click(function() {
+          $("#menu-toggle").toggleClass("toggled");
+          $("#side-menu-container").slideToggle(300);
+        });
+      </script>
+    </header>
+
+    <div id="content-container">
+
+      <div id="side-menu-container">
+
+        <div id="search" role="search">
+        <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+            <input type="text" name="q" placeholder="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+</div>
+
+        <div id="side-menu" role="navigation">
+          
+  
+    
+  
+  
+    <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing</a></li>
+</ul>
+
+  
+
+        </div>
+
+        
+      </div>
+
+      <div id="main-content-container">
+        <div id="main-content" role="main">
+          
+  <section id="module-module_dependencies.module.session">
+<span id="module-dependencies-module-session-module"></span><h1>module_dependencies.module.session module<a class="headerlink" href="#module-module_dependencies.module.session" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.module.session.</span></span><span class="sig-name descname"><span class="pre">ModuleSession</span></span><a class="reference internal" href="../_modules/module_dependencies/module/session.html#ModuleSession"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.session.ModuleSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">requests.sessions.Session</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/session.html#ModuleSession.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.construct_payload">
+<span class="sig-name descname"><span class="pre">construct_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'10s'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/session.html#ModuleSession.construct_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.construct_payload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the payload to send to SourceGraph. The payload is a dictionary
+with “variables” and “query” keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> (<em>str</em>) – String of the module we are interested in,
+e.g. “nltk” or “nltk.tokenize”.</p></li>
+<li><p><strong>count</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The maximum number of results. Either an integer,
+a string representing an integer, or “all”, defaults to “all”.</p></li>
+<li><p><strong>timeout</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Timeout as parsed by the Go time package “ParseDuration” function,
+e.g. “10s”, “100ms”, defaults to “10s”. If an integer instead, then parsed as
+number of milliseconds. Cannot exceed 1 minute. Defaults to “10s”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Mapping of “variable” and “query” to a dictionary and a string,
+respectively.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+<p>TODO: Verify that <cite>module</cite> is valid</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'10s'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">requests.models.Response</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/session.html#ModuleSession.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a POST request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>json</strong> – (optional) json to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+<li><p><strong>module</strong> (<em>str</em>) – </p></li>
+<li><p><strong>count</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>timeout</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes all adapters and as such the session</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a DELETE request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a GET request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.get_adapter">
+<span class="sig-name descname"><span class="pre">get_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.get_adapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the appropriate connection adapter for the given URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>requests.adapters.BaseAdapter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.get_redirect_target">
+<span class="sig-name descname"><span class="pre">get_redirect_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.get_redirect_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives a Response. Returns a redirect URI or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.head">
+<span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a HEAD request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.merge_environment_settings">
+<span class="sig-name descname"><span class="pre">merge_environment_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.merge_environment_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment and merge it with some settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.mount">
+<span class="sig-name descname"><span class="pre">mount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adapter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.mount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a connection adapter to a prefix.</p>
+<p>Adapters are sorted in descending order by prefix length.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.options">
+<span class="sig-name descname"><span class="pre">options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a OPTIONS request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.patch">
+<span class="sig-name descname"><span class="pre">patch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a PATCH request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.prepare_request">
+<span class="sig-name descname"><span class="pre">prepare_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.prepare_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a <code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedRequest</span></code> for
+transmission and returns it. The <code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedRequest</span></code> has settings
+merged from the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> instance and those of the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> instance to prepare with this
+session’s settings.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.PreparedRequest</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a PUT request. Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>**kwargs</strong> – Optional arguments that <code class="docutils literal notranslate"><span class="pre">request</span></code> takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.rebuild_auth">
+<span class="sig-name descname"><span class="pre">rebuild_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prepared_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.rebuild_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>When being redirected we may want to strip authentication from the
+request to avoid leaking credentials. This method intelligently removes
+and reapplies authentication where possible to avoid credential loss.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.rebuild_method">
+<span class="sig-name descname"><span class="pre">rebuild_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prepared_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.rebuild_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>When being redirected we may want to change the method of the request
+based on certain specs or browser behavior.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.rebuild_proxies">
+<span class="sig-name descname"><span class="pre">rebuild_proxies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prepared_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.rebuild_proxies" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method re-evaluates the proxy configuration by considering the
+environment variables. If we are redirected to a URL covered by
+NO_PROXY, we strip the proxy configuration. Otherwise, we set missing
+proxy keys for this URL (in case they were stripped by a previous
+redirect).</p>
+<p>This method also replaces the Proxy-Authorization header where
+necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.request">
+<span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_redirects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hooks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>, prepares it and sends it.
+Returns <code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> – method for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>url</strong> – URL for the new <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> object.</p></li>
+<li><p><strong>params</strong> – (optional) Dictionary or bytes to be sent in the query
+string for the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>data</strong> – (optional) Dictionary, list of tuples, bytes, or file-like
+object to send in the body of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>json</strong> – (optional) json to send in the body of the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>headers</strong> – (optional) Dictionary of HTTP Headers to send with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>cookies</strong> – (optional) Dict or CookieJar object to send with the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p></li>
+<li><p><strong>files</strong> – (optional) Dictionary of <code class="docutils literal notranslate"><span class="pre">'filename':</span> <span class="pre">file-like-objects</span></code>
+for multipart encoding upload.</p></li>
+<li><p><strong>auth</strong> – (optional) Auth tuple or callable to enable
+Basic/Digest/Custom HTTP Auth.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em> or </em><em>tuple</em>) – (optional) How long to wait for the server to send
+data before giving up, as a float, or a <span class="xref std std-ref">(connect timeout,
+read timeout)</span> tuple.</p></li>
+<li><p><strong>allow_redirects</strong> (<em>bool</em>) – (optional) Set to True by default.</p></li>
+<li><p><strong>proxies</strong> – (optional) Dictionary mapping protocol or protocol and
+hostname to the URL of the proxy.</p></li>
+<li><p><strong>stream</strong> – (optional) whether to immediately download the response
+content. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>verify</strong> – (optional) Either a boolean, in which case it controls whether we verify
+the server’s TLS certificate, or a string, in which case it must be a path
+to a CA bundle to use. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>. When set to
+<code class="docutils literal notranslate"><span class="pre">False</span></code>, requests will accept any TLS certificate presented by
+the server, and will ignore hostname mismatches and/or expired
+certificates, which will make your application vulnerable to
+man-in-the-middle (MitM) attacks. Setting verify to <code class="docutils literal notranslate"><span class="pre">False</span></code> 
+may be useful during local development or testing.</p></li>
+<li><p><strong>cert</strong> – (optional) if String, path to ssl client cert file (.pem).
+If Tuple, (‘cert’, ‘key’) pair.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.resolve_redirects">
+<span class="sig-name descname"><span class="pre">resolve_redirects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">req</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_requests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">adapter_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.resolve_redirects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives a Response. Returns a generator of Responses or Requests.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a given PreparedRequest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.should_strip_auth">
+<span class="sig-name descname"><span class="pre">should_strip_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.should_strip_auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decide whether Authorization header should be removed when redirecting</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.headers">
+<span class="sig-name descname"><span class="pre">headers</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>A case-insensitive dictionary of headers to be sent on each
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code> sent from this
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.auth">
+<span class="sig-name descname"><span class="pre">auth</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.auth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default Authentication tuple or object to attach to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.proxies">
+<span class="sig-name descname"><span class="pre">proxies</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.proxies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary mapping protocol or protocol and host to the URL of the proxy
+(e.g. {‘http’: ‘foo.bar:3128’, ‘http://host.name’: ‘foo.bar:4012’}) to
+be used on each <code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.hooks">
+<span class="sig-name descname"><span class="pre">hooks</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.hooks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event-handling hooks.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of querystring data to attach to each
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code>. The dictionary values may be lists for
+representing multivalued query parameters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.stream">
+<span class="sig-name descname"><span class="pre">stream</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stream response content default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>SSL Verification default.
+Defaults to <cite>True</cite>, requiring requests to verify the TLS certificate at the
+remote end.
+If verify is set to <cite>False</cite>, requests will accept any TLS certificate
+presented by the server, and will ignore hostname mismatches and/or
+expired certificates, which will make your application vulnerable to
+man-in-the-middle (MitM) attacks.
+Only set this to <cite>False</cite> for testing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.cert">
+<span class="sig-name descname"><span class="pre">cert</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.cert" title="Permalink to this definition">¶</a></dt>
+<dd><p>SSL client certificate default, if String, path to ssl client
+cert file (.pem). If Tuple, (‘cert’, ‘key’) pair.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.max_redirects">
+<span class="sig-name descname"><span class="pre">max_redirects</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.max_redirects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum number of redirects allowed. If the request exceeds this
+limit, a <code class="xref py py-class docutils literal notranslate"><span class="pre">TooManyRedirects</span></code> exception is raised.
+This defaults to requests.models.DEFAULT_REDIRECT_LIMIT, which is
+30.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.trust_env">
+<span class="sig-name descname"><span class="pre">trust_env</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.trust_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trust environment settings for proxy configuration, default
+authentication and similar.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module_dependencies.module.session.ModuleSession.cookies">
+<span class="sig-name descname"><span class="pre">cookies</span></span><a class="headerlink" href="#module_dependencies.module.session.ModuleSession.cookies" title="Permalink to this definition">¶</a></dt>
+<dd><p>A CookieJar containing all currently outstanding cookies set on this
+session. By default it is a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">RequestsCookieJar</span></code>, but
+may be any other <code class="docutils literal notranslate"><span class="pre">cookielib.CookieJar</span></code> compatible object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+        </div>
+      </div>
+
+    </div>
+
+<footer>
+    <div id="footer-info">
+        <ul id="build-details">
+            
+                <li class="footer-element">
+                    
+                        <a href="../_sources/api/module_dependencies.module.session.rst.txt" rel="nofollow"> source</a>
+                    
+                </li>
+            
+
+            
+
+            
+        </ul>
+
+        
+            <div id="copyright">
+                &copy; 2021, Tom Aarsen
+            </div>
+        
+
+        <div id="credit">
+            created with <a href="http://sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/tomaarsen/nltk_theme">NLTK Theme</a>
+        </div>
+    </div>
+</footer> 
+
+</div>
+
+</body>
+</html>

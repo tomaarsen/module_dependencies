@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D2D2D" />
+  
+  <title>Home :: module_dependencies.module.module</title>
+  
+  <link rel="index" title="Index" href="../../../genindex.html"/>
+
+  <link rel="stylesheet" href="../../../_static/css/nltk_theme.css"/>
+  <link rel="stylesheet" href="../../../_static/css/custom.css"/>
+
+  <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+  
+
+  <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
+</head>
+
+<body>
+  <div id="nltk-theme-container">
+    <header>
+      <div id="logo-container">
+          
+          <h1>
+            <a href="../../../index.html">Home</a>
+          </h1>
+          
+      </div>
+      <div id="project-container">
+        
+        <h1>Documentation</h1>
+        
+      </div>
+
+      <a id="menu-toggle" class="fa fa-bars" aria-hidden="true"></a>
+
+      <script type="text/javascript">
+        $("#menu-toggle").click(function() {
+          $("#menu-toggle").toggleClass("toggled");
+          $("#side-menu-container").slideToggle(300);
+        });
+      </script>
+    </header>
+
+    <div id="content-container">
+
+      <div id="side-menu-container">
+
+        <div id="search" role="search">
+        <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+            <input type="text" name="q" placeholder="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+</div>
+
+        <div id="side-menu" role="navigation">
+          
+  
+    
+  
+  
+    <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing</a></li>
+</ul>
+
+  
+
+        </div>
+
+        
+      </div>
+
+      <div id="main-content-container">
+        <div id="main-content" role="main">
+          
+  <h1>Source code for module_dependencies.module.module</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">module_dependencies.module.session</span> <span class="kn">import</span> <span class="n">ModuleSession</span>
+<span class="kn">from</span> <span class="nn">module_dependencies.source</span> <span class="kn">import</span> <span class="n">Source</span>
+<span class="kn">from</span> <span class="nn">module_dependencies.util.tokenize</span> <span class="kn">import</span> <span class="n">detokenize</span><span class="p">,</span> <span class="n">tokenize</span>
+
+
+<div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+<div class="viewcode-block" id="Module.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span></div>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;data&quot;: {</span>
+<span class="sd">                &quot;search&quot;: {</span>
+<span class="sd">                    {&#39;alert&#39;: None,</span>
+<span class="sd">                    &#39;cloning&#39;: [], # Repositories that are busy cloning onto gitserver. In paginated search requests, some repositories may be cloning. These are reported here and you may choose to retry the paginated request with the same cursor after they have cloned OR you may simply continue making further paginated requests and choose to skip</span>
+<span class="sd">                    &#39;elapsedMilliseconds&#39;: 963,</span>
+<span class="sd">                    &#39;limitHit&#39;: False, # Are there more matches that we did not encounter?</span>
+<span class="sd">                    &#39;matchCount&#39;: 25757,</span>
+<span class="sd">                    &#39;missing&#39;: [], # Repositories or commits that do not exist. In paginated search requests, some repositories may be missing (e.g. if Sourcegraph is aware of them but is temporarily unable to serve them). These are reported here and you may choose to retry the paginated request with the same cursor and they may no longer be missing OR you</span>
+<span class="sd">                    &#39;results&#39;: [...],</span>
+<span class="sd">                    &#39;timedout&#39;: []} # Repositories or commits which we did not manage to search in time. Trying again usually will work. In paginated search requests, this field is not relevant.</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        TODO: Export repository and file count</span>
+<span class="sd">        TODO: Alert users of `alert`, output `limitHit`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">ModuleSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="c1"># print(response.elapsed.total_seconds())</span>
+            <span class="c1"># t = time.time()</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="c1"># print(time.time() - t)</span>
+        <span class="c1"># pprint(data[&quot;data&quot;][&quot;search&quot;][&quot;results&quot;], depth=1)</span>
+        <span class="k">return</span> <span class="n">Module</span><span class="o">.</span><span class="n">_parse_raw_response</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_raw_response</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Strip `content` from the raw input data, and replace it with</span>
+<span class="sd">        `dependencies` and `parse_error`.</span>
+
+<span class="sd">        :param results: Raw output from `session.post(self.module, ...)`</span>
+<span class="sd">        :type results: Dict</span>
+<span class="sd">        :param module: String of the module we are interested in,</span>
+<span class="sd">            e.g. &quot;nltk&quot; or &quot;nltk.tokenize&quot;.</span>
+<span class="sd">        :type module: str</span>
+<span class="sd">        :return: Modified output of `results`, with file `content` stripped,</span>
+<span class="sd">            and `dependencies` and `parse_error` added.</span>
+<span class="sd">        :rtype: Dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing Files&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">):</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+            <span class="n">error_name</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dependencies</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">SyntaxError</span><span class="p">,</span> <span class="ne">RecursionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">error_name</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;parse_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_name</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+<div class="viewcode-block" id="Module.usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.usage">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># uses</span>
+        <span class="c1"># frequency</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+            <span class="n">use</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">use</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Module.nested_usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.nested_usage">[docs]</a>    <span class="k">def</span> <span class="nf">nested_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_name</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="c1"># nested_uses</span>
+        <span class="c1"># nested_frequency</span>
+        <span class="c1"># Maybe use NLTK Tree objects?</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        output = defaultdict()</span>
+<span class="sd">        usages = self.usage()</span>
+<span class="sd">        for variable, occurrence in usages:</span>
+<span class="sd">            var_tup = tokenize(variable)</span>
+<span class="sd">            # for i in range(1, len(var_tup) + 1):</span>
+<span class="sd">                # partial_var_tup = var_tup[:i]</span>
+<span class="sd">                # partial_var = detokenize(partial_var_tup)</span>
+<span class="sd">            for var in var_tup:</span>
+<span class="sd">                output[partial_var][&quot;occurrences&quot;] += occurrence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Module.projects"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.projects">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">projects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;github.com/Ciphey/Ciphey&quot;: {</span>
+<span class="sd">                &quot;description&quot;: &quot;\u26a1 Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes \u26a1&quot;,</span>
+<span class="sd">                &quot;stars&quot;: 8078,</span>
+<span class="sd">                &quot;isFork&quot;: false,</span>
+<span class="sd">                &quot;files&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;name&quot;: &quot;enciphey.py&quot;,</span>
+<span class="sd">                        &quot;path&quot;: &quot;tests/enciphey.py&quot;,</span>
+<span class="sd">                        &quot;url&quot;: &quot;/github.com/Ciphey/Ciphey/-/blob/tests/enciphey.py&quot;,</span>
+<span class="sd">                        &quot;dependencies&quot;: [</span>
+<span class="sd">                            &quot;nltk.tokenize.sent_tokenize&quot;,</span>
+<span class="sd">                            &quot;nltk.tokenize.treebank.TreebankWordDetokenizer&quot;</span>
+<span class="sd">                        ],</span>
+<span class="sd">                        &quot;parse_error&quot;: null</span>
+<span class="sd">                    },</span>
+<span class="sd">                    ...</span>
+<span class="sd">                ]</span>
+<span class="sd">            },</span>
+<span class="sd">            ...</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">projects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+                <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">],</span> <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]]}</span>
+        <span class="k">return</span> <span class="n">projects</span></div>
+
+<div class="viewcode-block" id="Module.n_matches"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_matches">[docs]</a>    <span class="k">def</span> <span class="nf">n_matches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of matches found.</span>
+
+<span class="sd">        &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; module.n_matches()</span>
+<span class="sd">        137</span>
+
+<span class="sd">        :return: The number of matches, i.e. the number of times</span>
+<span class="sd">            `self.module` was imported in the fetched files.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;matchCount&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Module.n_files"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_files">[docs]</a>    <span class="k">def</span> <span class="nf">n_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of files fetched.</span>
+
+<span class="sd">        &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; module.n_files()</span>
+<span class="sd">        100</span>
+
+<span class="sd">        :return: The number of fetched files in which `self.module` was</span>
+<span class="sd">            imported. Generally equivalent or similar to `count` if it</span>
+<span class="sd">            was provided.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Module.n_repositories"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_repositories">[docs]</a>    <span class="k">def</span> <span class="nf">n_repositories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of repositories fetched.</span>
+
+<span class="sd">        &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; module.n_repositories()</span>
+<span class="sd">        52</span>
+
+<span class="sd">        :return: The number of fetched repositories in which `self.module`</span>
+<span class="sd">            was imported.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;repositoriesCount&quot;</span><span class="p">]</span></div></div>
+</pre></div>
+
+        </div>
+      </div>
+
+    </div>
+
+<footer>
+    <div id="footer-info">
+        <ul id="build-details">
+            
+
+            
+
+            
+        </ul>
+
+        
+            <div id="copyright">
+                &copy; 2021, Tom Aarsen
+            </div>
+        
+
+        <div id="credit">
+            created with <a href="http://sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/tomaarsen/nltk_theme">NLTK Theme</a>
+        </div>
+    </div>
+</footer> 
+
+</div>
+
+</body>
+</html>

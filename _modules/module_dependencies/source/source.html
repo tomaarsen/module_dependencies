@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D2D2D" />
+  
+  <title>Home :: module_dependencies.source.source</title>
+  
+  <link rel="index" title="Index" href="../../../genindex.html"/>
+
+  <link rel="stylesheet" href="../../../_static/css/nltk_theme.css"/>
+  <link rel="stylesheet" href="../../../_static/css/custom.css"/>
+
+  <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+  
+
+  <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
+</head>
+
+<body>
+  <div id="nltk-theme-container">
+    <header>
+      <div id="logo-container">
+          
+          <h1>
+            <a href="../../../index.html">Home</a>
+          </h1>
+          
+      </div>
+      <div id="project-container">
+        
+        <h1>Documentation</h1>
+        
+      </div>
+
+      <a id="menu-toggle" class="fa fa-bars" aria-hidden="true"></a>
+
+      <script type="text/javascript">
+        $("#menu-toggle").click(function() {
+          $("#menu-toggle").toggleClass("toggled");
+          $("#side-menu-container").slideToggle(300);
+        });
+      </script>
+    </header>
+
+    <div id="content-container">
+
+      <div id="side-menu-container">
+
+        <div id="search" role="search">
+        <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+            <input type="text" name="q" placeholder="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+</div>
+
+        <div id="side-menu" role="navigation">
+          
+  
+    
+  
+  
+    <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing</a></li>
+</ul>
+
+  
+
+        </div>
+
+        
+      </div>
+
+      <div id="main-content-container">
+        <div id="main-content" role="main">
+          
+  <h1>Source code for module_dependencies.source.source</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">module_dependencies.source.api</span> <span class="kn">import</span> <span class="n">SourceI</span>
+<span class="kn">from</span> <span class="nn">module_dependencies.source.visitor</span> <span class="kn">import</span> <span class="n">ParserVisitor</span>
+<span class="kn">from</span> <span class="nn">module_dependencies.util.tokenize</span> <span class="kn">import</span> <span class="n">detokenize</span>
+
+
+<div class="viewcode-block" id="SourceString"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceString">[docs]</a><span class="k">class</span> <span class="nc">SourceString</span><span class="p">(</span><span class="n">SourceI</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implementation of ``SourceI`` interface. Reads a string which</span>
+<span class="sd">    represents Python source code, and parses it for dependencies</span>
+<span class="sd">    and import statements.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SourceString.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceString.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Read a string with Python source code.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Source</span>
+<span class="sd">            &gt;&gt;&gt; src = Source(&quot;from nltk import word_tokenize\\nword_tokenize(&#39;Hello there!&#39;)&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; src.dependencies()</span>
+<span class="sd">            [&#39;nltk.word_tokenize&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; src.imports()</span>
+<span class="sd">            [&#39;nltk&#39;]</span>
+
+<span class="sd">        :param src source: String with Python source code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visitor</span> <span class="o">=</span> <span class="n">ParserVisitor</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourceString.imports"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceString.imports">[docs]</a>    <span class="k">def</span> <span class="nf">imports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">detokenize</span><span class="p">(</span><span class="n">importname</span><span class="p">)</span> <span class="k">for</span> <span class="n">importname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visitor</span><span class="o">.</span><span class="n">get_imports</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourceString.dependencies"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceString.dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">detokenize</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span> <span class="k">for</span> <span class="n">usage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visitor</span><span class="o">.</span><span class="n">get_uses</span><span class="p">(</span><span class="n">module</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="SourceBase64"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64">[docs]</a><span class="k">class</span> <span class="nc">SourceBase64</span><span class="p">(</span><span class="n">SourceString</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads a base64 encoded string which represents Python source code,</span>
+<span class="sd">    and parses it for dependencies and import statements.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SourceBase64.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Read a string with base64 encoded Python source code.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Source</span>
+<span class="sd">            &gt;&gt;&gt; src = Source(&quot;ZnJvbSBubHRrIGltcG9ydCB3b3JkX3Rva2VuaXplCndvcmRfdG9rZW5pemUoJ0hlbGxvIHRoZXJlIScp&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; src.dependencies()</span>
+<span class="sd">            [&#39;nltk.word_tokenize&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; src.imports()</span>
+<span class="sd">            [&#39;nltk&#39;]</span>
+
+<span class="sd">        :param src encoded: String with base64 encoded Python source code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">source</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SourceFile"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFile">[docs]</a><span class="k">class</span> <span class="nc">SourceFile</span><span class="p">(</span><span class="n">SourceString</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads a path to a Python file, and parses it for dependencies</span>
+<span class="sd">    and import statements.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SourceFile.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFile.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Read a file path to a Python file.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Source</span>
+<span class="sd">            &gt;&gt;&gt; src = Source(&quot;my_file.py&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; src.dependencies()</span>
+<span class="sd">            [&#39;nltk.word_tokenize&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; src.imports()</span>
+<span class="sd">            [&#39;nltk&#39;]</span>
+
+<span class="sd">        :param src encoded: String with base64 encoded Python source code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="SourceFolder"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder">[docs]</a><span class="k">class</span> <span class="nc">SourceFolder</span><span class="p">(</span><span class="n">SourceI</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads a path to a folder, and parses each Python file for dependencies</span>
+<span class="sd">    and import statements.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SourceFolder.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Read a path to a folder containing Python file.</span>
+<span class="sd">        The Python files will be looked for recursively,</span>
+<span class="sd">        and the folder may contain non-Python files.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; src = Source(&quot;module_dependencies&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; pprint(src.dependencies_mapping(&quot;ast&quot;))</span>
+<span class="sd">            {&#39;module_dependencies/__init__.py&#39;: [],</span>
+<span class="sd">            &#39;module_dependencies/api.py&#39;: [],</span>
+<span class="sd">            &#39;module_dependencies/factory.py&#39;: [],</span>
+<span class="sd">            &#39;module_dependencies/source.py&#39;: [&#39;ast.parse&#39;],</span>
+<span class="sd">            &#39;module_dependencies/tokenize.py&#39;: [],</span>
+<span class="sd">            &#39;module_dependencies/visitor.py&#39;: [&#39;ast.AST&#39;,</span>
+<span class="sd">                                               &#39;ast.Attribute&#39;,</span>
+<span class="sd">                                               &#39;ast.Import&#39;,</span>
+<span class="sd">                                               &#39;ast.ImportFrom&#39;,</span>
+<span class="sd">                                               &#39;ast.Name&#39;,</span>
+<span class="sd">                                               &#39;ast.NodeVisitor&#39;,</span>
+<span class="sd">                                               &#39;ast.iter_fields&#39;]}</span>
+
+<span class="sd">        :param str path: String path to a folder containing Python code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">filename</span><span class="p">:</span> <span class="n">SourceFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="s2">&quot;*.py&quot;</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="SourceFolder.imports_mapping"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder.imports_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">imports_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">filename</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">imports</span><span class="p">()</span> <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="SourceFolder.imports"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder.imports">[docs]</a>    <span class="k">def</span> <span class="nf">imports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="n">importname</span>
+                <span class="k">for</span> <span class="n">imports</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">imports_mapping</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">importname</span> <span class="ow">in</span> <span class="n">imports</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SourceFolder.dependencies_mapping"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder.dependencies_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">dependencies_mapping</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">filename</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="SourceFolder.dependencies"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder.dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="n">importname</span>
+                <span class="k">for</span> <span class="n">imports</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies_mapping</span><span class="p">(</span><span class="n">module</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">importname</span> <span class="ow">in</span> <span class="n">imports</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+        </div>
+      </div>
+
+    </div>
+
+<footer>
+    <div id="footer-info">
+        <ul id="build-details">
+            
+
+            
+
+            
+        </ul>
+
+        
+            <div id="copyright">
+                &copy; 2021, Tom Aarsen
+            </div>
+        
+
+        <div id="credit">
+            created with <a href="http://sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/tomaarsen/nltk_theme">NLTK Theme</a>
+        </div>
+    </div>
+</footer> 
+
+</div>
+
+</body>
+</html>

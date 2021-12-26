@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D2D2D" />
+  
+  <title>Home :: module_dependencies.source.factory</title>
+  
+  <link rel="index" title="Index" href="../../../genindex.html"/>
+
+  <link rel="stylesheet" href="../../../_static/css/nltk_theme.css"/>
+  <link rel="stylesheet" href="../../../_static/css/custom.css"/>
+
+  <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+  
+
+  <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
+</head>
+
+<body>
+  <div id="nltk-theme-container">
+    <header>
+      <div id="logo-container">
+          
+          <h1>
+            <a href="../../../index.html">Home</a>
+          </h1>
+          
+      </div>
+      <div id="project-container">
+        
+        <h1>Documentation</h1>
+        
+      </div>
+
+      <a id="menu-toggle" class="fa fa-bars" aria-hidden="true"></a>
+
+      <script type="text/javascript">
+        $("#menu-toggle").click(function() {
+          $("#menu-toggle").toggleClass("toggled");
+          $("#side-menu-container").slideToggle(300);
+        });
+      </script>
+    </header>
+
+    <div id="content-container">
+
+      <div id="side-menu-container">
+
+        <div id="search" role="search">
+        <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+            <input type="text" name="q" placeholder="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+</div>
+
+        <div id="side-menu" role="navigation">
+          
+  
+    
+  
+  
+    <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing</a></li>
+</ul>
+
+  
+
+        </div>
+
+        
+      </div>
+
+      <div id="main-content-container">
+        <div id="main-content" role="main">
+          
+  <h1>Source code for module_dependencies.source.factory</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">module_dependencies.source.api</span> <span class="kn">import</span> <span class="n">SourceI</span>
+
+<span class="kn">from</span> <span class="nn">module_dependencies.source.source</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># isort:skip</span>
+    <span class="n">SourceBase64</span><span class="p">,</span>
+    <span class="n">SourceFile</span><span class="p">,</span>
+    <span class="n">SourceFolder</span><span class="p">,</span>
+    <span class="n">SourceString</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="Source"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source">[docs]</a><span class="k">class</span> <span class="nc">Source</span><span class="p">(</span><span class="n">SourceI</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Factory class for instances of the ``SourceI`` interface.</span>
+<span class="sd">    The specific subclass of ``SourceI`` is chosen based on the</span>
+<span class="sd">    contents of the ``source`` input parameter.</span>
+
+<span class="sd">    Example usage::</span>
+
+<span class="sd">        &gt;&gt;&gt; from module_dependencies import Source</span>
+<span class="sd">        &gt;&gt;&gt; src = Source(r&quot;from nltk import word_tokenize\\nword_tokenize(&#39;Hello there!&#39;)&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; src</span>
+<span class="sd">        &lt;module_dependencies.source.SourceString object at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; src = Source(&quot;my_file.py&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; src</span>
+<span class="sd">        &lt;module_dependencies.source.SourceFile object at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; src = Source(&quot;data/real/models&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; src</span>
+<span class="sd">        &lt;module_dependencies.source.SourceFolder object at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; src = Source(&quot;ZnJvbSBubHRrIGltcG9ydCB3b3JkX3Rva2VuaXplCndvcmRfdG9rZW5pemUoJ0hlbGxvIHRoZXJlIScp&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; src</span>
+<span class="sd">        &lt;module_dependencies.source.SourceBase64 object at 0x...&gt;</span>
+
+<span class="sd">    The class methods ``Source.from_...`` can also be used to initialize</span>
+<span class="sd">    specific subclasses of the ``SourceI`` interface.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Source.__new__"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.__new__">[docs]</a>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_base64</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">UnicodeDecodeError</span><span class="p">,</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Input parameter `source` was invalid.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+<div class="viewcode-block" id="Source.from_string"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.from_string">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SourceString</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SourceString</span><span class="p">(</span><span class="n">source</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Source.from_base64"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.from_base64">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_base64</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">encoded</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SourceBase64</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SourceBase64</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Source.from_file"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SourceFile</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SourceFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Source.from_folder"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.from_folder">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_folder</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SourceFolder</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SourceFolder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div></div>
+</pre></div>
+
+        </div>
+      </div>
+
+    </div>
+
+<footer>
+    <div id="footer-info">
+        <ul id="build-details">
+            
+
+            
+
+            
+        </ul>
+
+        
+            <div id="copyright">
+                &copy; 2021, Tom Aarsen
+            </div>
+        
+
+        <div id="credit">
+            created with <a href="http://sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/tomaarsen/nltk_theme">NLTK Theme</a>
+        </div>
+    </div>
+</footer> 
+
+</div>
+
+</body>
+</html>

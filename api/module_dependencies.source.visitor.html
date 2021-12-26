@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D2D2D" />
+  
+  <title>Home :: module_dependencies.source.visitor module</title>
+  
+  <link rel="index" title="Index" href="../genindex.html"/>
+
+  <link rel="stylesheet" href="../_static/css/nltk_theme.css"/>
+  <link rel="stylesheet" href="../_static/css/custom.css"/>
+
+  <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+  
+
+  <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
+</head>
+
+<body>
+  <div id="nltk-theme-container">
+    <header>
+      <div id="logo-container">
+          
+          <h1>
+            <a href="../index.html">Home</a>
+          </h1>
+          
+      </div>
+      <div id="project-container">
+        
+        <h1>Documentation</h1>
+        
+      </div>
+
+      <a id="menu-toggle" class="fa fa-bars" aria-hidden="true"></a>
+
+      <script type="text/javascript">
+        $("#menu-toggle").click(function() {
+          $("#menu-toggle").toggleClass("toggled");
+          $("#side-menu-container").slideToggle(300);
+        });
+      </script>
+    </header>
+
+    <div id="content-container">
+
+      <div id="side-menu-container">
+
+        <div id="search" role="search">
+        <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+            <input type="text" name="q" placeholder="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+</div>
+
+        <div id="side-menu" role="navigation">
+          
+  
+    
+  
+  
+    <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing</a></li>
+</ul>
+
+  
+
+        </div>
+
+        
+      </div>
+
+      <div id="main-content-container">
+        <div id="main-content" role="main">
+          
+  <section id="module-module_dependencies.source.visitor">
+<span id="module-dependencies-source-visitor-module"></span><h1>module_dependencies.source.visitor module<a class="headerlink" href="#module-module_dependencies.source.visitor" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParentedNodeVisitor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.visitor.</span></span><span class="sig-name descname"><span class="pre">ParentedNodeVisitor</span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParentedNodeVisitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ast.NodeVisitor</span></code></p>
+<p>Subclass of NodeVisitor which adds the <code class="docutils literal notranslate"><span class="pre">parent</span></code> attribute
+to every node traversed via <code class="docutils literal notranslate"><span class="pre">generic_visit</span></code>. This attribute
+points to the parent node in the AST.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParentedNodeVisitor.generic_visit">
+<span class="sig-name descname"><span class="pre">generic_visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParentedNodeVisitor.generic_visit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor.generic_visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called if no explicit visitor function exists for a node.
+Places <code class="docutils literal notranslate"><span class="pre">parent</span></code> attribute on the child node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>) – Node in an AST.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParentedNodeVisitor.visit">
+<span class="sig-name descname"><span class="pre">visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor.visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visit a node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParentedNodeVisitor.visit_Constant">
+<span class="sig-name descname"><span class="pre">visit_Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor.visit_Constant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.visitor.</span></span><span class="sig-name descname"><span class="pre">ParserVisitor</span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#module_dependencies.source.visitor.ParentedNodeVisitor" title="module_dependencies.source.visitor.ParentedNodeVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">module_dependencies.source.visitor.ParentedNodeVisitor</span></code></a></p>
+<p>An AST NodeVisitor for determining usage of a module.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a ParserVisitor responsible for determining usage of
+the <code class="docutils literal notranslate"><span class="pre">module</span></code> module in an AST.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> (<em>str</em>) – The name of the module to determine the usage of, e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;nltk&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;nltk.tokenize&quot;</span></code>, optional.
+If None, then the usage of all imported modules is gathered.</p></li>
+<li><p><strong>tree</strong> (<em>ast.AST</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>import_names</strong> (<em>Set</em><em>[</em><em>Variable</em><em>]</em>) – <p>Set of names of imported objects, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="s1">&#39;product&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;chain&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;groupby&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;np&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;word_tokenize&#39;</span><span class="p">,)}</span>
+</pre></div>
+</div>
+<p>when the file used to create the AST contains:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">groupby</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>import_modules</strong> (<em>Set</em><em>[</em><em>Variable</em><em>]</em>) – <p>Set of names of modules from which objects are imported, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="s1">&#39;itertools&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;nltk&#39;</span><span class="p">,</span> <span class="s1">&#39;tokenize&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;numpy&#39;</span><span class="p">,)}</span>
+</pre></div>
+</div>
+<p>when the file used to create the AST contains:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">groupby</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>prefixes</strong> (<em>Dict</em><em>[</em><em>Variable</em><em>, </em><em>Variable</em><em>]</em>) – <p>Dictionary as mapping from imported object to imported module, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="s1">&#39;chain&#39;</span><span class="p">,):</span> <span class="p">(</span><span class="s1">&#39;itertools&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;groupby&#39;</span><span class="p">,):</span> <span class="p">(</span><span class="s1">&#39;itertools&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;product&#39;</span><span class="p">,):</span> <span class="p">(</span><span class="s1">&#39;itertools&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;word_tokenize&#39;</span><span class="p">,):</span> <span class="p">(</span><span class="s1">&#39;nltk&#39;</span><span class="p">,</span> <span class="s1">&#39;tokenize&#39;</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>when the file used to create the AST contains:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">groupby</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>aliases</strong> (<em>Dict</em><em>[</em><em>Variable</em><em>, </em><em>Variable</em><em>]</em>) – <p>Dictionary as mapping from module alias to original module name, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="s1">&#39;np&#39;</span><span class="p">,):</span> <span class="p">(</span><span class="s1">&#39;numpy&#39;</span><span class="p">,)}</span>
+</pre></div>
+</div>
+<p>when the file used to create the AST contains:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">groupby</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</p></li>
+<li><p><strong>uses</strong> (<em>Set</em><em>[</em><em>Variable</em><em>]</em>) – Set of objects from <code class="docutils literal notranslate"><span class="pre">module</span></code> used in an AST.</p></li>
+</ul>
+</dd>
+</dl>
+<p>TODO: Some kind of warning when <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">nltk</span> <span class="pre">import</span> <span class="pre">*</span></code> is used
+TODO: Tests for <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">.mongo</span> <span class="pre">import</span> <span class="pre">db</span></code> and <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">..</span> <span class="pre">import</span> <span class="pre">mongo</span></code>
+TODO: value[0] = …
+TODO: value[“hello”] = …
+TODO: a, b = …
+TODO: What if a user does:
+import module
+…
+module = …
+Solution: Maybe add to <code class="docutils literal notranslate"><span class="pre">self.uses</span></code> sometimes?
+This might happen in practice with:
+<a href="#id1"><span class="problematic" id="id2">``</span></a>`
+def …():</p>
+<blockquote>
+<div><p>from nltk.corpus import words
+…</p>
+</div></blockquote>
+<dl class="simple">
+<dt>def …():</dt><dd><p>words = …
+words.split()</p>
+</dd>
+</dl>
+<p><a href="#id3"><span class="problematic" id="id4">``</span></a>`
+Solution: Maybe add and then remove when we leave the recursion
+Maybe clear everything when leaving a ClassDef or FuncDef
+Solution: Map all variables to types, which are appropriately scoped</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.propagate_attributes">
+<span class="sig-name descname"><span class="pre">propagate_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.propagate_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.propagate_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively propagate upwards through the AST starting from <code class="docutils literal notranslate"><span class="pre">node</span></code>,
+gathering the full name of the variable. This method is meant to be called
+from the parent of an <code class="docutils literal notranslate"><span class="pre">ast.Name</span></code> node, which helps produce e.g.
+<code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'tokenize',</span> <span class="pre">'PunktSentenceTokenizer')</span></code> when the <code class="docutils literal notranslate"><span class="pre">ast.Name</span></code> only
+contained <code class="docutils literal notranslate"><span class="pre">'PunktSentenceTokenizer'</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>) – The node where we start propogating upwards.</p>
+</dd>
+<dt class="field-even">Return Variable</dt>
+<dd class="field-even"><p>The names of the tokens that occur before <code class="docutils literal notranslate"><span class="pre">node</span></code>,
+if any.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[str, …]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit_Import">
+<span class="sig-name descname"><span class="pre">visit_Import</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.Import</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_Import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_Import" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when encountering an Import node, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<p>In this example, <code class="docutils literal notranslate"><span class="pre">('numpy',)</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.import_modules</span></code>,
+<code class="docutils literal notranslate"><span class="pre">('np',)</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.import_names</span></code>, and the mapping of
+<code class="docutils literal notranslate"><span class="pre">('numpy',)</span></code> to <code class="docutils literal notranslate"><span class="pre">('np',)</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.aliases</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.Import</em>) – The node with the import information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit_ImportFrom">
+<span class="sig-name descname"><span class="pre">visit_ImportFrom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.ImportFrom</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_ImportFrom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_ImportFrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when encountering an ImportFrom node, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">wordnet</span> <span class="k">as</span> <span class="n">wn</span>
+</pre></div>
+</div>
+<p>In this example, <code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'corpus')</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.import_modules</span></code>,
+(‘wn’,) is added to <code class="docutils literal notranslate"><span class="pre">self.import_names</span></code>, the mapping of <code class="docutils literal notranslate"><span class="pre">('wn',)</span></code>
+to <code class="docutils literal notranslate"><span class="pre">('wordnet',)</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.aliases</span></code>, and the mapping of
+<code class="docutils literal notranslate"><span class="pre">('wordnet',)</span></code> to <code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'corpus')</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.prefixes</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.ImportFrom</em>) – The node with the import-from information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit_Name">
+<span class="sig-name descname"><span class="pre">visit_Name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.Name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_Name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when encountering a Name node, which exists whenever
+a variable is used in some capacity. This Name node consists
+only of the most left-most part of a variable, e.g. <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>
+when the variable was <code class="docutils literal notranslate"><span class="pre">nltk.tokenize.TweetTokenizer</span></code>.</p>
+<p>This method extracts the full Variable, e.g.
+<code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'tokenize',</span> <span class="pre">'TweetTokenizer')</span></code>. It uses <code class="docutils literal notranslate"><span class="pre">self.aliases</span></code>
+and <code class="docutils literal notranslate"><span class="pre">self.prefixes</span></code> from <code class="docutils literal notranslate"><span class="pre">visit_Import</span></code> and <code class="docutils literal notranslate"><span class="pre">visit_ImportFrom</span></code> to
+deal with aliases (e.g. <code class="docutils literal notranslate"><span class="pre">('np',)</span></code> to <code class="docutils literal notranslate"><span class="pre">('numpy',)</span></code>) and extending
+prefixes, e.g. <code class="docutils literal notranslate"><span class="pre">('word_tokenize',)</span></code> to
+<code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'tokenize',</span> <span class="pre">'word_tokenize')</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.Name</em>) – The Name node representing the use of a
+variable in an AST.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.get_imports">
+<span class="sig-name descname"><span class="pre">get_imports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.get_imports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.get_imports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of names of modules from which objects are imported, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="s1">&#39;itertools&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;nltk&#39;</span><span class="p">,</span> <span class="s1">&#39;tokenize&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;numpy&#39;</span><span class="p">,)}</span>
+
+<span class="n">when</span> <span class="n">the</span> <span class="n">file</span> <span class="n">used</span> <span class="n">to</span> <span class="n">create</span> <span class="n">the</span> <span class="n">AST</span> <span class="n">contains</span><span class="p">::</span>
+
+    <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">groupby</span><span class="p">,</span> <span class="n">product</span>
+    <span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">word_tokenize</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Set of names of modules from which objects are imported.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Set[Variable]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.get_uses">
+<span class="sig-name descname"><span class="pre">get_uses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.get_uses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.get_uses" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>Generate the reported uses of objects imported from modules in <code class="docutils literal notranslate"><span class="pre">modules</span></code>.</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">modules</span></code> is None, then all uses of objects that were imported are yielded.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;from nltk.tokenize import word_tokenize</span>
+</pre></div>
+</div>
+</dd>
+<dt>word_tokenize(‘Hello there!’)”)</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">visitor</span> <span class="o">=</span> <span class="n">ParserVisitor</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">visitor</span><span class="o">.</span><span class="n">get_uses</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">))</span>
+<span class="go">[(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">param module</dt>
+<dd class="field-odd"><p>Module string or list of module strings.
+For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
+are returned. Defaults to None.</p>
+</dd>
+<dt class="field-even">type module</dt>
+<dd class="field-even"><p>Union[Iterable[str], str], optional</p>
+</dd>
+<dt class="field-odd">yield</dt>
+<dd class="field-odd"><p>A tuple of tokens representing the use of an imported object.</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p>Iterator[Variable]</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>modules</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>]</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Iterator[Tuple[str, …]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.generic_visit">
+<span class="sig-name descname"><span class="pre">generic_visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.generic_visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called if no explicit visitor function exists for a node.
+Places <code class="docutils literal notranslate"><span class="pre">parent</span></code> attribute on the child node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>) – Node in an AST.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit">
+<span class="sig-name descname"><span class="pre">visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visit a node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit_Constant">
+<span class="sig-name descname"><span class="pre">visit_Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_Constant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+        </div>
+      </div>
+
+    </div>
+
+<footer>
+    <div id="footer-info">
+        <ul id="build-details">
+            
+                <li class="footer-element">
+                    
+                        <a href="../_sources/api/module_dependencies.source.visitor.rst.txt" rel="nofollow"> source</a>
+                    
+                </li>
+            
+
+            
+
+            
+        </ul>
+
+        
+            <div id="copyright">
+                &copy; 2021, Tom Aarsen
+            </div>
+        
+
+        <div id="credit">
+            created with <a href="http://sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/tomaarsen/nltk_theme">NLTK Theme</a>
+        </div>
+    </div>
+</footer> 
+
+</div>
+
+</body>
+</html>

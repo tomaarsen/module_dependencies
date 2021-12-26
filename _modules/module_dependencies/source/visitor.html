@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D2D2D" />
+  
+  <title>Home :: module_dependencies.source.visitor</title>
+  
+  <link rel="index" title="Index" href="../../../genindex.html"/>
+
+  <link rel="stylesheet" href="../../../_static/css/nltk_theme.css"/>
+  <link rel="stylesheet" href="../../../_static/css/custom.css"/>
+
+  <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+  
+
+  <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
+</head>
+
+<body>
+  <div id="nltk-theme-container">
+    <header>
+      <div id="logo-container">
+          
+          <h1>
+            <a href="../../../index.html">Home</a>
+          </h1>
+          
+      </div>
+      <div id="project-container">
+        
+        <h1>Documentation</h1>
+        
+      </div>
+
+      <a id="menu-toggle" class="fa fa-bars" aria-hidden="true"></a>
+
+      <script type="text/javascript">
+        $("#menu-toggle").click(function() {
+          $("#menu-toggle").toggleClass("toggled");
+          $("#side-menu-container").slideToggle(300);
+        });
+      </script>
+    </header>
+
+    <div id="content-container">
+
+      <div id="side-menu-container">
+
+        <div id="search" role="search">
+        <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+            <input type="text" name="q" placeholder="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+</div>
+
+        <div id="side-menu" role="navigation">
+          
+  
+    
+  
+  
+    <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing</a></li>
+</ul>
+
+  
+
+        </div>
+
+        
+      </div>
+
+      <div id="main-content-container">
+        <div id="main-content" role="main">
+          
+  <h1>Source code for module_dependencies.source.visitor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Source code inspired by Dockerizeme: https://github.com/dockerizeme/dockerizeme</span>
+
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">module_dependencies.util.tokenize</span> <span class="kn">import</span> <span class="n">tokenize</span>
+
+<span class="n">Variable</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ParentedNodeVisitor"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParentedNodeVisitor">[docs]</a><span class="k">class</span> <span class="nc">ParentedNodeVisitor</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeVisitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Subclass of NodeVisitor which adds the ``parent`` attribute</span>
+<span class="sd">    to every node traversed via ``generic_visit``. This attribute</span>
+<span class="sd">    points to the parent node in the AST.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ParentedNodeVisitor.generic_visit"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParentedNodeVisitor.generic_visit">[docs]</a>    <span class="k">def</span> <span class="nf">generic_visit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called if no explicit visitor function exists for a node.</span>
+<span class="sd">        Places ``parent`` attribute on the child node.</span>
+
+<span class="sd">        :param ast.AST node: Node in an AST.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">_field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">iter_fields</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+                        <span class="n">item</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ParserVisitor"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor">[docs]</a><span class="k">class</span> <span class="nc">ParserVisitor</span><span class="p">(</span><span class="n">ParentedNodeVisitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An AST NodeVisitor for determining usage of a module.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ParserVisitor.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a ParserVisitor responsible for determining usage of</span>
+<span class="sd">        the ``module`` module in an AST.</span>
+
+<span class="sd">        :param str module: The name of the module to determine the usage of, e.g.</span>
+<span class="sd">            ``&quot;nltk&quot;`` or ``&quot;nltk.tokenize&quot;``, optional.</span>
+<span class="sd">            If None, then the usage of all imported modules is gathered.</span>
+<span class="sd">        :var Set[Variable] import_names:</span>
+<span class="sd">            Set of names of imported objects, e.g.::</span>
+
+<span class="sd">            {(&#39;product&#39;,), (&#39;chain&#39;,), (&#39;groupby&#39;,), (&#39;np&#39;,), (&#39;word_tokenize&#39;,)}</span>
+
+<span class="sd">            when the file used to create the AST contains::</span>
+
+<span class="sd">                from itertools import chain, groupby, product</span>
+<span class="sd">                from nltk.tokenize import word_tokenize</span>
+<span class="sd">                import numpy as np</span>
+<span class="sd">        :var Set[Variable] import_modules:</span>
+<span class="sd">            Set of names of modules from which objects are imported, e.g.::</span>
+
+<span class="sd">            {(&#39;itertools&#39;,), (&#39;nltk&#39;, &#39;tokenize&#39;), (&#39;numpy&#39;,)}</span>
+
+<span class="sd">            when the file used to create the AST contains::</span>
+
+<span class="sd">                from itertools import chain, groupby, product</span>
+<span class="sd">                from nltk.tokenize import word_tokenize</span>
+<span class="sd">                import numpy as np</span>
+<span class="sd">        :var Dict[Variable, Variable] prefixes:</span>
+<span class="sd">            Dictionary as mapping from imported object to imported module, e.g.::</span>
+
+<span class="sd">            {(&#39;chain&#39;,): (&#39;itertools&#39;,), (&#39;groupby&#39;,): (&#39;itertools&#39;,), (&#39;product&#39;,): (&#39;itertools&#39;,), (&#39;word_tokenize&#39;,): (&#39;nltk&#39;, &#39;tokenize&#39;)}</span>
+
+<span class="sd">            when the file used to create the AST contains::</span>
+
+<span class="sd">                from itertools import chain, groupby, product</span>
+<span class="sd">                from nltk.tokenize import word_tokenize</span>
+<span class="sd">                import numpy as np</span>
+<span class="sd">        :var Dict[Variable, Variable] aliases:</span>
+<span class="sd">            Dictionary as mapping from module alias to original module name, e.g.::</span>
+
+<span class="sd">            {(&#39;np&#39;,): (&#39;numpy&#39;,)}</span>
+
+<span class="sd">            when the file used to create the AST contains::</span>
+
+<span class="sd">                from itertools import chain, groupby, product</span>
+<span class="sd">                from nltk.tokenize import word_tokenize</span>
+<span class="sd">                import numpy as np</span>
+<span class="sd">        :var Set[Variable] uses:</span>
+<span class="sd">            Set of objects from ``module`` used in an AST.</span>
+
+<span class="sd">        TODO: Some kind of warning when ``from nltk import *`` is used</span>
+<span class="sd">        TODO: Tests for ``from .mongo import db`` and ``from .. import mongo``</span>
+<span class="sd">        TODO: value[0] = ...</span>
+<span class="sd">        TODO: value[&quot;hello&quot;] = ...</span>
+<span class="sd">        TODO: a, b = ...</span>
+<span class="sd">        TODO: What if a user does:</span>
+<span class="sd">        import module</span>
+<span class="sd">        ...</span>
+<span class="sd">        module = ...</span>
+<span class="sd">        Solution: Maybe add to ``self.uses`` sometimes?</span>
+<span class="sd">        This might happen in practice with:</span>
+<span class="sd">        ```</span>
+<span class="sd">        def ...():</span>
+<span class="sd">            from nltk.corpus import words</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        def ...():</span>
+<span class="sd">            words = ...</span>
+<span class="sd">            words.split()</span>
+<span class="sd">        ```</span>
+<span class="sd">        Solution: Maybe add and then remove when we leave the recursion</span>
+<span class="sd">        Maybe clear everything when leaving a ClassDef or FuncDef</span>
+<span class="sd">        Solution: Map all variables to types, which are appropriately scoped</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">import_names</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Variable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefixes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ParserVisitor.propagate_attributes"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor.propagate_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Variable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Recursively propagate upwards through the AST starting from ``node``,</span>
+<span class="sd">        gathering the full name of the variable. This method is meant to be called</span>
+<span class="sd">        from the parent of an ``ast.Name`` node, which helps produce e.g.</span>
+<span class="sd">        ``(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;PunktSentenceTokenizer&#39;)`` when the ``ast.Name`` only</span>
+<span class="sd">        contained ``&#39;PunktSentenceTokenizer&#39;``.</span>
+
+<span class="sd">        :param ast.AST node: The node where we start propogating upwards.</span>
+<span class="sd">        :return Variable: The names of the tokens that occur before ``node``,</span>
+<span class="sd">            if any.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">attr</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate_attributes</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">()</span></div>
+
+<div class="viewcode-block" id="ParserVisitor.visit_Import"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor.visit_Import">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Import</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Import</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when encountering an Import node, e.g.::</span>
+
+<span class="sd">            import numpy as np</span>
+
+<span class="sd">        In this example, ``(&#39;numpy&#39;,)`` is added to ``self.import_modules``,</span>
+<span class="sd">        ``(&#39;np&#39;,)`` is added to ``self.import_names``, and the mapping of</span>
+<span class="sd">        ``(&#39;numpy&#39;,)`` to ``(&#39;np&#39;,)`` is added to ``self.aliases``.</span>
+
+<span class="sd">        :param ast.Import node: The node with the import information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name_obj</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">name_obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">name_obj</span><span class="o">.</span><span class="n">asname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">alias</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">name_obj</span><span class="o">.</span><span class="n">asname</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">import_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">import_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Call generic visit to visit all child nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ParserVisitor.visit_ImportFrom"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor.visit_ImportFrom">[docs]</a>    <span class="k">def</span> <span class="nf">visit_ImportFrom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">ImportFrom</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when encountering an ImportFrom node, e.g.::</span>
+
+<span class="sd">            from nltk.corpus import wordnet as wn</span>
+
+<span class="sd">        In this example, ``(&#39;nltk&#39;, &#39;corpus&#39;)`` is added to ``self.import_modules``,</span>
+<span class="sd">        (&#39;wn&#39;,) is added to ``self.import_names``, the mapping of ``(&#39;wn&#39;,)``</span>
+<span class="sd">        to ``(&#39;wordnet&#39;,)`` is added to ``self.aliases``, and the mapping of</span>
+<span class="sd">        ``(&#39;wordnet&#39;,)`` to ``(&#39;nltk&#39;, &#39;corpus&#39;)`` is added to ``self.prefixes``.</span>
+
+<span class="sd">        :param ast.ImportFrom node: The node with the import-from information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,)</span> <span class="o">*</span> <span class="n">node</span><span class="o">.</span><span class="n">level</span>
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">module</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">+=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name_obj</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">name_obj</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prefixes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span>
+
+            <span class="k">if</span> <span class="n">name_obj</span><span class="o">.</span><span class="n">asname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">alias</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">name_obj</span><span class="o">.</span><span class="n">asname</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">import_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">import_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># Call generic visit to visit all child nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ParserVisitor.visit_Name"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor.visit_Name">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called when encountering a Name node, which exists whenever</span>
+<span class="sd">        a variable is used in some capacity. This Name node consists</span>
+<span class="sd">        only of the most left-most part of a variable, e.g. ``&#39;nltk&#39;``</span>
+<span class="sd">        when the variable was ``nltk.tokenize.TweetTokenizer``.</span>
+
+<span class="sd">        This method extracts the full Variable, e.g.</span>
+<span class="sd">        ``(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;TweetTokenizer&#39;)``. It uses ``self.aliases``</span>
+<span class="sd">        and ``self.prefixes`` from ``visit_Import`` and ``visit_ImportFrom`` to</span>
+<span class="sd">        deal with aliases (e.g. ``(&#39;np&#39;,)`` to ``(&#39;numpy&#39;,)``) and extending</span>
+<span class="sd">        prefixes, e.g. ``(&#39;word_tokenize&#39;,)`` to</span>
+<span class="sd">        ``(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)``.</span>
+
+<span class="sd">        :param ast.Name node: The Name node representing the use of a</span>
+<span class="sd">            variable in an AST.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: There&#39;s potential here to add variables</span>
+        <span class="c1"># TODO: There&#39;s options for faster pruning here too.</span>
+        <span class="n">head_token</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">,)</span>
+        <span class="n">variable</span> <span class="o">=</span> <span class="n">head_token</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate_attributes</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+        <span class="c1"># e.g. for fixing ``import numpy as np``</span>
+        <span class="c1"># TODO: Check whether there is a need for having these keys be tuples</span>
+        <span class="c1"># TODO: Can this be multiple tokens? e.g. ``import numpy as num.py``?</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">variable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">variable</span><span class="p">[:</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">variable</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="c1"># e.g. for fixing ``from nltk import word_tokenize``</span>
+        <span class="c1"># TODO: Check whether there is a need for having these keys be tuples</span>
+        <span class="c1"># TODO: Can this be multiple tokens? e.g. ``from nltk import tokenize.TweetTokenizer``?</span>
+        <span class="k">if</span> <span class="n">variable</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefixes</span><span class="p">:</span>
+            <span class="n">variable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefixes</span><span class="p">[</span><span class="n">variable</span><span class="p">[:</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">variable</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">uses</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ParserVisitor.get_imports"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor.get_imports">[docs]</a>    <span class="k">def</span> <span class="nf">get_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Variable</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the set of names of modules from which objects are imported, e.g.::</span>
+
+<span class="sd">            {(&#39;itertools&#39;,), (&#39;nltk&#39;, &#39;tokenize&#39;), (&#39;numpy&#39;,)}</span>
+
+<span class="sd">            when the file used to create the AST contains::</span>
+
+<span class="sd">                from itertools import chain, groupby, product</span>
+<span class="sd">                from nltk.tokenize import word_tokenize</span>
+<span class="sd">                import numpy as np</span>
+
+<span class="sd">        :return: Set of names of modules from which objects are imported.</span>
+<span class="sd">        :rtype: Set[Variable]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span></div>
+
+<div class="viewcode-block" id="ParserVisitor.get_uses"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor.get_uses">[docs]</a>    <span class="k">def</span> <span class="nf">get_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modules</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Variable</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Generate the reported uses of objects imported from modules in ``modules``.</span>
+<span class="sd">        If ``modules`` is None, then all uses of objects that were imported are yielded.</span>
+
+<span class="sd">        For example::</span>
+
+<span class="sd">            &gt;&gt;&gt; tree = ast.parse(&quot;from nltk.tokenize import word_tokenize\nword_tokenize(&#39;Hello there!&#39;)&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; visitor = ParserVisitor(tree)</span>
+<span class="sd">            &gt;&gt;&gt; list(visitor.get_uses(&quot;nltk&quot;))</span>
+<span class="sd">            [(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)]</span>
+
+<span class="sd">        :param module: Module string or list of module strings.</span>
+<span class="sd">            For example: ``&#39;nltk&#39;``, ``&#39;nltk.parse&#39;`` or ``[&#39;nltk.parse&#39;, &#39;nltk.stem&#39;]``.</span>
+<span class="sd">            If ``module`` is None, then all uses of imported variables, functions and classes</span>
+<span class="sd">            are returned. Defaults to None.</span>
+<span class="sd">        :type module: Union[Iterable[str], str], optional</span>
+<span class="sd">        :yield: A tuple of tokens representing the use of an imported object.</span>
+<span class="sd">        :rtype: Iterator[Variable]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">modules</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">modules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">modules</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">modules</span><span class="p">]</span>
+            <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenize</span><span class="p">(</span><span class="n">module</span><span class="p">)</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">]</span>
+            <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">module</span>
+                <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="n">module</span> <span class="o">==</span> <span class="n">variable</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="p">)]</span>
+                    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uses</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">variable</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">module</span><span class="p">)]</span> <span class="o">==</span> <span class="n">module</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">variable</span>
+                    <span class="k">break</span></div></div>
+</pre></div>
+
+        </div>
+      </div>
+
+    </div>
+
+<footer>
+    <div id="footer-info">
+        <ul id="build-details">
+            
+
+            
+
+            
+        </ul>
+
+        
+            <div id="copyright">
+                &copy; 2021, Tom Aarsen
+            </div>
+        
+
+        <div id="credit">
+            created with <a href="http://sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/tomaarsen/nltk_theme">NLTK Theme</a>
+        </div>
+    </div>
+</footer> 
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2D2D2D" />
+  
+  <title>Home :: module_dependencies.module.session</title>
+  
+  <link rel="index" title="Index" href="../../../genindex.html"/>
+
+  <link rel="stylesheet" href="../../../_static/css/nltk_theme.css"/>
+  <link rel="stylesheet" href="../../../_static/css/custom.css"/>
+
+  <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+  
+
+  <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
+</head>
+
+<body>
+  <div id="nltk-theme-container">
+    <header>
+      <div id="logo-container">
+          
+          <h1>
+            <a href="../../../index.html">Home</a>
+          </h1>
+          
+      </div>
+      <div id="project-container">
+        
+        <h1>Documentation</h1>
+        
+      </div>
+
+      <a id="menu-toggle" class="fa fa-bars" aria-hidden="true"></a>
+
+      <script type="text/javascript">
+        $("#menu-toggle").click(function() {
+          $("#menu-toggle").toggleClass("toggled");
+          $("#side-menu-container").slideToggle(300);
+        });
+      </script>
+    </header>
+
+    <div id="content-container">
+
+      <div id="side-menu-container">
+
+        <div id="search" role="search">
+        <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+            <input type="text" name="q" placeholder="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+</div>
+
+        <div id="side-menu" role="navigation">
+          
+  
+    
+  
+  
+    <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing</a></li>
+</ul>
+
+  
+
+        </div>
+
+        
+      </div>
+
+      <div id="main-content-container">
+        <div id="main-content" role="main">
+          
+  <h1>Source code for module_dependencies.module.session</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<div class="viewcode-block" id="ModuleSession"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession">[docs]</a><span class="k">class</span> <span class="nc">ModuleSession</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">):</span>
+<div class="viewcode-block" id="ModuleSession.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># The API URL to query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://sourcegraph.com/.api/graphql&quot;</span>
+
+        <span class="c1"># The partial payload with the GraphQL query. Used in ``construct_payload``</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;query.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_payload</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="c1"># The default query information, only missing the ``content`` key.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="s2">&quot;1m&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;patterntype&quot;</span><span class="p">:</span> <span class="s2">&quot;regexp&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Format of the search content, either ``import module`` or ``from module``.</span>
+        <span class="c1"># Note that this format is only used if ``module`` does not contain any dots.</span>
+        <span class="c1"># After all, ``nltk.tokenize`` might be imported like ``from nltk import tokenize``,</span>
+        <span class="c1"># and then this format would not catch this.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_import_format</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&quot;^</span><span class="se">\\</span><span class="s1">s*(import|from) +</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span>
+        <span class="c1"># self.base_import_format = r&#39;&quot;{module}&quot;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subpackage_import_format</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&quot;</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span>  <span class="c1"># TODO: Check performance of this vs using base_import_format with left-most module</span></div>
+
+<div class="viewcode-block" id="ModuleSession.construct_payload"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.construct_payload">[docs]</a>    <span class="k">def</span> <span class="nf">construct_payload</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Construct the payload to send to SourceGraph. The payload is a dictionary</span>
+<span class="sd">        with &quot;variables&quot; and &quot;query&quot; keys.</span>
+
+<span class="sd">        :param module: String of the module we are interested in,</span>
+<span class="sd">            e.g. &quot;nltk&quot; or &quot;nltk.tokenize&quot;.</span>
+<span class="sd">        :type module: str</span>
+<span class="sd">        :param count: The maximum number of results. Either an integer,</span>
+<span class="sd">            a string representing an integer, or &quot;all&quot;, defaults to &quot;all&quot;.</span>
+<span class="sd">        :type count: Union[int, str], optional</span>
+<span class="sd">        :param timeout: Timeout as parsed by the Go time package &quot;ParseDuration&quot; function,</span>
+<span class="sd">            e.g. &quot;10s&quot;, &quot;100ms&quot;, defaults to &quot;10s&quot;. If an integer instead, then parsed as</span>
+<span class="sd">            number of milliseconds. Cannot exceed 1 minute. Defaults to &quot;10s&quot;.</span>
+<span class="sd">        :type timeout: Union[int, str], optional</span>
+<span class="sd">        :return: Mapping of &quot;variable&quot; and &quot;query&quot; to a dictionary and a string,</span>
+<span class="sd">            respectively.</span>
+<span class="sd">        :rtype: Dict</span>
+
+<span class="sd">        TODO: Verify that `module` is valid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_query</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">module</span><span class="p">:</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpackage_import_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_import_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="n">query</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">timeout</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">ms&quot;</span>
+        <span class="n">query</span><span class="p">[</span><span class="s2">&quot;timeout&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timeout</span>
+
+        <span class="c1"># TODO: Perhaps just &quot;site-packages&quot;</span>
+        <span class="n">module_head</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># e.g. &quot;nltk&quot; from &quot;nltk.tokenize&quot;</span>
+        <span class="n">query</span><span class="p">[</span><span class="s2">&quot;-file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;site-packages/</span><span class="si">{</span><span class="n">module_head</span><span class="si">}</span><span class="s2">/&quot;</span>
+
+        <span class="n">query_string</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_payload</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;variables&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query_string</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">payload</span></div>
+
+<div class="viewcode-block" id="ModuleSession.post"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct_payload</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div></div>
+</pre></div>
+
+        </div>
+      </div>
+
+    </div>
+
+<footer>
+    <div id="footer-info">
+        <ul id="build-details">
+            
+
+            
+
+            
+        </ul>
+
+        
+            <div id="copyright">
+                &copy; 2021, Tom Aarsen
+            </div>
+        
+
+        <div id="credit">
+            created with <a href="http://sphinx-doc.org/">Sphinx</a> and <a href="https://github.com/tomaarsen/nltk_theme">NLTK Theme</a>
+        </div>
+    </div>
+</footer> 
+
+</div>
+
+</body>
+</html>
