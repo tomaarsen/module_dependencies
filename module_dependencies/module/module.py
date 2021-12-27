@@ -113,7 +113,7 @@ class Module:
             :rtype: Dict
             """
             logger.info(
-                f"Extracting dependencies of {len(results['results'])} files of source code..."
+                f"Extracting dependencies of {len(results['results']):,} files of source code..."
             )
             if self.verbose:
                 iterator = tqdm(results["results"], desc="Parsing Files", unit="file")
@@ -131,7 +131,7 @@ class Module:
                 result["file"]["dependencies"] = dependencies
                 result["file"]["parse_error"] = error_name
             logger.info(
-                f"Extracted dependencies of {len(results['results'])} files of source code."
+                f"Extracted dependencies of {len(results['results']):,} files of source code."
             )
             return results
 
@@ -146,11 +146,11 @@ class Module:
                 f"(status code {response.status_code})"
             )
             logger.info(
-                f"Parsing {len(response.content)} bytes of source code as JSON..."
+                f"Parsing {len(response.content):,} bytes of source code as JSON..."
             )
             data = json.loads(response.content)
             logger.info(
-                f"Parsed {len(response.content)} bytes of source code as JSON..."
+                f"Parsed {len(response.content):,} bytes of source code as JSON..."
             )
         return parse_raw_response(data["data"]["search"]["results"], self.module)
 
