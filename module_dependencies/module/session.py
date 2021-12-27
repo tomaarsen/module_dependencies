@@ -52,8 +52,8 @@ class ModuleSession(requests.Session):
             a string representing an integer, or "all", defaults to "all".
         :type count: Union[int, str], optional
         :param timeout: Timeout as parsed by the Go time package "ParseDuration" function,
-            e.g. "10s", "100ms", defaults to "10s". If an integer instead, then parsed as
-            number of milliseconds. Cannot exceed 1 minute. Defaults to "10s".
+            e.g. "10s", "100ms". If an integer instead, then parsed as number of
+            milliseconds. Cannot exceed 1 minute. Defaults to "10s".
         :type timeout: Union[int, str], optional
         :return: Mapping of "variable" and "query" to a dictionary and a string,
             respectively.
