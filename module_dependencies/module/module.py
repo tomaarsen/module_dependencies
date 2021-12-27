@@ -34,7 +34,6 @@ class Module:
             n_files()
             n_repositories()
 
-        TODO: Export repository and file count
         TODO: Alert users of `alert`, output `limitHit`
 
         :param module: The name of a Python module of which to find
