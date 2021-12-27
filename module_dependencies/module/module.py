@@ -1,4 +1,5 @@
 import json
+import logging
 from collections import Counter, defaultdict
 from functools import cached_property, lru_cache
 from typing import Any, Dict, List, Tuple, Union
@@ -9,6 +10,8 @@ from module_dependencies.module.session import ModuleSession
 from module_dependencies.source import Source
 from module_dependencies.util.tokenize import detokenize, tokenize
 
+logger = logging.getLogger(__name__)
+
 
 class Module:
     def __init__(
@@ -16,6 +19,8 @@ class Module:
         module: str,
         count: Union[int, str] = "all",
         timeout: Union[int, str] = "10s",
+        verbose: bool = True,
+        lazy: bool = True,
     ) -> None:
         """Create a Module instance that can be used to find
         which sections of a Python module are most frequently used.
@@ -46,10 +51,26 @@ class Module:
             unit, e.g. "10s", "100ms". If an integer instead, then parsed as
             number of milliseconds. Cannot exceed 1 minute. Defaults to "10s".
         :type timeout: Union[int, str], optional
+        :param verbose: If True, set the logging level to INFO, otherwise to
+            WARNING. True implies that there is some data printed to sys.out,
+            while False makes the class quiet. Defaults to True.
+        :type verbose: bool, optional
+        :param lazy: If True, waits with fetching and parsing the data to when
+            the data is required. Defaults to True.
+        :type lazy: bool, optional
         """
         self.module = module
         self.count = count
         self.timeout = timeout
+        self.verbose = verbose
+
+        if verbose:
+            logger.setLevel(logging.INFO)
+        else:
+            logger.setLevel(logging.WARNING)
+
+        if not lazy:
+            self.data
 
     @cached_property
     def data(self) -> Dict:
@@ -91,7 +112,14 @@ class Module:
                 and `dependencies` and `parse_error` added.
             :rtype: Dict
             """
-            for result in tqdm(results["results"], desc="Parsing Files", unit="file"):
+            logger.info(
+                f"Extracting dependencies of {len(results['results'])} files of source code..."
+            )
+            if self.verbose:
+                iterator = tqdm(results["results"], desc="Parsing Files", unit="file")
+            else:
+                iterator = results["results"]
+            for result in iterator:
                 content = result["file"]["content"]
                 del result["file"]["content"]
                 error_name = None
@@ -102,12 +130,28 @@ class Module:
                     error_name = e.__class__.__name__
                 result["file"]["dependencies"] = dependencies
                 result["file"]["parse_error"] = error_name
+            logger.info(
+                f"Extracted dependencies of {len(results['results'])} files of source code."
+            )
             return results
 
         with ModuleSession() as session:
+            logger.info(
+                f"Fetching source code containing imports of `{self.module}`..."
+            )
             response = session.post(self.module, count=self.count, timeout=self.timeout)
             response.raise_for_status()
+            logger.info(
+                f"Fetched source code containing imports of `{self.module}` "
+                f"(status code {response.status_code})"
+            )
+            logger.info(
+                f"Parsing {len(response.content)} bytes of source code as JSON..."
+            )
             data = json.loads(response.content)
+            logger.info(
+                f"Parsed {len(response.content)} bytes of source code as JSON..."
+            )
         return parse_raw_response(data["data"]["search"]["results"], self.module)
 
     @lru_cache(maxsize=1)

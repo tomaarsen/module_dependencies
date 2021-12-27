@@ -1,3 +1,11 @@
+import logging
+import os
+
+logging.basicConfig(
+    level=os.environ.get("LOGLEVEL", logging.INFO),
+    format="[%(asctime)s] [%(name)-12s] [%(levelname)-8s] - %(message)s",
+)
+
 from module_dependencies.source import (  # isort:skip
     Source,
     SourceBase64,
