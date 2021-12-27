@@ -89,9 +89,9 @@
           
   <h1>Source code for module_dependencies.module.module</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
@@ -107,121 +107,335 @@
         <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a Module instance that can be used to find</span>
+<span class="sd">        which sections of a Python module are most frequently used.</span>
+
+<span class="sd">        This class exposes the following methods::</span>
+
+<span class="sd">            usage()</span>
+<span class="sd">            nested_usage()</span>
+<span class="sd">            repositories</span>
+<span class="sd">            n_uses()</span>
+<span class="sd">            n_files()</span>
+<span class="sd">            n_repositories()</span>
+
+<span class="sd">        TODO: Export repository and file count</span>
+<span class="sd">        TODO: Alert users of `alert`, output `limitHit`</span>
+
+<span class="sd">        :param module: The name of a Python module of which to find</span>
+<span class="sd">            the frequently used objects, e.g. `&quot;nltk&quot;`.</span>
+<span class="sd">        :type module: str</span>
+<span class="sd">        :param count: The maximum number of times an import of `module`</span>
+<span class="sd">            should be fetched. Roughly equivalent to the number of fetched</span>
+<span class="sd">            files. Either an integer, a string representing an integer,</span>
+<span class="sd">            or &quot;all&quot;, defaults to &quot;all&quot;.</span>
+<span class="sd">        :type count: Union[int, str], optional</span>
+<span class="sd">        :param timeout: Timeout for the source code API. Does not correspond</span>
+<span class="sd">            to the timeout for any of the functions as a whole. The timeout</span>
+<span class="sd">            can be an integer or a string with some digits and then a time</span>
+<span class="sd">            unit, e.g. &quot;10s&quot;, &quot;100ms&quot;. If an integer instead, then parsed as</span>
+<span class="sd">            number of milliseconds. Cannot exceed 1 minute. Defaults to &quot;10s&quot;.</span>
+<span class="sd">        :type timeout: Union[int, str], optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span></div>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;data&quot;: {</span>
-<span class="sd">                &quot;search&quot;: {</span>
-<span class="sd">                    {&#39;alert&#39;: None,</span>
-<span class="sd">                    &#39;cloning&#39;: [], # Repositories that are busy cloning onto gitserver. In paginated search requests, some repositories may be cloning. These are reported here and you may choose to retry the paginated request with the same cursor after they have cloned OR you may simply continue making further paginated requests and choose to skip</span>
-<span class="sd">                    &#39;elapsedMilliseconds&#39;: 963,</span>
-<span class="sd">                    &#39;limitHit&#39;: False, # Are there more matches that we did not encounter?</span>
-<span class="sd">                    &#39;matchCount&#39;: 25757,</span>
-<span class="sd">                    &#39;missing&#39;: [], # Repositories or commits that do not exist. In paginated search requests, some repositories may be missing (e.g. if Sourcegraph is aware of them but is temporarily unable to serve them). These are reported here and you may choose to retry the paginated request with the same cursor and they may no longer be missing OR you</span>
-<span class="sd">                    &#39;results&#39;: [...],</span>
-<span class="sd">                    &#39;timedout&#39;: []} # Repositories or commits which we did not manage to search in time. Trying again usually will work. In paginated search requests, this field is not relevant.</span>
-<span class="sd">                }</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Cached property of a Module, containing the parsed data from</span>
+<span class="sd">        the SourceGraph API. This property lazily loads the data once upon request,</span>
+<span class="sd">        and then parses it using `Source(...).dependencies()`.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Module</span>
+<span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=3)</span>
+<span class="sd">            &gt;&gt;&gt; pprint(module.data, depth=1)</span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;alert&#39;: None,</span>
+<span class="sd">                &#39;cloning&#39;: [],</span>
+<span class="sd">                &#39;elapsedMilliseconds&#39;: 573,</span>
+<span class="sd">                &#39;limitHit&#39;: True,</span>
+<span class="sd">                &#39;matchCount&#39;: 3,</span>
+<span class="sd">                &#39;missing&#39;: [],</span>
+<span class="sd">                &#39;repositoriesCount&#39;: 1,</span>
+<span class="sd">                &#39;results&#39;: [...],</span>
+<span class="sd">                &#39;timedout&#39;: []</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        TODO: Export repository and file count</span>
-<span class="sd">        TODO: Alert users of `alert`, output `limitHit`</span>
+
+<span class="sd">        :return: The cached, parsed SourceGraph API data.</span>
+<span class="sd">        :rtype: Dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">parse_raw_response</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Strip `content` from the raw input data, and replace it with</span>
+<span class="sd">            `dependencies` and `parse_error`.</span>
+
+<span class="sd">            :param results: Raw output from `session.post(self.module, ...)`</span>
+<span class="sd">            :type results: Dict</span>
+<span class="sd">            :param module: String of the module we are interested in,</span>
+<span class="sd">                e.g. &quot;nltk&quot; or &quot;nltk.tokenize&quot;.</span>
+<span class="sd">            :type module: str</span>
+<span class="sd">            :return: Modified output of `results`, with file `content` stripped,</span>
+<span class="sd">                and `dependencies` and `parse_error` added.</span>
+<span class="sd">            :rtype: Dict</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing Files&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">):</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+                <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+                <span class="n">error_name</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dependencies</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">SyntaxError</span><span class="p">,</span> <span class="ne">RecursionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">error_name</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;parse_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_name</span>
+            <span class="k">return</span> <span class="n">results</span>
+
         <span class="k">with</span> <span class="n">ModuleSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
             <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-            <span class="c1"># print(response.elapsed.total_seconds())</span>
-            <span class="c1"># t = time.time()</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-            <span class="c1"># print(time.time() - t)</span>
-        <span class="c1"># pprint(data[&quot;data&quot;][&quot;search&quot;][&quot;results&quot;], depth=1)</span>
-        <span class="k">return</span> <span class="n">Module</span><span class="o">.</span><span class="n">_parse_raw_response</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span>
-        <span class="p">)</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_raw_response</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Strip `content` from the raw input data, and replace it with</span>
-<span class="sd">        `dependencies` and `parse_error`.</span>
-
-<span class="sd">        :param results: Raw output from `session.post(self.module, ...)`</span>
-<span class="sd">        :type results: Dict</span>
-<span class="sd">        :param module: String of the module we are interested in,</span>
-<span class="sd">            e.g. &quot;nltk&quot; or &quot;nltk.tokenize&quot;.</span>
-<span class="sd">        :type module: str</span>
-<span class="sd">        :return: Modified output of `results`, with file `content` stripped,</span>
-<span class="sd">            and `dependencies` and `parse_error` added.</span>
-<span class="sd">        :rtype: Dict</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing Files&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">):</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
-            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
-            <span class="n">error_name</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">dependencies</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-            <span class="k">except</span> <span class="p">(</span><span class="ne">SyntaxError</span><span class="p">,</span> <span class="ne">RecursionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="n">error_name</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;parse_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_name</span>
-        <span class="k">return</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="n">parse_raw_response</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Module.usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.usage">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of object-occurrence tuples, sorted by most to least frequent.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Module</span>
+<span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;3&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; module.usage()</span>
+<span class="sd">            [(&#39;nltk.metrics.distance.edit_distance&#39;, 2),</span>
+<span class="sd">            (&#39;nltk.tokenize.sent_tokenize&#39;, 1),</span>
+<span class="sd">            (&#39;nltk.tokenize.treebank.TreebankWordDetokenizer&#39;, 1)]</span>
+
+<span class="sd">        :return: A list of object-occurrence tuples, sorted by most to least frequent.</span>
+<span class="sd">        :rtype: List[Tuple[str, int]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># uses</span>
         <span class="c1"># frequency</span>
+
+        <span class="k">def</span> <span class="nf">is_subsection_of</span><span class="p">(</span><span class="n">var_one</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">var_two</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Check whether `var_one` is a subsection of `var_two`. This means</span>
+<span class="sd">            that `var_two` can be created by inserting strings into the tuple of</span>
+<span class="sd">            `var_one`. For example, `var_two` as `(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)`</span>
+<span class="sd">            can be created by inserting `&#39;tokenize&#39;` into a `var_one` as</span>
+<span class="sd">            `(&#39;nltk&#39;, &#39;word_tokenize&#39;)`, so this function returns True.</span>
+
+<span class="sd">            :param var_one: Tuple of strings representing the path to a Python</span>
+<span class="sd">                object, e.g. `(&#39;nltk&#39;, &#39;word_tokenize&#39;)`.</span>
+<span class="sd">            :type var_one: Tuple[str]</span>
+<span class="sd">            :param var_two: Tuple of strings representing the path to a Python</span>
+<span class="sd">                object, e.g. `(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)`.</span>
+<span class="sd">            :type var_two: Tuple[str]</span>
+<span class="sd">            :return: True if `var_one` is a subsection of `var_two`.</span>
+<span class="sd">            :rtype: bool</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">var_two</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="n">var_one</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="c1"># e.g. with (&#39;nltk&#39;, &#39;corpus&#39;, &#39;words&#39;) and (&#39;nltk&#39;, &#39;corpus&#39;, &#39;words&#39;, &#39;words&#39;),</span>
+                <span class="c1"># TODO: False isnt really appropriate. This algorithm simply doesn&#39;t</span>
+                <span class="c1"># work well with repeat words.</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_one</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">merge_one</span><span class="p">(</span><span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+            <span class="sd">&quot;&quot;&quot;Merge a list of similar tuples, combining on &quot;paths&quot; that likely</span>
+<span class="sd">            refer to the same object, e.g. `&quot;nltk.word_tokenize&quot;` and</span>
+<span class="sd">            `&quot;nltk.tokenize.word_tokenize&quot;`. `usage` is a list of potentially</span>
+<span class="sd">            combinable objects.</span>
+
+<span class="sd">            :param usage: A list of tuples, where the first element is a tuple</span>
+<span class="sd">                of strings that represent a path to a Python object, e.g.</span>
+<span class="sd">                `(&#39;nltk&#39;, &#39;word_tokenize&#39;)`, and the second element is how</span>
+<span class="sd">                often that Python object occurs in a large collection of code.</span>
+<span class="sd">                Each path in the tuple ends in the same token, and thus could</span>
+<span class="sd">                refer to the same object.</span>
+<span class="sd">            :type usage: List[Tuple[Tuple[str], int]]</span>
+<span class="sd">            :return: `usage`, but the first element of each tuple is detokenized,</span>
+<span class="sd">                i.e. converted back to a string, and paths that refer to the</span>
+<span class="sd">                same element are merged.</span>
+<span class="sd">            :rtype: List[Tuple[str, int]]</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">merged</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># Sort `usage` on longest to shortest paths</span>
+            <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">usage</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="c1"># Get the list of object/occurrence tuples that `obj` can expand to become</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="n">o_key</span><span class="p">,</span> <span class="n">o_occ</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">o_key</span><span class="p">,</span> <span class="n">o_occ</span> <span class="ow">in</span> <span class="n">merged</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">is_subsection_of</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">o_key</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+                    <span class="c1"># Get the most likely expansion, e.g.</span>
+                    <span class="c1"># &quot;nltk.load&quot; can expand to &quot;nltk.data.load&quot;</span>
+                    <span class="c1"># and &quot;nltk.parse.dependencygraph.DependencyGraph.load&quot;</span>
+                    <span class="c1"># Then, we pick the one with the highest occurrence,</span>
+                    <span class="c1"># which is likely &quot;nltk.data.load&quot;</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="n">occ</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">merged</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span> <span class="o">=</span> <span class="n">occ</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">detokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">occ</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">merged</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+        <span class="k">def</span> <span class="nf">merge_all</span><span class="p">(</span><span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+            <span class="sd">&quot;&quot;&quot;Merge a list of tuples, combining on &quot;paths&quot; that likely</span>
+<span class="sd">            refer to the same object, e.g. `&quot;nltk.word_tokenize&quot;` and</span>
+<span class="sd">            `&quot;nltk.tokenize.word_tokenize&quot;`.</span>
+
+<span class="sd">            :param usage: A list of tuples, where the first element of</span>
+<span class="sd">                each tuple is a string representing a path to a Python object,</span>
+<span class="sd">                e.g. `&quot;nltk.word_tokenize&quot;`, and the second element of each</span>
+<span class="sd">                tuple is the occurrence of that object in a large collection</span>
+<span class="sd">                of code.</span>
+<span class="sd">            :type usage: List[Tuple[str, int]]</span>
+<span class="sd">            :return: `usage`, but with some merged tuples.</span>
+<span class="sd">            :rtype: List[Tuple[str, int]]</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># Group usage data together, based on the last token in each object path</span>
+            <span class="c1"># Merging can only occur within these groups.</span>
+            <span class="n">grouped</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">usage</span><span class="p">:</span>
+                <span class="n">obj_tok</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="n">grouped</span><span class="p">[</span><span class="n">obj_tok</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">obj_tok</span><span class="p">,</span> <span class="n">occ</span><span class="p">))</span>
+
+            <span class="c1"># Attempt to merge within a group</span>
+            <span class="n">merged</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">grouped</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">merged</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">merge_one</span><span class="p">(</span><span class="n">group</span><span class="p">))</span>
+            <span class="c1"># Sort the usage data from most to least occurring</span>
+            <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
             <span class="n">use</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">use</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">merge_all</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="Module.nested_usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.nested_usage">[docs]</a>    <span class="k">def</span> <span class="nf">nested_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_name</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Module.nested_usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.nested_usage">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">nested_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Get a (recursive) dictionary of objects mapped to occurrence of that object,</span>
+<span class="sd">        and the object&#39;s children.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Module</span>
+<span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;3&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; module.nested_usage()</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;nltk&quot;: {</span>
+<span class="sd">                    &quot;occurrences&quot;: 4,</span>
+<span class="sd">                    &quot;corpus&quot;: {</span>
+<span class="sd">                        &quot;occurrences&quot;: 2,</span>
+<span class="sd">                        &quot;stopwords&quot;: {</span>
+<span class="sd">                            &quot;occurrences&quot;: 2,</span>
+<span class="sd">                            &quot;words&quot;: {</span>
+<span class="sd">                                &quot;occurrences&quot;: 2</span>
+<span class="sd">                            }</span>
+<span class="sd">                        }</span>
+<span class="sd">                    },</span>
+<span class="sd">                    &quot;tokenize&quot;: {</span>
+<span class="sd">                        &quot;occurrences&quot;: 2,</span>
+<span class="sd">                        &quot;sent_tokenize&quot;: {</span>
+<span class="sd">                            &quot;occurrences&quot;: 1</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &quot;treebank&quot;: {</span>
+<span class="sd">                            &quot;occurrences&quot;: 1,</span>
+<span class="sd">                            &quot;TreebankWordDetokenizer&quot;: {</span>
+<span class="sd">                                &quot;occurrences&quot;: 1</span>
+<span class="sd">                            }</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+
+<span class="sd">        TODO: Consider adding support for a `full_name` parameter</span>
+
+<span class="sd">        :return: A dictionary mapping objects to how often that object occurred</span>
+<span class="sd">            in the parsed source code.</span>
+<span class="sd">        :rtype: Dict[str, Union[Dict, int]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># nested_uses</span>
         <span class="c1"># nested_frequency</span>
-        <span class="c1"># Maybe use NLTK Tree objects?</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        output = defaultdict()</span>
-<span class="sd">        usages = self.usage()</span>
-<span class="sd">        for variable, occurrence in usages:</span>
-<span class="sd">            var_tup = tokenize(variable)</span>
-<span class="sd">            # for i in range(1, len(var_tup) + 1):</span>
-<span class="sd">                # partial_var_tup = var_tup[:i]</span>
-<span class="sd">                # partial_var = detokenize(partial_var_tup)</span>
-<span class="sd">            for var in var_tup:</span>
-<span class="sd">                output[partial_var][&quot;occurrences&quot;] += occurrence</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+        <span class="k">def</span> <span class="nf">recursive_add</span><span class="p">(</span><span class="n">nested</span><span class="p">,</span> <span class="n">obj_tup</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">occurrence</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj_tup</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="n">head</span> <span class="o">=</span> <span class="n">obj_tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">head</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nested</span><span class="p">:</span>
+                <span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;occurrences&quot;</span><span class="p">:</span> <span class="n">occurrence</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="s2">&quot;occurrences&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">occurrence</span>
+            <span class="n">recursive_add</span><span class="p">(</span><span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">],</span> <span class="n">obj_tup</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">occurrence</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Module.projects"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.projects">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">projects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;github.com/Ciphey/Ciphey&quot;: {</span>
-<span class="sd">                &quot;description&quot;: &quot;\u26a1 Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes \u26a1&quot;,</span>
-<span class="sd">                &quot;stars&quot;: 8078,</span>
-<span class="sd">                &quot;isFork&quot;: false,</span>
-<span class="sd">                &quot;files&quot;: [</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &quot;name&quot;: &quot;enciphey.py&quot;,</span>
-<span class="sd">                        &quot;path&quot;: &quot;tests/enciphey.py&quot;,</span>
-<span class="sd">                        &quot;url&quot;: &quot;/github.com/Ciphey/Ciphey/-/blob/tests/enciphey.py&quot;,</span>
-<span class="sd">                        &quot;dependencies&quot;: [</span>
-<span class="sd">                            &quot;nltk.tokenize.sent_tokenize&quot;,</span>
-<span class="sd">                            &quot;nltk.tokenize.treebank.TreebankWordDetokenizer&quot;</span>
-<span class="sd">                        ],</span>
-<span class="sd">                        &quot;parse_error&quot;: null</span>
-<span class="sd">                    },</span>
-<span class="sd">                    ...</span>
-<span class="sd">                ]</span>
-<span class="sd">            },</span>
-<span class="sd">            ...</span>
-<span class="sd">        }</span>
+        <span class="n">nested</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occurrence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">():</span>
+            <span class="n">obj_tup</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="n">recursive_add</span><span class="p">(</span><span class="n">nested</span><span class="p">,</span> <span class="n">obj_tup</span><span class="p">,</span> <span class="n">occurrence</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nested</span></div>
+
+<div class="viewcode-block" id="Module.repositories"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.repositories">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">repositories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;Return a mapping of repository names to repository information</span>
+<span class="sd">        that were fetched and parsed. Contains &quot;description&quot;, &quot;stars&quot;, &quot;isFork&quot; keys,</span>
+<span class="sd">        plus a list of &quot;files&quot; with &quot;name&quot;, &quot;path&quot;, &quot;url&quot;, &quot;dependencies&quot; and</span>
+<span class="sd">        &quot;parse_error&quot; fields. The &quot;parse_error&quot; field lists the error that was</span>
+<span class="sd">        encountered when attempting to parse the file, e.g. &quot;SyntaxError&quot;.</span>
+<span class="sd">        This might happen when a Python 2 file was fetched.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Module</span>
+<span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;3&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; module.repositories()</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;github.com/codelucas/newspaper&quot;: {</span>
+<span class="sd">                    &quot;description&quot;: &quot;News, full-text, and article metadata extraction in Python 3. Advanced docs:&quot;,</span>
+<span class="sd">                    &quot;stars&quot;: 11224,</span>
+<span class="sd">                    &quot;isFork&quot;: false,</span>
+<span class="sd">                    &quot;files&quot;: [</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;name&quot;: &quot;download_corpora.py&quot;,</span>
+<span class="sd">                            &quot;path&quot;: &quot;download_corpora.py&quot;,</span>
+<span class="sd">                            &quot;url&quot;: &quot;/github.com/codelucas/newspaper/-/blob/download_corpora.py&quot;,</span>
+<span class="sd">                            &quot;dependencies&quot;: [</span>
+<span class="sd">                                &quot;nltk.download&quot;</span>
+<span class="sd">                            ],</span>
+<span class="sd">                            &quot;parse_error&quot;: null</span>
+<span class="sd">                        },</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;name&quot;: &quot;nlp.py&quot;,</span>
+<span class="sd">                            &quot;path&quot;: &quot;newspaper/nlp.py&quot;,</span>
+<span class="sd">                            &quot;url&quot;: &quot;/github.com/codelucas/newspaper/-/blob/newspaper/nlp.py&quot;,</span>
+<span class="sd">                            &quot;dependencies&quot;: [</span>
+<span class="sd">                                &quot;nltk.data.load&quot;</span>
+<span class="sd">                            ],</span>
+<span class="sd">                            &quot;parse_error&quot;: null</span>
+<span class="sd">                        },</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;name&quot;: &quot;text.py&quot;,</span>
+<span class="sd">                            &quot;path&quot;: &quot;newspaper/text.py&quot;,</span>
+<span class="sd">                            &quot;url&quot;: &quot;/github.com/codelucas/newspaper/-/blob/newspaper/text.py&quot;,</span>
+<span class="sd">                            &quot;dependencies&quot;: [</span>
+<span class="sd">                                &quot;nltk.stem.isri.ISRIStemmer&quot;,</span>
+<span class="sd">                                &quot;nltk.tokenize.wordpunct_tokenize&quot;</span>
+<span class="sd">                            ],</span>
+<span class="sd">                            &quot;parse_error&quot;: null</span>
+<span class="sd">                        }</span>
+<span class="sd">                    ]</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :return: A mapping of repositories</span>
+<span class="sd">        :rtype: Dict[str, Dict[str, Any]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">projects</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]:</span>
@@ -233,25 +447,34 @@
                 <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">],</span> <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]]}</span>
         <span class="k">return</span> <span class="n">projects</span></div>
 
-<div class="viewcode-block" id="Module.n_matches"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_matches">[docs]</a>    <span class="k">def</span> <span class="nf">n_matches</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the number of matches found.</span>
+<div class="viewcode-block" id="Module.n_uses"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_uses">[docs]</a>    <span class="k">def</span> <span class="nf">n_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of uses of the module.</span>
 
-<span class="sd">        &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; module.n_matches()</span>
-<span class="sd">        137</span>
+<span class="sd">        Example usage::</span>
 
-<span class="sd">        :return: The number of matches, i.e. the number of times</span>
-<span class="sd">            `self.module` was imported in the fetched files.</span>
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Module</span>
+<span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; module.n_uses()</span>
+<span class="sd">            137</span>
+
+<span class="sd">        :return: The number of uses, i.e. the number of times</span>
+<span class="sd">            `self.module` was used in the fetched files.</span>
 <span class="sd">        :rtype: int</span>
+
+<span class="sd">        TODO: Make this work with submodules like `nltk.tokenize`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;matchCount&quot;</span><span class="p">]</span></div>
+        <span class="c1"># return self.data[&quot;matchCount&quot;]</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nested_usage</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">][</span><span class="s2">&quot;occurrences&quot;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Module.n_files"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_files">[docs]</a>    <span class="k">def</span> <span class="nf">n_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the number of files fetched.</span>
 
-<span class="sd">        &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; module.n_files()</span>
-<span class="sd">        100</span>
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Module</span>
+<span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; module.n_files()</span>
+<span class="sd">            100</span>
 
 <span class="sd">        :return: The number of fetched files in which `self.module` was</span>
 <span class="sd">            imported. Generally equivalent or similar to `count` if it</span>
@@ -263,9 +486,12 @@
 <div class="viewcode-block" id="Module.n_repositories"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_repositories">[docs]</a>    <span class="k">def</span> <span class="nf">n_repositories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the number of repositories fetched.</span>
 
-<span class="sd">        &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; module.n_repositories()</span>
-<span class="sd">        52</span>
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Module</span>
+<span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; module.n_repositories()</span>
+<span class="sd">            52</span>
 
 <span class="sd">        :return: The number of fetched repositories in which `self.module`</span>
 <span class="sd">            was imported.</span>

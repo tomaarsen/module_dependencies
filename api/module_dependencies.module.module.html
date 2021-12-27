@@ -97,12 +97,33 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'10s'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Create a Module instance that can be used to find
+which sections of a Python module are most frequently used.</p>
+<p>This class exposes the following methods:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">()</span>
+<span class="n">nested_usage</span><span class="p">()</span>
+<span class="n">repositories</span>
+<span class="n">n_uses</span><span class="p">()</span>
+<span class="n">n_files</span><span class="p">()</span>
+<span class="n">n_repositories</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>TODO: Export repository and file count
+TODO: Alert users of <cite>alert</cite>, output <cite>limitHit</cite></p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>module</strong> (<em>str</em>) – </p></li>
-<li><p><strong>count</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – </p></li>
-<li><p><strong>timeout</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – </p></li>
+<li><p><strong>module</strong> (<em>str</em>) – The name of a Python module of which to find
+the frequently used objects, e.g. <cite>“nltk”</cite>.</p></li>
+<li><p><strong>count</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The maximum number of times an import of <cite>module</cite>
+should be fetched. Roughly equivalent to the number of fetched
+files. Either an integer, a string representing an integer,
+or “all”, defaults to “all”.</p></li>
+<li><p><strong>timeout</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Timeout for the source code API. Does not correspond
+to the timeout for any of the functions as a whole. The timeout
+can be an integer or a string with some digits and then a time
+unit, e.g. “10s”, “100ms”. If an integer instead, then parsed as
+number of milliseconds. Cannot exceed 1 minute. Defaults to “10s”.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -113,113 +134,201 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.data">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#module_dependencies.module.module.Module.data" title="Permalink to this definition">¶</a></dt>
-<dd><dl>
-<dt>{</dt><dd><dl>
-<dt>“data”: {</dt><dd><dl class="simple">
-<dt>“search”: {</dt><dd><p>{‘alert’: None,
-‘cloning’: [], # Repositories that are busy cloning onto gitserver. In paginated search requests, some repositories may be cloning. These are reported here and you may choose to retry the paginated request with the same cursor after they have cloned OR you may simply continue making further paginated requests and choose to skip
-‘elapsedMilliseconds’: 963,
-‘limitHit’: False, # Are there more matches that we did not encounter?
-‘matchCount’: 25757,
-‘missing’: [], # Repositories or commits that do not exist. In paginated search requests, some repositories may be missing (e.g. if Sourcegraph is aware of them but is temporarily unable to serve them). These are reported here and you may choose to retry the paginated request with the same cursor and they may no longer be missing OR you
-‘results’: […],
-‘timedout’: []} # Repositories or commits which we did not manage to search in time. Trying again usually will work. In paginated search requests, this field is not relevant.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span></em><a class="headerlink" href="#module_dependencies.module.module.Module.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cached property of a Module, containing the parsed data from
+the SourceGraph API. This property lazily loads the data once upon request,
+and then parses it using <cite>Source(…).dependencies()</cite>.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">    &#39;alert&#39;: None,</span>
+<span class="go">    &#39;cloning&#39;: [],</span>
+<span class="go">    &#39;elapsedMilliseconds&#39;: 573,</span>
+<span class="go">    &#39;limitHit&#39;: True,</span>
+<span class="go">    &#39;matchCount&#39;: 3,</span>
+<span class="go">    &#39;missing&#39;: [],</span>
+<span class="go">    &#39;repositoriesCount&#39;: 1,</span>
+<span class="go">    &#39;results&#39;: [...],</span>
+<span class="go">    &#39;timedout&#39;: []</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The cached, parsed SourceGraph API data.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dict</p>
 </dd>
 </dl>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>}
-TODO: Export repository and file count
-TODO: Alert users of <cite>alert</cite>, output <cite>limitHit</cite></p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.usage">
-<span class="sig-name descname"><span class="pre">usage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.usage" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">usage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of object-occurrence tuples, sorted by most to least frequent.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="o">.</span><span class="n">usage</span><span class="p">()</span>
+<span class="go">[(&#39;nltk.metrics.distance.edit_distance&#39;, 2),</span>
+<span class="go">(&#39;nltk.tokenize.sent_tokenize&#39;, 1),</span>
+<span class="go">(&#39;nltk.tokenize.treebank.TreebankWordDetokenizer&#39;, 1)]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of object-occurrence tuples, sorted by most to least frequent.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[Tuple[str, int]]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.nested_usage">
-<span class="sig-name descname"><span class="pre">nested_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.nested_usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.nested_usage" title="Permalink to this definition">¶</a></dt>
-<dd><p>output = defaultdict()
-usages = self.usage()
-for variable, occurrence in usages:</p>
-<blockquote>
-<div><p>var_tup = tokenize(variable)
-# for i in range(1, len(var_tup) + 1):</p>
-<blockquote>
-<div><p># partial_var_tup = var_tup[:i]
-# partial_var = detokenize(partial_var_tup)</p>
-</div></blockquote>
-<dl class="simple">
-<dt>for var in var_tup:</dt><dd><p>output[partial_var][“occurrences”] += occurrence</p>
+<span class="sig-name descname"><span class="pre">nested_usage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.nested_usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.nested_usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a (recursive) dictionary of objects mapped to occurrence of that object,
+and the object’s children.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="o">.</span><span class="n">nested_usage</span><span class="p">()</span>
+<span class="go">{</span>
+<span class="go">    &quot;nltk&quot;: {</span>
+<span class="go">        &quot;occurrences&quot;: 4,</span>
+<span class="go">        &quot;corpus&quot;: {</span>
+<span class="go">            &quot;occurrences&quot;: 2,</span>
+<span class="go">            &quot;stopwords&quot;: {</span>
+<span class="go">                &quot;occurrences&quot;: 2,</span>
+<span class="go">                &quot;words&quot;: {</span>
+<span class="go">                    &quot;occurrences&quot;: 2</span>
+<span class="go">                }</span>
+<span class="go">            }</span>
+<span class="go">        },</span>
+<span class="go">        &quot;tokenize&quot;: {</span>
+<span class="go">            &quot;occurrences&quot;: 2,</span>
+<span class="go">            &quot;sent_tokenize&quot;: {</span>
+<span class="go">                &quot;occurrences&quot;: 1</span>
+<span class="go">            },</span>
+<span class="go">            &quot;treebank&quot;: {</span>
+<span class="go">                &quot;occurrences&quot;: 1,</span>
+<span class="go">                &quot;TreebankWordDetokenizer&quot;: {</span>
+<span class="go">                    &quot;occurrences&quot;: 1</span>
+<span class="go">                }</span>
+<span class="go">            }</span>
+<span class="go">        }</span>
+<span class="go">    }</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>TODO: Consider adding support for a <cite>full_name</cite> parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary mapping objects to how often that object occurred
+in the parsed source code.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dict[str, Union[Dict, int]]</p>
 </dd>
 </dl>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="module_dependencies.module.module.Module.projects">
-<span class="sig-name descname"><span class="pre">projects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.projects" title="Permalink to this definition">¶</a></dt>
-<dd><dl>
-<dt>{</dt><dd><dl>
-<dt>“github.com/Ciphey/Ciphey”: {</dt><dd><p>“description”: “⚡ Automatically decrypt encryptions without knowing the key or cipher, decode encodings, and crack hashes ⚡”,
-“stars”: 8078,
-“isFork”: false,
-“files”: [</p>
-<blockquote>
-<div><dl>
-<dt>{</dt><dd><p>“name”: “enciphey.py”,
-“path”: “tests/enciphey.py”,
-“url”: “/github.com/Ciphey/Ciphey/-/blob/tests/enciphey.py”,
-“dependencies”: [</p>
-<blockquote>
-<div><p>“nltk.tokenize.sent_tokenize”,
-“nltk.tokenize.treebank.TreebankWordDetokenizer”</p>
-</div></blockquote>
-<p>],
-“parse_error”: null</p>
+<dt class="sig sig-object py" id="module_dependencies.module.module.Module.repositories">
+<span class="sig-name descname"><span class="pre">repositories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.repositories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.repositories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a mapping of repository names to repository information
+that were fetched and parsed. Contains “description”, “stars”, “isFork” keys,
+plus a list of “files” with “name”, “path”, “url”, “dependencies” and
+“parse_error” fields. The “parse_error” field lists the error that was
+encountered when attempting to parse the file, e.g. “SyntaxError”.
+This might happen when a Python 2 file was fetched.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="o">.</span><span class="n">repositories</span><span class="p">()</span>
+<span class="go">{</span>
+<span class="go">    &quot;github.com/codelucas/newspaper&quot;: {</span>
+<span class="go">        &quot;description&quot;: &quot;News, full-text, and article metadata extraction in Python 3. Advanced docs:&quot;,</span>
+<span class="go">        &quot;stars&quot;: 11224,</span>
+<span class="go">        &quot;isFork&quot;: false,</span>
+<span class="go">        &quot;files&quot;: [</span>
+<span class="go">            {</span>
+<span class="go">                &quot;name&quot;: &quot;download_corpora.py&quot;,</span>
+<span class="go">                &quot;path&quot;: &quot;download_corpora.py&quot;,</span>
+<span class="go">                &quot;url&quot;: &quot;/github.com/codelucas/newspaper/-/blob/download_corpora.py&quot;,</span>
+<span class="go">                &quot;dependencies&quot;: [</span>
+<span class="go">                    &quot;nltk.download&quot;</span>
+<span class="go">                ],</span>
+<span class="go">                &quot;parse_error&quot;: null</span>
+<span class="go">            },</span>
+<span class="go">            {</span>
+<span class="go">                &quot;name&quot;: &quot;nlp.py&quot;,</span>
+<span class="go">                &quot;path&quot;: &quot;newspaper/nlp.py&quot;,</span>
+<span class="go">                &quot;url&quot;: &quot;/github.com/codelucas/newspaper/-/blob/newspaper/nlp.py&quot;,</span>
+<span class="go">                &quot;dependencies&quot;: [</span>
+<span class="go">                    &quot;nltk.data.load&quot;</span>
+<span class="go">                ],</span>
+<span class="go">                &quot;parse_error&quot;: null</span>
+<span class="go">            },</span>
+<span class="go">            {</span>
+<span class="go">                &quot;name&quot;: &quot;text.py&quot;,</span>
+<span class="go">                &quot;path&quot;: &quot;newspaper/text.py&quot;,</span>
+<span class="go">                &quot;url&quot;: &quot;/github.com/codelucas/newspaper/-/blob/newspaper/text.py&quot;,</span>
+<span class="go">                &quot;dependencies&quot;: [</span>
+<span class="go">                    &quot;nltk.stem.isri.ISRIStemmer&quot;,</span>
+<span class="go">                    &quot;nltk.tokenize.wordpunct_tokenize&quot;</span>
+<span class="go">                ],</span>
+<span class="go">                &quot;parse_error&quot;: null</span>
+<span class="go">            }</span>
+<span class="go">        ]</span>
+<span class="go">    }</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A mapping of repositories</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dict[str, Dict[str, Any]]</p>
 </dd>
 </dl>
-</div></blockquote>
-<p>]</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>}</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="module_dependencies.module.module.Module.n_matches">
-<span class="sig-name descname"><span class="pre">n_matches</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.n_matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.n_matches" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the number of matches found.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;100&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="o">.</span><span class="n">n_matches</span><span class="p">()</span>
+<dt class="sig sig-object py" id="module_dependencies.module.module.Module.n_uses">
+<span class="sig-name descname"><span class="pre">n_uses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.n_uses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.n_uses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of uses of the module.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;100&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="o">.</span><span class="n">n_uses</span><span class="p">()</span>
 <span class="go">137</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The number of matches, i.e. the number of times
-<cite>self.module</cite> was imported in the fetched files.</p>
+<dd class="field-odd"><p>The number of uses, i.e. the number of times
+<cite>self.module</cite> was used in the fetched files.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
+<p>TODO: Make this work with submodules like <cite>nltk.tokenize</cite></p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.n_files">
 <span class="sig-name descname"><span class="pre">n_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.n_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.n_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of files fetched.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;100&quot;</span><span class="p">)</span>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;100&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="o">.</span><span class="n">n_files</span><span class="p">()</span>
 <span class="go">100</span>
 </pre></div>
@@ -240,7 +349,9 @@ was provided.</p>
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.n_repositories">
 <span class="sig-name descname"><span class="pre">n_repositories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.n_repositories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.n_repositories" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of repositories fetched.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;100&quot;</span><span class="p">)</span>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">module</span> <span class="o">=</span> <span class="n">Module</span><span class="p">(</span><span class="s2">&quot;nltk&quot;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="s2">&quot;100&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">module</span><span class="o">.</span><span class="n">n_repositories</span><span class="p">()</span>
 <span class="go">52</span>
 </pre></div>
