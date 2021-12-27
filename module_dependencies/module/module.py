@@ -414,11 +414,8 @@ class Module:
         :return: The number of uses, i.e. the number of times
             `self.module` was used in the fetched files.
         :rtype: int
-
-        TODO: Make this work with submodules like `nltk.tokenize`
         """
-        # return self.data["matchCount"]
-        return int(self.nested_usage()[self.module]["occurrences"])
+        return sum(occ for _, occ in self.usage())
 
     def n_files(self) -> int:
         """Return the number of files fetched.
