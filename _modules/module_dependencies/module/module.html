@@ -504,11 +504,8 @@
 <span class="sd">        :return: The number of uses, i.e. the number of times</span>
 <span class="sd">            `self.module` was used in the fetched files.</span>
 <span class="sd">        :rtype: int</span>
-
-<span class="sd">        TODO: Make this work with submodules like `nltk.tokenize`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># return self.data[&quot;matchCount&quot;]</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nested_usage</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">][</span><span class="s2">&quot;occurrences&quot;</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occ</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="Module.n_files"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_files">[docs]</a>    <span class="k">def</span> <span class="nf">n_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the number of files fetched.</span>
