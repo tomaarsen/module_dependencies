@@ -128,3 +128,5 @@ RELEASE-GUIDE.txt
 app.py
 # Generated files for documentation
 docs/api/*.rst
+# A folder with generated files for demo-ing purposes
+generated
