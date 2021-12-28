@@ -102,13 +102,22 @@ which sections of a Python module are most frequently used.</p>
 <p>This class exposes the following methods:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">()</span>
 <span class="n">nested_usage</span><span class="p">()</span>
-<span class="n">repositories</span>
+<span class="n">repositories</span><span class="p">()</span>
+<span class="n">plot</span><span class="p">()</span>
 <span class="n">n_uses</span><span class="p">()</span>
 <span class="n">n_files</span><span class="p">()</span>
 <span class="n">n_repositories</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>TODO: Alert users of <cite>alert</cite>, output <cite>limitHit</cite></p>
+<p>TODO: Alert users of <cite>alert</cite>, output <cite>limitHit</cite>
+TODO: Something with percentages?
+TODO: Info on just one object, e.g.
+&gt;&gt;&gt; module.use(“nltk.tokenize”)
+“802 occurrences out of 83530 (0.96%)”
+TODO: Biggest repositories relying on some subsection.</p>
+<blockquote>
+<div><p>Perhaps an extension to <cite>repositories()</cite>?</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -171,7 +180,7 @@ and then parses it using <cite>Source(…).dependencies()</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.usage">
-<span class="sig-name descname"><span class="pre">usage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.usage" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of object-occurrence tuples, sorted by most to least frequent.</p>
 <p>Example usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
@@ -183,18 +192,26 @@ and then parses it using <cite>Source(…).dependencies()</cite>.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A list of object-occurrence tuples, sorted by most to least frequent.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
+into <cite>“nltk.tokenize.word_tokenize”</cite>. May give incorrect results
+for projects with “compat” folders, as the merging tends to prefer
+longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
+<cite>“tensorflow.compat.v1.dtypes.float32”</cite> as opposed to just
+<cite>“tensorflow.dtypes.float32”</cite>. Defaults to True.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>List[Tuple[str, int]]</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of object-occurrence tuples, sorted by most to least frequent.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[Tuple[str, int]]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.nested_usage">
-<span class="sig-name descname"><span class="pre">nested_usage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.nested_usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.nested_usage" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nested_usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cumulative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.nested_usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.nested_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a (recursive) dictionary of objects mapped to occurrence of that object,
 and the object’s children.</p>
 <p>Example usage:</p>
@@ -229,14 +246,30 @@ and the object’s children.</p>
 <span class="go">}</span>
 </pre></div>
 </div>
-<p>TODO: Consider adding support for a <cite>full_name</cite> parameter</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A dictionary mapping objects to how often that object occurred
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>full_name</strong> (<em>bool</em>) – Whether each dictionary key should be the full path,
+e.g. <cite>“nltk.tokenize”</cite>, rather than just the right-most section.
+Defaults to False.</p></li>
+<li><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
+into <cite>“nltk.tokenize.word_tokenize”</cite>. May give incorrect results
+for projects with “compat” folders, as the merging tends to prefer
+longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
+<cite>“tensorflow.compat.v1.dtypes.float32”</cite> as opposed to just
+<cite>“tensorflow.dtypes.float32”</cite>. Defaults to True.</p></li>
+<li><p><strong>cumulative</strong> (<em>bool</em>) – Whether to include usage counts of e.g.
+<cite>“nltk.tokenize.word_tokenize”</cite> into <cite>“nltk.tokenize”</cite> and
+<cite>“nltk”</cite> as well. Defaults to True.</p></li>
+<li><p><strong>cumulative</strong> – bool</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary mapping objects to how often that object occurred
 in the parsed source code.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Dict[str, Union[Dict, int]]</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, Union[Dict, int]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -299,6 +332,26 @@ This might happen when a Python 2 file was fetched.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Dict[str, Dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.module.Module.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a plotly Sunburst plot showing the frequency of use
+of different sections of this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
+into <cite>“nltk.tokenize.word_tokenize”</cite>. May give incorrect results
+for projects with “compat” folders, as the merging tends to prefer
+longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
+<cite>“tensorflow.compat.v1.dtypes.float32”</cite> as opposed to just
+<cite>“tensorflow.dtypes.float32”</cite>. Defaults to True.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>

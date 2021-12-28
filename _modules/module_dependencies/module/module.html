@@ -119,12 +119,19 @@
 
 <span class="sd">            usage()</span>
 <span class="sd">            nested_usage()</span>
-<span class="sd">            repositories</span>
+<span class="sd">            repositories()</span>
+<span class="sd">            plot()</span>
 <span class="sd">            n_uses()</span>
 <span class="sd">            n_files()</span>
 <span class="sd">            n_repositories()</span>
 
 <span class="sd">        TODO: Alert users of `alert`, output `limitHit`</span>
+<span class="sd">        TODO: Something with percentages?</span>
+<span class="sd">        TODO: Info on just one object, e.g.</span>
+<span class="sd">        &gt;&gt;&gt; module.use(&quot;nltk.tokenize&quot;)</span>
+<span class="sd">        &quot;802 occurrences out of 83530 (0.96%)&quot;</span>
+<span class="sd">        TODO: Biggest repositories relying on some subsection.</span>
+<span class="sd">              Perhaps an extension to `repositories()`?</span>
 
 <span class="sd">        :param module: The name of a Python module of which to find</span>
 <span class="sd">            the frequently used objects, e.g. `&quot;nltk&quot;`.</span>
@@ -244,7 +251,7 @@
         <span class="k">return</span> <span class="n">parse_raw_response</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Module.usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.usage">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Get a list of object-occurrence tuples, sorted by most to least frequent.</span>
 
 <span class="sd">        Example usage::</span>
@@ -256,6 +263,13 @@
 <span class="sd">            (&#39;nltk.tokenize.sent_tokenize&#39;, 1),</span>
 <span class="sd">            (&#39;nltk.tokenize.treebank.TreebankWordDetokenizer&#39;, 1)]</span>
 
+<span class="sd">        :param merge: Whether to attempt to merge e.g. `&quot;nltk.word_tokenize&quot;`</span>
+<span class="sd">            into `&quot;nltk.tokenize.word_tokenize&quot;`. May give incorrect results</span>
+<span class="sd">            for projects with &quot;compat&quot; folders, as the merging tends to prefer</span>
+<span class="sd">            longer paths, e.g. `&quot;tensorflow.float32&quot;` will become</span>
+<span class="sd">            `&quot;tensorflow.compat.v1.dtypes.float32&quot;` as opposed to just</span>
+<span class="sd">            `&quot;tensorflow.dtypes.float32&quot;`. Defaults to True.</span>
+<span class="sd">        :type merge: bool</span>
 <span class="sd">        :return: A list of object-occurrence tuples, sorted by most to least frequent.</span>
 <span class="sd">        :rtype: List[Tuple[str, int]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -362,10 +376,15 @@
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">use</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">merge_all</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">())</span></div>
+        <span class="n">usage</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">merge</span><span class="p">:</span>
+            <span class="n">usage</span> <span class="o">=</span> <span class="n">merge_all</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">usage</span></div>
 
 <div class="viewcode-block" id="Module.nested_usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.nested_usage">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">nested_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">nested_usage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">full_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cumulative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Get a (recursive) dictionary of objects mapped to occurrence of that object,</span>
 <span class="sd">        and the object&#39;s children.</span>
 
@@ -401,26 +420,46 @@
 <span class="sd">                }</span>
 <span class="sd">            }</span>
 
-<span class="sd">        TODO: Consider adding support for a `full_name` parameter</span>
-
+<span class="sd">        :param full_name: Whether each dictionary key should be the full path,</span>
+<span class="sd">            e.g. `&quot;nltk.tokenize&quot;`, rather than just the right-most section.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        :type full_name: bool</span>
+<span class="sd">        :param merge: Whether to attempt to merge e.g. `&quot;nltk.word_tokenize&quot;`</span>
+<span class="sd">            into `&quot;nltk.tokenize.word_tokenize&quot;`. May give incorrect results</span>
+<span class="sd">            for projects with &quot;compat&quot; folders, as the merging tends to prefer</span>
+<span class="sd">            longer paths, e.g. `&quot;tensorflow.float32&quot;` will become</span>
+<span class="sd">            `&quot;tensorflow.compat.v1.dtypes.float32&quot;` as opposed to just</span>
+<span class="sd">            `&quot;tensorflow.dtypes.float32&quot;`. Defaults to True.</span>
+<span class="sd">        :type merge: bool</span>
+<span class="sd">        :param cumulative: Whether to include usage counts of e.g.</span>
+<span class="sd">            `&quot;nltk.tokenize.word_tokenize&quot;` into `&quot;nltk.tokenize&quot;` and</span>
+<span class="sd">            `&quot;nltk&quot;` as well. Defaults to True.</span>
+<span class="sd">        :param cumulative: bool</span>
 <span class="sd">        :return: A dictionary mapping objects to how often that object occurred</span>
 <span class="sd">            in the parsed source code.</span>
 <span class="sd">        :rtype: Dict[str, Union[Dict, int]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># nested_uses</span>
         <span class="c1"># nested_frequency</span>
-        <span class="k">def</span> <span class="nf">recursive_add</span><span class="p">(</span><span class="n">nested</span><span class="p">,</span> <span class="n">obj_tup</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">occurrence</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">recursive_add</span><span class="p">(</span>
+            <span class="n">nested</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">obj_tup</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">occurrence</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">obj_tup</span><span class="p">:</span>
                 <span class="k">return</span>
             <span class="n">head</span> <span class="o">=</span> <span class="n">obj_tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">full_name</span> <span class="ow">and</span> <span class="n">prefix</span><span class="p">:</span>
+                <span class="n">head</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">head</span>
             <span class="k">if</span> <span class="n">head</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nested</span><span class="p">:</span>
-                <span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;occurrences&quot;</span><span class="p">:</span> <span class="n">occurrence</span><span class="p">}</span>
+                <span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;occurrences&quot;</span><span class="p">:</span> <span class="n">occurrence</span> <span class="k">if</span> <span class="n">cumulative</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj_tup</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="p">}</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="s2">&quot;occurrences&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">occurrence</span>
-            <span class="n">recursive_add</span><span class="p">(</span><span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">],</span> <span class="n">obj_tup</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">occurrence</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cumulative</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj_tup</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">][</span><span class="s2">&quot;occurrences&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">occurrence</span>
+            <span class="n">recursive_add</span><span class="p">(</span><span class="n">nested</span><span class="p">[</span><span class="n">head</span><span class="p">],</span> <span class="n">obj_tup</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">occurrence</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">head</span><span class="p">)</span>
 
         <span class="n">nested</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occurrence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occurrence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="n">merge</span><span class="p">):</span>
             <span class="n">obj_tup</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
             <span class="n">recursive_add</span><span class="p">(</span><span class="n">nested</span><span class="p">,</span> <span class="n">obj_tup</span><span class="p">,</span> <span class="n">occurrence</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nested</span></div>
@@ -489,6 +528,61 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">],</span> <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]]}</span>
         <span class="k">return</span> <span class="n">projects</span></div>
+
+<div class="viewcode-block" id="Module.plot"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Display a plotly Sunburst plot showing the frequency of use</span>
+<span class="sd">        of different sections of this module.</span>
+
+<span class="sd">        :param merge: Whether to attempt to merge e.g. `&quot;nltk.word_tokenize&quot;`</span>
+<span class="sd">            into `&quot;nltk.tokenize.word_tokenize&quot;`. May give incorrect results</span>
+<span class="sd">            for projects with &quot;compat&quot; folders, as the merging tends to prefer</span>
+<span class="sd">            longer paths, e.g. `&quot;tensorflow.float32&quot;` will become</span>
+<span class="sd">            `&quot;tensorflow.compat.v1.dtypes.float32&quot;` as opposed to just</span>
+<span class="sd">            `&quot;tensorflow.dtypes.float32&quot;`. Defaults to True.</span>
+<span class="sd">        :type merge: bool</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+
+        <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="n">nested_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">tok_obj</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Recursively apply elements from `tok_obj` as keys in `nested_dict`,</span>
+<span class="sd">            and then gather the `occurrences`.</span>
+
+<span class="sd">            :param nested_dict: A dictionary with nested usages, generally taken</span>
+<span class="sd">                from the `nested_usage` method.</span>
+<span class="sd">            :type nested_dict: Dict</span>
+<span class="sd">            :param tok_obj: A tuple of strings representing a path to a Python path.</span>
+<span class="sd">            :type tok_obj: Tuple[str]</span>
+<span class="sd">            :return: The occurrence of the object represented by `tok_obj`</span>
+<span class="sd">                in `nested_dict`.</span>
+<span class="sd">            :rtype: int</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tok_obj</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">nested_dict</span><span class="p">[</span><span class="s2">&quot;occurrences&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">get_value</span><span class="p">(</span><span class="n">nested_dict</span><span class="p">[</span><span class="n">tok_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">tok_obj</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+        <span class="n">usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="n">merge</span><span class="p">)</span>
+        <span class="n">nested_usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nested_usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="n">merge</span><span class="p">)</span>
+
+        <span class="n">objects</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">usage</span><span class="p">:</span>
+            <span class="n">tok_obj</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="n">objects</span> <span class="o">|=</span> <span class="p">{</span><span class="n">detokenize</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)}</span>
+        <span class="n">objects</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
+        <span class="n">tok_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">]</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+            <span class="n">go</span><span class="o">.</span><span class="n">Sunburst</span><span class="p">(</span>
+                <span class="n">ids</span><span class="o">=</span><span class="n">objects</span><span class="p">,</span>
+                <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="n">tok_obj</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">tok_obj</span> <span class="ow">in</span> <span class="n">tok_objects</span><span class="p">],</span>
+                <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">detokenize</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">tok_obj</span> <span class="ow">in</span> <span class="n">tok_objects</span><span class="p">],</span>
+                <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">get_value</span><span class="p">(</span><span class="n">nested_usage</span><span class="p">,</span> <span class="n">tok_obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">tok_obj</span> <span class="ow">in</span> <span class="n">tok_objects</span><span class="p">],</span>
+                <span class="n">branchvalues</span><span class="o">=</span><span class="s2">&quot;total&quot;</span><span class="p">,</span>
+                <span class="n">insidetextorientation</span><span class="o">=</span><span class="s2">&quot;radial&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Module.n_uses"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_uses">[docs]</a>    <span class="k">def</span> <span class="nf">n_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the number of uses of the module.</span>
