@@ -29,12 +29,19 @@ class Module:
 
             usage()
             nested_usage()
-            repositories
+            repositories()
+            plot()
             n_uses()
             n_files()
             n_repositories()
 
         TODO: Alert users of `alert`, output `limitHit`
+        TODO: Something with percentages?
+        TODO: Info on just one object, e.g.
+        >>> module.use("nltk.tokenize")
+        "802 occurrences out of 83530 (0.96%)"
+        TODO: Biggest repositories relying on some subsection.
+              Perhaps an extension to `repositories()`?
 
         :param module: The name of a Python module of which to find
             the frequently used objects, e.g. `"nltk"`.
@@ -154,7 +161,7 @@ class Module:
         return parse_raw_response(data["data"]["search"]["results"], self.module)
 
     @lru_cache(maxsize=1)
-    def usage(self) -> List[Tuple[str, int]]:
+    def usage(self, merge: bool = True) -> List[Tuple[str, int]]:
         """Get a list of object-occurrence tuples, sorted by most to least frequent.
 
         Example usage::
@@ -166,6 +173,13 @@ class Module:
             ('nltk.tokenize.sent_tokenize', 1),
             ('nltk.tokenize.treebank.TreebankWordDetokenizer', 1)]
 
+        :param merge: Whether to attempt to merge e.g. `"nltk.word_tokenize"`
+            into `"nltk.tokenize.word_tokenize"`. May give incorrect results
+            for projects with "compat" folders, as the merging tends to prefer
+            longer paths, e.g. `"tensorflow.float32"` will become
+            `"tensorflow.compat.v1.dtypes.float32"` as opposed to just
+            `"tensorflow.dtypes.float32"`. Defaults to True.
+        :type merge: bool
         :return: A list of object-occurrence tuples, sorted by most to least frequent.
         :rtype: List[Tuple[str, int]]
         """
@@ -272,10 +286,15 @@ class Module:
             for result in self.data["results"]
             for use in result["file"]["dependencies"]
         )
-        return merge_all(counter.most_common())
+        usage = counter.most_common()
+        if merge:
+            usage = merge_all(usage)
+        return usage
 
     @lru_cache(maxsize=1)
-    def nested_usage(self) -> Dict[str, Union[Dict, int]]:
+    def nested_usage(
+        self, full_name: bool = False, merge: bool = True, cumulative: bool = True
+    ) -> Dict[str, Union[Dict, int]]:
         """Get a (recursive) dictionary of objects mapped to occurrence of that object,
         and the object's children.
 
@@ -311,26 +330,46 @@ class Module:
                 }
             }
 
-        TODO: Consider adding support for a `full_name` parameter
-
+        :param full_name: Whether each dictionary key should be the full path,
+            e.g. `"nltk.tokenize"`, rather than just the right-most section.
+            Defaults to False.
+        :type full_name: bool
+        :param merge: Whether to attempt to merge e.g. `"nltk.word_tokenize"`
+            into `"nltk.tokenize.word_tokenize"`. May give incorrect results
+            for projects with "compat" folders, as the merging tends to prefer
+            longer paths, e.g. `"tensorflow.float32"` will become
+            `"tensorflow.compat.v1.dtypes.float32"` as opposed to just
+            `"tensorflow.dtypes.float32"`. Defaults to True.
+        :type merge: bool
+        :param cumulative: Whether to include usage counts of e.g.
+            `"nltk.tokenize.word_tokenize"` into `"nltk.tokenize"` and
+            `"nltk"` as well. Defaults to True.
+        :param cumulative: bool
         :return: A dictionary mapping objects to how often that object occurred
             in the parsed source code.
         :rtype: Dict[str, Union[Dict, int]]
         """
         # nested_uses
         # nested_frequency
-        def recursive_add(nested, obj_tup: List[str], occurrence):
+        def recursive_add(
+            nested: Dict, obj_tup: List[str], occurrence: int, prefix: str = ""
+        ):
             if not obj_tup:
                 return
             head = obj_tup[0]
+            if full_name and prefix:
+                head = prefix + "." + head
             if head not in nested:
-                nested[head] = {"occurrences": occurrence}
+                nested[head] = {
+                    "occurrences": occurrence if cumulative or len(obj_tup) == 1 else 0
+                }
             else:
-                nested[head]["occurrences"] += occurrence
-            recursive_add(nested[head], obj_tup[1:], occurrence)
+                if cumulative or len(obj_tup) == 1:
+                    nested[head]["occurrences"] += occurrence
+            recursive_add(nested[head], obj_tup[1:], occurrence, prefix=head)
 
         nested = {}
-        for obj, occurrence in self.usage():
+        for obj, occurrence in self.usage(merge=merge):
             obj_tup = tokenize(obj)
             recursive_add(nested, obj_tup, occurrence)
         return nested
@@ -399,6 +438,61 @@ class Module:
             else:
                 projects[name] = {**result["repository"], "files": [result["file"]]}
         return projects
+
+    def plot(self, merge: bool = True) -> None:
+        """Display a plotly Sunburst plot showing the frequency of use
+        of different sections of this module.
+
+        :param merge: Whether to attempt to merge e.g. `"nltk.word_tokenize"`
+            into `"nltk.tokenize.word_tokenize"`. May give incorrect results
+            for projects with "compat" folders, as the merging tends to prefer
+            longer paths, e.g. `"tensorflow.float32"` will become
+            `"tensorflow.compat.v1.dtypes.float32"` as opposed to just
+            `"tensorflow.dtypes.float32"`. Defaults to True.
+        :type merge: bool
+        :rtype: None
+        """
+        import plotly.graph_objects as go
+
+        def get_value(nested_dict: Dict, tok_obj: Tuple[str]) -> int:
+            """Recursively apply elements from `tok_obj` as keys in `nested_dict`,
+            and then gather the `occurrences`.
+
+            :param nested_dict: A dictionary with nested usages, generally taken
+                from the `nested_usage` method.
+            :type nested_dict: Dict
+            :param tok_obj: A tuple of strings representing a path to a Python path.
+            :type tok_obj: Tuple[str]
+            :return: The occurrence of the object represented by `tok_obj`
+                in `nested_dict`.
+            :rtype: int
+            """
+            if not tok_obj:
+                return nested_dict["occurrences"]
+            return get_value(nested_dict[tok_obj[0]], tok_obj[1:])
+
+        usage = self.usage(merge=merge)
+        nested_usage = self.nested_usage(merge=merge)
+
+        objects = set()
+        for obj, _ in usage:
+            tok_obj = tokenize(obj)
+            objects |= {detokenize(tok_obj[:i]) for i in range(1, len(tok_obj) + 1)}
+        objects = sorted(objects)
+        tok_objects = [tokenize(obj) for obj in objects]
+
+        fig = go.Figure(
+            go.Sunburst(
+                ids=objects,
+                labels=[tok_obj[-1] for tok_obj in tok_objects],
+                parents=[detokenize(tok_obj[:-1]) for tok_obj in tok_objects],
+                values=[get_value(nested_usage, tok_obj) for tok_obj in tok_objects],
+                branchvalues="total",
+                insidetextorientation="radial",
+            )
+        )
+        fig.update_layout(margin={"t": 0, "l": 0, "r": 0, "b": 0})
+        fig.show()
 
     def n_uses(self) -> int:
         """Return the number of uses of the module.
