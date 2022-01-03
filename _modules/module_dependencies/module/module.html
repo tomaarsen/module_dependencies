@@ -88,16 +88,13 @@
         <div id="main-content" role="main">
           
   <h1>Source code for module_dependencies.module.module</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-
 <span class="kn">from</span> <span class="nn">module_dependencies.module.session</span> <span class="kn">import</span> <span class="n">ModuleSession</span>
-<span class="kn">from</span> <span class="nn">module_dependencies.source</span> <span class="kn">import</span> <span class="n">Source</span>
 <span class="kn">from</span> <span class="nn">module_dependencies.util.tokenize</span> <span class="kn">import</span> <span class="n">detokenize</span><span class="p">,</span> <span class="n">tokenize</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -107,10 +104,11 @@
 <div class="viewcode-block" id="Module.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
-        <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;25000&quot;</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">lazy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">python</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">jupyter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a Module instance that can be used to find</span>
 <span class="sd">        which sections of a Python module are most frequently used.</span>
@@ -132,6 +130,7 @@
 <span class="sd">        &quot;802 occurrences out of 83530 (0.96%)&quot;</span>
 <span class="sd">        TODO: Biggest repositories relying on some subsection.</span>
 <span class="sd">              Perhaps an extension to `repositories()`?</span>
+<span class="sd">              Add this to n_uses, n_files and n_repositories, too</span>
 
 <span class="sd">        :param module: The name of a Python module of which to find</span>
 <span class="sd">            the frequently used objects, e.g. `&quot;nltk&quot;`.</span>
@@ -139,14 +138,8 @@
 <span class="sd">        :param count: The maximum number of times an import of `module`</span>
 <span class="sd">            should be fetched. Roughly equivalent to the number of fetched</span>
 <span class="sd">            files. Either an integer, a string representing an integer,</span>
-<span class="sd">            or &quot;all&quot;, defaults to &quot;all&quot;.</span>
+<span class="sd">            or &quot;all&quot;, defaults to &quot;25000&quot;.</span>
 <span class="sd">        :type count: Union[int, str], optional</span>
-<span class="sd">        :param timeout: Timeout for the source code API. Does not correspond</span>
-<span class="sd">            to the timeout for any of the functions as a whole. The timeout</span>
-<span class="sd">            can be an integer or a string with some digits and then a time</span>
-<span class="sd">            unit, e.g. &quot;10s&quot;, &quot;100ms&quot;. If an integer instead, then parsed as</span>
-<span class="sd">            number of milliseconds. Cannot exceed 1 minute. Defaults to &quot;10s&quot;.</span>
-<span class="sd">        :type timeout: Union[int, str], optional</span>
 <span class="sd">        :param verbose: If True, set the logging level to INFO, otherwise to</span>
 <span class="sd">            WARNING. True implies that there is some data printed to sys.out,</span>
 <span class="sd">            while False makes the class quiet. Defaults to True.</span>
@@ -157,8 +150,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="n">languages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">python</span><span class="p">:</span>
+            <span class="n">languages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Python&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">jupyter</span><span class="p">:</span>
+            <span class="n">languages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Jupyter Notebook&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">languages</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">languages</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
@@ -194,64 +194,43 @@
 <span class="sd">        :return: The cached, parsed SourceGraph API data.</span>
 <span class="sd">        :rtype: Dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ModuleSession</span><span class="p">()</span><span class="o">.</span><span class="n">fetch_and_parse</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">languages</span>
+        <span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">parse_raw_response</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Strip `content` from the raw input data, and replace it with</span>
-<span class="sd">            `dependencies` and `parse_error`.</span>
+<div class="viewcode-block" id="Module.is_subsection_of"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.is_subsection_of">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_subsection_of</span><span class="p">(</span><span class="n">var_one</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">var_two</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check whether `var_one` is a subsection of `var_two`. This means</span>
+<span class="sd">        that `var_two` can be created by inserting strings into the tuple of</span>
+<span class="sd">        `var_one`. For example, `var_two` as `(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)`</span>
+<span class="sd">        can be created by inserting `&#39;tokenize&#39;` into a `var_one` as</span>
+<span class="sd">        `(&#39;nltk&#39;, &#39;word_tokenize&#39;)`, so this function returns True.</span>
 
-<span class="sd">            :param results: Raw output from `session.post(self.module, ...)`</span>
-<span class="sd">            :type results: Dict</span>
-<span class="sd">            :param module: String of the module we are interested in,</span>
-<span class="sd">                e.g. &quot;nltk&quot; or &quot;nltk.tokenize&quot;.</span>
-<span class="sd">            :type module: str</span>
-<span class="sd">            :return: Modified output of `results`, with file `content` stripped,</span>
-<span class="sd">                and `dependencies` and `parse_error` added.</span>
-<span class="sd">            :rtype: Dict</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Extracting dependencies of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> files of source code...&quot;</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-                <span class="n">iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing Files&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">iterator</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
-                <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
-                <span class="n">error_name</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">dependencies</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-                <span class="k">except</span> <span class="p">(</span><span class="ne">SyntaxError</span><span class="p">,</span> <span class="ne">RecursionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">error_name</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
-                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span>
-                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;parse_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_name</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Extracted dependencies of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> files of source code.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="n">results</span>
-
-        <span class="k">with</span> <span class="n">ModuleSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Fetching source code containing imports of `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="si">}</span><span class="s2">`...&quot;</span>
-            <span class="p">)</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
-            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Fetched source code containing imports of `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="si">}</span><span class="s2">` &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">)&quot;</span>
-            <span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Parsing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes of source code as JSON...&quot;</span>
-            <span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Parsed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes of source code as JSON...&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">parse_raw_response</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">)</span>
+<span class="sd">        :param var_one: Tuple of strings representing the path to a Python</span>
+<span class="sd">            object, e.g. `(&#39;nltk&#39;, &#39;word_tokenize&#39;)`.</span>
+<span class="sd">        :type var_one: Tuple[str]</span>
+<span class="sd">        :param var_two: Tuple of strings representing the path to a Python</span>
+<span class="sd">            object, e.g. `(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)`.</span>
+<span class="sd">        :type var_two: Tuple[str]</span>
+<span class="sd">        :return: True if `var_one` is a subsection of `var_two`.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">var_two</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="n">var_one</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="c1"># e.g. with (&#39;nltk&#39;, &#39;corpus&#39;, &#39;words&#39;) and (&#39;nltk&#39;, &#39;corpus&#39;, &#39;words&#39;, &#39;words&#39;),</span>
+            <span class="c1"># TODO: False isnt really appropriate. This algorithm simply doesn&#39;t</span>
+            <span class="c1"># work well with repeat words.</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_one</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Module.usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.usage">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cumulative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Get a list of object-occurrence tuples, sorted by most to least frequent.</span>
 
 <span class="sd">        Example usage::</span>
@@ -276,34 +255,6 @@
         <span class="c1"># uses</span>
         <span class="c1"># frequency</span>
 
-        <span class="k">def</span> <span class="nf">is_subsection_of</span><span class="p">(</span><span class="n">var_one</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">var_two</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-            <span class="sd">&quot;&quot;&quot;Check whether `var_one` is a subsection of `var_two`. This means</span>
-<span class="sd">            that `var_two` can be created by inserting strings into the tuple of</span>
-<span class="sd">            `var_one`. For example, `var_two` as `(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)`</span>
-<span class="sd">            can be created by inserting `&#39;tokenize&#39;` into a `var_one` as</span>
-<span class="sd">            `(&#39;nltk&#39;, &#39;word_tokenize&#39;)`, so this function returns True.</span>
-
-<span class="sd">            :param var_one: Tuple of strings representing the path to a Python</span>
-<span class="sd">                object, e.g. `(&#39;nltk&#39;, &#39;word_tokenize&#39;)`.</span>
-<span class="sd">            :type var_one: Tuple[str]</span>
-<span class="sd">            :param var_two: Tuple of strings representing the path to a Python</span>
-<span class="sd">                object, e.g. `(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)`.</span>
-<span class="sd">            :type var_two: Tuple[str]</span>
-<span class="sd">            :return: True if `var_one` is a subsection of `var_two`.</span>
-<span class="sd">            :rtype: bool</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">var_two</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="n">var_one</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="c1"># e.g. with (&#39;nltk&#39;, &#39;corpus&#39;, &#39;words&#39;) and (&#39;nltk&#39;, &#39;corpus&#39;, &#39;words&#39;, &#39;words&#39;),</span>
-                <span class="c1"># TODO: False isnt really appropriate. This algorithm simply doesn&#39;t</span>
-                <span class="c1"># work well with repeat words.</span>
-                <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">return</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_one</span><span class="p">)</span>
-
         <span class="k">def</span> <span class="nf">merge_one</span><span class="p">(</span><span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
             <span class="sd">&quot;&quot;&quot;Merge a list of similar tuples, combining on &quot;paths&quot; that likely</span>
 <span class="sd">            refer to the same object, e.g. `&quot;nltk.word_tokenize&quot;` and</span>
@@ -326,10 +277,11 @@
             <span class="c1"># Sort `usage` on longest to shortest paths</span>
             <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">usage</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="c1"># Get the list of object/occurrence tuples that `obj` can expand to become</span>
+                <span class="c1"># Note that in order to expand to something, it must have occurred more than once</span>
                 <span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="p">(</span><span class="n">o_key</span><span class="p">,</span> <span class="n">o_occ</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">o_key</span><span class="p">,</span> <span class="n">o_occ</span> <span class="ow">in</span> <span class="n">merged</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">is_subsection_of</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">o_key</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">Module</span><span class="o">.</span><span class="n">is_subsection_of</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">o_key</span><span class="p">)</span> <span class="ow">and</span> <span class="n">o_occ</span> <span class="o">&gt;</span> <span class="mi">1</span>
                 <span class="p">]</span>
                 <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
                     <span class="c1"># Get the most likely expansion, e.g.</span>
@@ -371,6 +323,14 @@
             <span class="c1"># Sort the usage data from most to least occurring</span>
             <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+        <span class="k">def</span> <span class="nf">cumulate</span><span class="p">(</span><span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+            <span class="n">usage</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span> <span class="n">occ</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">usage</span><span class="p">})</span>
+            <span class="k">for</span> <span class="n">tok_obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">usage</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">)):</span>
+                    <span class="n">usage</span><span class="p">[</span><span class="n">tok_obj</span><span class="p">[:</span><span class="n">i</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">occ</span>
+            <span class="n">usage</span> <span class="o">=</span> <span class="p">[(</span><span class="n">detokenize</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">),</span> <span class="n">occ</span><span class="p">)</span> <span class="k">for</span> <span class="n">tok_obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">usage</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">usage</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
             <span class="n">use</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
@@ -379,6 +339,8 @@
         <span class="n">usage</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">merge</span><span class="p">:</span>
             <span class="n">usage</span> <span class="o">=</span> <span class="n">merge_all</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cumulative</span><span class="p">:</span>
+            <span class="n">usage</span> <span class="o">=</span> <span class="n">cumulate</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">usage</span></div>
 
 <div class="viewcode-block" id="Module.nested_usage"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.nested_usage">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -419,6 +381,8 @@
 <span class="sd">                    }</span>
 <span class="sd">                }</span>
 <span class="sd">            }</span>
+
+<span class="sd">        TODO: Optimize this by relying on usage() better for cumulative</span>
 
 <span class="sd">        :param full_name: Whether each dictionary key should be the full path,</span>
 <span class="sd">            e.g. `&quot;nltk.tokenize&quot;`, rather than just the right-most section.</span>
@@ -465,7 +429,7 @@
         <span class="k">return</span> <span class="n">nested</span></div>
 
 <div class="viewcode-block" id="Module.repositories"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.repositories">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">repositories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">repositories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Return a mapping of repository names to repository information</span>
 <span class="sd">        that were fetched and parsed. Contains &quot;description&quot;, &quot;stars&quot;, &quot;isFork&quot; keys,</span>
 <span class="sd">        plus a list of &quot;files&quot; with &quot;name&quot;, &quot;path&quot;, &quot;url&quot;, &quot;dependencies&quot; and</span>
@@ -519,17 +483,43 @@
 <span class="sd">        :return: A mapping of repositories</span>
 <span class="sd">        :rtype: Dict[str, Dict[str, Any]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="p">:</span>
+            <span class="n">tok_obj</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="n">objects</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">potential_obj</span>
+                <span class="k">for</span> <span class="n">potential_obj</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">Module</span><span class="o">.</span><span class="n">is_subsection_of</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">,</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">potential_obj</span><span class="p">))</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">objects</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;No instance of </span><span class="si">{</span><span class="n">obj</span><span class="si">!r}</span><span class="s2"> was found in the fetched files!&quot;</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="p">)</span>
+
         <span class="n">projects</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
-                <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">],</span> <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]]}</span>
-        <span class="k">return</span> <span class="n">projects</span></div>
+            <span class="c1"># Add this result if we want all results,</span>
+            <span class="c1"># or if this result contains dependencies that match `obj`</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+                    <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">projects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;repository&quot;</span><span class="p">],</span> <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]]}</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span>
+                <span class="n">projects</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">project</span><span class="p">:</span> <span class="n">project</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;stars&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Module.plot"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Module.plot"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a plotly Sunburst plot showing the frequency of use</span>
 <span class="sd">        of different sections of this module.</span>
 
@@ -567,24 +557,41 @@
         <span class="n">objects</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">usage</span><span class="p">:</span>
             <span class="n">tok_obj</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-            <span class="n">objects</span> <span class="o">|=</span> <span class="p">{</span><span class="n">detokenize</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)}</span>
-        <span class="n">objects</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
-        <span class="n">tok_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">]</span>
+            <span class="n">objects</span> <span class="o">|=</span> <span class="p">{</span>
+                <span class="p">(</span><span class="n">detokenize</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">[:</span><span class="n">i</span><span class="p">]),</span> <span class="n">tok_obj</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">}</span>
+
+        <span class="n">full_objects</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;obj&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;tok&quot;</span><span class="p">:</span> <span class="n">tok_obj</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">:</span> <span class="n">get_value</span><span class="p">(</span><span class="n">nested_usage</span><span class="p">,</span> <span class="n">tok_obj</span><span class="p">)}</span>
+            <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">tok_obj</span> <span class="ow">in</span> <span class="n">objects</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="n">full_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">fobj</span> <span class="k">for</span> <span class="n">fobj</span> <span class="ow">in</span> <span class="n">full_objects</span> <span class="k">if</span> <span class="n">fobj</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">sorted_fobjs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="n">full_objects</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">fobj</span><span class="p">:</span> <span class="n">fobj</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">limit_value</span> <span class="o">=</span> <span class="n">sorted_fobjs</span><span class="p">[</span><span class="n">limit</span><span class="p">][</span><span class="s2">&quot;val&quot;</span><span class="p">]</span>
+            <span class="n">full_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">fobj</span> <span class="k">for</span> <span class="n">fobj</span> <span class="ow">in</span> <span class="n">full_objects</span> <span class="k">if</span> <span class="n">fobj</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">limit_value</span><span class="p">]</span>
 
         <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
             <span class="n">go</span><span class="o">.</span><span class="n">Sunburst</span><span class="p">(</span>
-                <span class="n">ids</span><span class="o">=</span><span class="n">objects</span><span class="p">,</span>
-                <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="n">tok_obj</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">tok_obj</span> <span class="ow">in</span> <span class="n">tok_objects</span><span class="p">],</span>
-                <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">detokenize</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">tok_obj</span> <span class="ow">in</span> <span class="n">tok_objects</span><span class="p">],</span>
-                <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">get_value</span><span class="p">(</span><span class="n">nested_usage</span><span class="p">,</span> <span class="n">tok_obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">tok_obj</span> <span class="ow">in</span> <span class="n">tok_objects</span><span class="p">],</span>
+                <span class="c1"># name=f&quot;Usage of {self.module} visualised&quot;,</span>
+                <span class="c1"># legendrank=100,</span>
+                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">fobj</span><span class="p">[</span><span class="s2">&quot;obj&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">fobj</span> <span class="ow">in</span> <span class="n">full_objects</span><span class="p">],</span>
+                <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="n">fobj</span><span class="p">[</span><span class="s2">&quot;tok&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">fobj</span> <span class="ow">in</span> <span class="n">full_objects</span><span class="p">],</span>
+                <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">detokenize</span><span class="p">(</span><span class="n">fobj</span><span class="p">[</span><span class="s2">&quot;tok&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">fobj</span> <span class="ow">in</span> <span class="n">full_objects</span><span class="p">],</span>
+                <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">fobj</span><span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">fobj</span> <span class="ow">in</span> <span class="n">full_objects</span><span class="p">],</span>
                 <span class="n">branchvalues</span><span class="o">=</span><span class="s2">&quot;total&quot;</span><span class="p">,</span>
                 <span class="n">insidetextorientation</span><span class="o">=</span><span class="s2">&quot;radial&quot;</span><span class="p">,</span>
+                <span class="n">maxdepth</span><span class="o">=</span><span class="n">max_depth</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Module.n_uses"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_uses">[docs]</a>    <span class="k">def</span> <span class="nf">n_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="Module.n_uses"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_uses">[docs]</a>    <span class="k">def</span> <span class="nf">n_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the number of uses of the module.</span>
 
 <span class="sd">        Example usage::</span>
@@ -598,7 +605,18 @@
 <span class="sd">            `self.module` was used in the fetched files.</span>
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occ</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">())</span></div>
+        <span class="k">if</span> <span class="n">obj</span><span class="p">:</span>
+            <span class="n">tok_obj</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="n">objects</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">potential_obj</span>
+                <span class="k">for</span> <span class="n">potential_obj</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">Module</span><span class="o">.</span><span class="n">is_subsection_of</span><span class="p">(</span><span class="n">tok_obj</span><span class="p">,</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">potential_obj</span><span class="p">))</span>
+            <span class="p">}</span>
+            <span class="c1"># print(objects)</span>
+            <span class="n">usages</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="c1"># print([usages[potential_obj] for potential_obj in objects])</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">usages</span><span class="p">[</span><span class="n">potential_obj</span><span class="p">]</span> <span class="k">for</span> <span class="n">potential_obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occ</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Module.n_files"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_files">[docs]</a>    <span class="k">def</span> <span class="nf">n_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the number of files fetched.</span>
@@ -626,6 +644,8 @@
 <span class="sd">            &gt;&gt;&gt; module = Module(&quot;nltk&quot;, count=&quot;100&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; module.n_repositories()</span>
 <span class="sd">            52</span>
+
+<span class="sd">        TODO: Exclude errorred code</span>
 
 <span class="sd">        :return: The number of fetched repositories in which `self.module`</span>
 <span class="sd">            was imported.</span>

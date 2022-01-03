@@ -96,7 +96,7 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'10s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lazy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'25000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lazy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jupyter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a Module instance that can be used to find
 which sections of a Python module are most frequently used.</p>
 <p>This class exposes the following methods:</p>
@@ -116,7 +116,8 @@ TODO: Info on just one object, e.g.
 “802 occurrences out of 83530 (0.96%)”
 TODO: Biggest repositories relying on some subsection.</p>
 <blockquote>
-<div><p>Perhaps an extension to <cite>repositories()</cite>?</p>
+<div><p>Perhaps an extension to <cite>repositories()</cite>?
+Add this to n_uses, n_files and n_repositories, too</p>
 </div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -126,17 +127,14 @@ the frequently used objects, e.g. <cite>“nltk”</cite>.</p></li>
 <li><p><strong>count</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The maximum number of times an import of <cite>module</cite>
 should be fetched. Roughly equivalent to the number of fetched
 files. Either an integer, a string representing an integer,
-or “all”, defaults to “all”.</p></li>
-<li><p><strong>timeout</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Timeout for the source code API. Does not correspond
-to the timeout for any of the functions as a whole. The timeout
-can be an integer or a string with some digits and then a time
-unit, e.g. “10s”, “100ms”. If an integer instead, then parsed as
-number of milliseconds. Cannot exceed 1 minute. Defaults to “10s”.</p></li>
+or “all”, defaults to “25000”.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, set the logging level to INFO, otherwise to
 WARNING. True implies that there is some data printed to sys.out,
 while False makes the class quiet. Defaults to True.</p></li>
 <li><p><strong>lazy</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, waits with fetching and parsing the data to when
 the data is required. Defaults to True.</p></li>
+<li><p><strong>python</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>jupyter</strong> (<em>bool</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -179,8 +177,34 @@ and then parses it using <cite>Source(…).dependencies()</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.module.module.Module.is_subsection_of">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_subsection_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_one</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_two</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.is_subsection_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.is_subsection_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether <cite>var_one</cite> is a subsection of <cite>var_two</cite>. This means
+that <cite>var_two</cite> can be created by inserting strings into the tuple of
+<cite>var_one</cite>. For example, <cite>var_two</cite> as <cite>(‘nltk’, ‘tokenize’, ‘word_tokenize’)</cite>
+can be created by inserting <cite>‘tokenize’</cite> into a <cite>var_one</cite> as
+<cite>(‘nltk’, ‘word_tokenize’)</cite>, so this function returns True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var_one</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em>) – Tuple of strings representing the path to a Python
+object, e.g. <cite>(‘nltk’, ‘word_tokenize’)</cite>.</p></li>
+<li><p><strong>var_two</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em>) – Tuple of strings representing the path to a Python
+object, e.g. <cite>(‘nltk’, ‘tokenize’, ‘word_tokenize’)</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if <cite>var_one</cite> is a subsection of <cite>var_two</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.usage">
-<span class="sig-name descname"><span class="pre">usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.usage" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cumulative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of object-occurrence tuples, sorted by most to least frequent.</p>
 <p>Example usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
@@ -193,12 +217,15 @@ and then parses it using <cite>Source(…).dependencies()</cite>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
 into <cite>“nltk.tokenize.word_tokenize”</cite>. May give incorrect results
 for projects with “compat” folders, as the merging tends to prefer
 longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 <cite>“tensorflow.compat.v1.dtypes.float32”</cite> as opposed to just
-<cite>“tensorflow.dtypes.float32”</cite>. Defaults to True.</p>
+<cite>“tensorflow.dtypes.float32”</cite>. Defaults to True.</p></li>
+<li><p><strong>cumulative</strong> (<em>bool</em>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of object-occurrence tuples, sorted by most to least frequent.</p>
@@ -246,6 +273,7 @@ and the object’s children.</p>
 <span class="go">}</span>
 </pre></div>
 </div>
+<p>TODO: Optimize this by relying on usage() better for cumulative</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -276,7 +304,7 @@ in the parsed source code.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.repositories">
-<span class="sig-name descname"><span class="pre">repositories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.repositories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.repositories" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">repositories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.repositories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.repositories" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a mapping of repository names to repository information
 that were fetched and parsed. Contains “description”, “stars”, “isFork” keys,
 plus a list of “files” with “name”, “path”, “url”, “dependencies” and
@@ -333,22 +361,30 @@ This might happen when a Python 2 file was fetched.</p>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Dict[str, Dict[str, Any]]</p>
 </dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>str</em>) – </p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.plot" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display a plotly Sunburst plot showing the frequency of use
 of different sections of this module.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
 into <cite>“nltk.tokenize.word_tokenize”</cite>. May give incorrect results
 for projects with “compat” folders, as the merging tends to prefer
 longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 <cite>“tensorflow.compat.v1.dtypes.float32”</cite> as opposed to just
-<cite>“tensorflow.dtypes.float32”</cite>. Defaults to True.</p>
+<cite>“tensorflow.dtypes.float32”</cite>. Defaults to True.</p></li>
+<li><p><strong>threshold</strong> (<em>int</em>) – </p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – </p></li>
+<li><p><strong>max_depth</strong> (<em>int</em>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
@@ -358,7 +394,7 @@ longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module.n_uses">
-<span class="sig-name descname"><span class="pre">n_uses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.n_uses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.n_uses" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">n_uses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module.n_uses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module.n_uses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of uses of the module.</p>
 <p>Example usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Module</span>
@@ -374,6 +410,9 @@ longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>str</em>) – </p>
 </dd>
 </dl>
 </dd></dl>
@@ -412,6 +451,7 @@ was provided.</p>
 <span class="go">52</span>
 </pre></div>
 </div>
+<p>TODO: Exclude errorred code</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The number of fetched repositories in which <cite>self.module</cite>

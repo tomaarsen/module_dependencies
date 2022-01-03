@@ -563,6 +563,163 @@ are returned. Defaults to None.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.source.</span></span><span class="sig-name descname"><span class="pre">SourceJupyterNotebook</span></span><a class="reference internal" href="../_modules/module_dependencies/source/source.html#SourceJupyterNotebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#module_dependencies.source.source.SourceString" title="module_dependencies.source.source.SourceString"><code class="xref py py-class docutils literal notranslate"><span class="pre">module_dependencies.source.source.SourceString</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jupyter_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/source.html#SourceJupyterNotebook.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a string with Python source code.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Source</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="s2">&quot;from nltk import word_tokenize</span><span class="se">\n</span><span class="s2">word_tokenize(&#39;Hello there!&#39;)&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="o">.</span><span class="n">dependencies</span><span class="p">()</span>
+<span class="go">[&#39;nltk.word_tokenize&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="o">.</span><span class="n">imports</span><span class="p">()</span>
+<span class="go">[&#39;nltk&#39;]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>src</em>) – String with Python source code.</p></li>
+<li><p><strong>jupyter_source</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook.dependencies">
+<span class="sig-name descname"><span class="pre">dependencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of variables, functions and classes originating from <code class="docutils literal notranslate"><span class="pre">module</span></code>.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="s2">&quot;module_dependencies&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="s2">&quot;os&quot;</span><span class="p">))</span>
+<span class="go">[&#39;os.path.isdir&#39;, &#39;os.path.isfile&#39;, &#39;os.path.join&#39;]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>module</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Module string or list of module strings.
+For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
+are returned. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of dot-separated modules, variables, functions and classes.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook.dependencies_mapping">
+<span class="sig-name descname"><span class="pre">dependencies_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook.dependencies_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a mapping from filenames to a list of variables, functions and classes
+originating from <code class="docutils literal notranslate"><span class="pre">module</span></code> that were used in that file.</p>
+<p>Only defined for <code class="docutils literal notranslate"><span class="pre">SourceFolder</span></code>, i.e. instances returned from <code class="docutils literal notranslate"><span class="pre">Source.from_folder()</span></code>.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="s2">&quot;module_dependencies&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">dependencies_mapping</span><span class="p">(</span><span class="s2">&quot;ast&quot;</span><span class="p">))</span>
+<span class="go">{&#39;module_dependencies/__init__.py&#39;: [],</span>
+<span class="go">&#39;module_dependencies/api.py&#39;: [],</span>
+<span class="go">&#39;module_dependencies/factory.py&#39;: [],</span>
+<span class="go">&#39;module_dependencies/source.py&#39;: [&#39;ast.parse&#39;],</span>
+<span class="go">&#39;module_dependencies/tokenize.py&#39;: [],</span>
+<span class="go">&#39;module_dependencies/visitor.py&#39;: [&#39;ast.AST&#39;,</span>
+<span class="go">                                   &#39;ast.Attribute&#39;,</span>
+<span class="go">                                   &#39;ast.Import&#39;,</span>
+<span class="go">                                   &#39;ast.ImportFrom&#39;,</span>
+<span class="go">                                   &#39;ast.Name&#39;,</span>
+<span class="go">                                   &#39;ast.NodeVisitor&#39;,</span>
+<span class="go">                                   &#39;ast.iter_fields&#39;]}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>module</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Module string or list of module strings.
+For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
+are returned. Defaults to None.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Mapping of filenames to <code class="docutils literal notranslate"><span class="pre">Source.from_file(filename).dependencies(module)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, List[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook.imports">
+<span class="sig-name descname"><span class="pre">imports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook.imports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of modules that were imported from in <code class="docutils literal notranslate"><span class="pre">source</span></code>.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Source</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="s2">&quot;from nltk import word_tokenize</span><span class="se">\n</span><span class="s2">word_tokenize(&#39;Hello there!&#39;)&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="o">.</span><span class="n">imports</span><span class="p">()</span>
+<span class="go">[&#39;nltk&#39;]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of modules</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook.imports_mapping">
+<span class="sig-name descname"><span class="pre">imports_mapping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook.imports_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a mapping from filenames to a list of modules that were imported from in <code class="docutils literal notranslate"><span class="pre">source</span></code>.</p>
+<p>Only defined for <code class="docutils literal notranslate"><span class="pre">SourceFolder</span></code>, i.e. instances returned from <code class="docutils literal notranslate"><span class="pre">Source.from_folder()</span></code>.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="s2">&quot;module_dependencies&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">imports_mapping</span><span class="p">())</span>
+<span class="go">{&#39;module_dependencies/__init__.py&#39;: [&#39;module_dependencies.factory&#39;,</span>
+<span class="go">                                     &#39;module_dependencies.source&#39;],</span>
+<span class="go">&#39;module_dependencies/api.py&#39;: [&#39;typing&#39;],</span>
+<span class="go">&#39;module_dependencies/factory.py&#39;: [&#39;module_dependencies.api&#39;,</span>
+<span class="go">                                   &#39;module_dependencies.source&#39;,</span>
+<span class="go">                                   &#39;os&#39;],</span>
+<span class="go">&#39;module_dependencies/source.py&#39;: [&#39;__future__&#39;,</span>
+<span class="go">                                  &#39;ast&#39;,</span>
+<span class="go">                                  &#39;base64&#39;,</span>
+<span class="go">                                  &#39;glob&#39;,</span>
+<span class="go">                                  &#39;module_dependencies.api&#39;,</span>
+<span class="go">                                  &#39;module_dependencies.tokenize&#39;,</span>
+<span class="go">                                  &#39;module_dependencies.visitor&#39;,</span>
+<span class="go">                                  &#39;os&#39;,</span>
+<span class="go">                                  &#39;typing&#39;],</span>
+<span class="go">&#39;module_dependencies/tokenize.py&#39;: [&#39;typing&#39;],</span>
+<span class="go">&#39;module_dependencies/visitor.py&#39;: [&#39;ast&#39;,</span>
+<span class="go">                                   &#39;module_dependencies.tokenize&#39;,</span>
+<span class="go">                                   &#39;typing&#39;]}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Mapping of filenames to <code class="docutils literal notranslate"><span class="pre">Source.from_file(filename).imports()</span></code>.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dict[str, List[str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="module_dependencies.source.source.SourceFolder">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.source.</span></span><span class="sig-name descname"><span class="pre">SourceFolder</span></span><a class="reference internal" href="../_modules/module_dependencies/source/source.html#SourceFolder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.source.SourceFolder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="module_dependencies.source.api.html#module_dependencies.source.api.SourceI" title="module_dependencies.source.api.SourceI"><code class="xref py py-class docutils literal notranslate"><span class="pre">module_dependencies.source.api.SourceI</span></code></a></p>

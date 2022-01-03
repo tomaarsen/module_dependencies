@@ -103,22 +103,36 @@
 <span class="sd">    to every node traversed via ``generic_visit``. This attribute</span>
 <span class="sd">    points to the parent node in the AST.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ParentedNodeVisitor.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParentedNodeVisitor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Track the depth of recursion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span></div>
+
 <div class="viewcode-block" id="ParentedNodeVisitor.generic_visit"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParentedNodeVisitor.generic_visit">[docs]</a>    <span class="k">def</span> <span class="nf">generic_visit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called if no explicit visitor function exists for a node.</span>
 <span class="sd">        Places ``parent`` attribute on the child node.</span>
 
 <span class="sd">        :param ast.AST node: Node in an AST.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">_field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">iter_fields</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
-                        <span class="n">item</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">800</span><span class="p">:</span>
+            <span class="c1"># At a depth of 1000, this will cause a program crash on Windows.</span>
+            <span class="k">raise</span> <span class="ne">RecursionError</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">iter_fields</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+                            <span class="n">item</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+                        <span class="n">value</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span></div></div>
 
 
 <div class="viewcode-block" id="ParserVisitor"><a class="viewcode-back" href="../../../api/module_dependencies.source.visitor.html#module_dependencies.source.visitor.ParserVisitor">[docs]</a><span class="k">class</span> <span class="nc">ParserVisitor</span><span class="p">(</span><span class="n">ParentedNodeVisitor</span><span class="p">):</span>
@@ -199,6 +213,7 @@
 <span class="sd">        Maybe clear everything when leaving a ClassDef or FuncDef</span>
 <span class="sd">        Solution: Map all variables to types, which are appropriately scoped</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">import_names</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Variable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">import_modules</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefixes</span> <span class="o">=</span> <span class="p">{}</span>

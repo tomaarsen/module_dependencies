@@ -88,11 +88,17 @@
         <div id="main-content" role="main">
           
   <h1>Source code for module_dependencies.module.session</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">module_dependencies.source</span> <span class="kn">import</span> <span class="n">Source</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ModuleSession"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession">[docs]</a><span class="k">class</span> <span class="nc">ModuleSession</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">):</span>
@@ -110,10 +116,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">default_payload</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="c1"># The default query information, only missing the ``content`` key.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">default_query</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">default_query</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="s2">&quot;25000&quot;</span><span class="p">,</span>
             <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="s2">&quot;1m&quot;</span><span class="p">,</span>
             <span class="s2">&quot;patterntype&quot;</span><span class="p">:</span> <span class="s2">&quot;regexp&quot;</span><span class="p">,</span>
         <span class="p">}</span>
@@ -122,15 +127,179 @@
         <span class="c1"># Note that this format is only used if ``module`` does not contain any dots.</span>
         <span class="c1"># After all, ``nltk.tokenize`` might be imported like ``from nltk import tokenize``,</span>
         <span class="c1"># and then this format would not catch this.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_import_format</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&quot;^</span><span class="se">\\</span><span class="s1">s*(import|from) +</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span>
+        <span class="c1"># base_import_format = r&#39;&quot;\\s*(import|from) +{module}[\\s\\.,$]&quot;&#39;</span>
         <span class="c1"># self.base_import_format = r&#39;&quot;{module}&quot;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subpackage_import_format</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&quot;</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span>  <span class="c1"># TODO: Check performance of this vs using base_import_format with left-most module</span></div>
+        <span class="n">subpackage_import_format</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&quot;</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span>  <span class="c1"># TODO: Check performance of this vs using base_import_format with left-most module</span>
+
+        <span class="c1"># The supported languages to fetch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Python&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+                    <span class="n">content</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="n">module</span><span class="p">),</span>
+                <span class="s2">&quot;base_import_format&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;&quot;^</span><span class="se">\\</span><span class="s1">s*(import|from) +</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span><span class="p">,</span>
+                <span class="s2">&quot;subpackage_import_format&quot;</span><span class="p">:</span> <span class="n">subpackage_import_format</span><span class="p">,</span>
+                <span class="s2">&quot;default_query&quot;</span><span class="p">:</span> <span class="p">{</span><span class="o">**</span><span class="n">default_query</span><span class="p">,</span> <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="s1">&#39;&quot;Python&quot;&#39;</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;Jupyter Notebook&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">content</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_jupyter</span><span class="p">(</span>
+                    <span class="n">content</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="n">module</span><span class="p">),</span>
+                <span class="s2">&quot;base_import_format&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;&quot;\&quot;</span><span class="se">\\</span><span class="s1">s*(import|from) +</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span><span class="p">,</span>
+                <span class="s2">&quot;subpackage_import_format&quot;</span><span class="p">:</span> <span class="n">subpackage_import_format</span><span class="p">,</span>
+                <span class="s2">&quot;default_query&quot;</span><span class="p">:</span> <span class="p">{</span><span class="o">**</span><span class="n">default_query</span><span class="p">,</span> <span class="s2">&quot;language&quot;</span><span class="p">:</span> <span class="s1">&#39;&quot;Jupyter Notebook&quot;&#39;</span><span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="ModuleSession.fetch_and_parse"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.fetch_and_parse">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_and_parse</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">languages</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the parsed data from the SourceGraph API.</span>
+<span class="sd">        This method loads the data once upon request and then parses it</span>
+<span class="sd">        using `Source(...).dependencies()`.</span>
+
+<span class="sd">        :param module: The name of a Python module of which to find</span>
+<span class="sd">            the frequently used objects, e.g. `&quot;nltk&quot;`.</span>
+<span class="sd">        :type module: str</span>
+<span class="sd">        :param count: The maximum number of times an import of `module`</span>
+<span class="sd">            should be fetched. Roughly equivalent to the number of fetched</span>
+<span class="sd">            files. Either an integer, a string representing an integer,</span>
+<span class="sd">            or &quot;all&quot;, defaults to &quot;all&quot;.</span>
+<span class="sd">        :type count: Union[int, str], optional</span>
+<span class="sd">        :param timeout: Timeout for the source code API. Does not correspond</span>
+<span class="sd">            to the timeout for any of the functions as a whole. The timeout</span>
+<span class="sd">            can be an integer or a string with some digits and then a time</span>
+<span class="sd">            unit, e.g. &quot;10s&quot;, &quot;100ms&quot;. If an integer instead, then parsed as</span>
+<span class="sd">            number of milliseconds. Cannot exceed 1 minute. Defaults to &quot;10s&quot;.</span>
+<span class="sd">        :type timeout: Union[int, str], optional</span>
+<span class="sd">        :param verbose: If True, display a progress bar for parsing files.</span>
+<span class="sd">            Defaults to True.</span>
+<span class="sd">        :type verbose: bool, optional</span>
+
+<span class="sd">        :return: The parsed SourceGraph API data.</span>
+<span class="sd">        :rtype: Dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">combine_results</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            {&#39;alert&#39;: None,</span>
+<span class="sd">            &#39;cloning&#39;: [],</span>
+<span class="sd">            &#39;elapsedMilliseconds&#39;: 569,</span>
+<span class="sd">            &#39;limitHit&#39;: True,</span>
+<span class="sd">            &#39;matchCount&#39;: 131,</span>
+<span class="sd">            &#39;missing&#39;: [],</span>
+<span class="sd">            &#39;repositoriesCount&#39;: 49,</span>
+<span class="sd">            &#39;results&#39;: [...],</span>
+<span class="sd">            &#39;timedout&#39;: []}</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">new</span>
+
+            <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;alert&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;cloning&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;cloning&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;elapsedMilliseconds&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;elapsedMilliseconds&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;limitHit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;limitHit&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;limitHit&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;matchCount&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;matchCount&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;missing&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;repositoriesCount&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;repositoriesCount&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;timedout&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new</span><span class="p">[</span><span class="s2">&quot;timedout&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">results</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">languages</span><span class="p">:</span>
+            <span class="n">languages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Fetching </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> source code containing imports of `</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">`...&quot;</span>
+                <span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                    <span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="n">language</span>
+                <span class="p">)</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Fetched </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> source code containing imports of `</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">` &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Parsing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes of </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> source code as JSON...&quot;</span>
+                <span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Parsed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes of </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> source code as JSON...&quot;</span>
+                <span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">combine_results</span><span class="p">(</span>
+                <span class="n">results</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_raw_response</span><span class="p">(</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;search&quot;</span><span class="p">][</span><span class="s2">&quot;results&quot;</span><span class="p">],</span>
+                    <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">,</span>
+                    <span class="n">language</span><span class="o">=</span><span class="n">language</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="ModuleSession.parse_raw_response"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.parse_raw_response">[docs]</a>    <span class="k">def</span> <span class="nf">parse_raw_response</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Strip `content` from the raw input data, and replace it with</span>
+<span class="sd">        `dependencies` and `parse_error`.</span>
+
+<span class="sd">        :param results: Raw output from `session.post(self.module, ...)`</span>
+<span class="sd">        :type results: Dict</span>
+<span class="sd">        :param module: String of the module we are interested in,</span>
+<span class="sd">            e.g. &quot;nltk&quot; or &quot;nltk.tokenize&quot;.</span>
+<span class="sd">        :type module: str</span>
+<span class="sd">        :param language: The name of the language that is being parsed,</span>
+<span class="sd">            e.g. &quot;Python&quot; or &quot;Jupyter Notebook&quot;.</span>
+<span class="sd">        :type language: str</span>
+<span class="sd">        :return: Modified output of `results`, with file `content` stripped,</span>
+<span class="sd">            and `dependencies` and `parse_error` added.</span>
+<span class="sd">        :rtype: Dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Extracting dependencies of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> files of </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> source code...&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+            <span class="n">iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">],</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Parsing Files&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;files&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">iterator</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+
+            <span class="n">error_name</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">language</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">](</span><span class="n">content</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">SyntaxError</span><span class="p">,</span> <span class="ne">RecursionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">error_name</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependencies</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">][</span><span class="s2">&quot;parse_error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_name</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Extracted dependencies of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> files of </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2"> source code.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span></div>
 
 <div class="viewcode-block" id="ModuleSession.construct_payload"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.construct_payload">[docs]</a>    <span class="k">def</span> <span class="nf">construct_payload</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+        <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Construct the payload to send to SourceGraph. The payload is a dictionary</span>
 <span class="sd">        with &quot;variables&quot; and &quot;query&quot; keys.</span>
@@ -151,11 +320,15 @@
 
 <span class="sd">        TODO: Verify that `module` is valid</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_query</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">language</span><span class="p">][</span><span class="s2">&quot;default_query&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">module</span><span class="p">:</span>
-            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpackage_import_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">language</span><span class="p">][</span><span class="s2">&quot;subpackage_import_format&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">module</span><span class="o">=</span><span class="n">module</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_import_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">language</span><span class="p">][</span><span class="s2">&quot;base_import_format&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">module</span><span class="o">=</span><span class="n">module</span>
+            <span class="p">)</span>
 
         <span class="n">query</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
 
@@ -178,8 +351,11 @@
         <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+        <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct_payload</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct_payload</span><span class="p">(</span>
+            <span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="n">language</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div></div>
 </pre></div>
 

@@ -98,6 +98,7 @@
     <span class="n">SourceFile</span><span class="p">,</span>
     <span class="n">SourceFolder</span><span class="p">,</span>
     <span class="n">SourceString</span><span class="p">,</span>
+    <span class="n">SourceJupyterNotebook</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -149,11 +150,16 @@
 
 <div class="viewcode-block" id="Source.from_file"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.from_file">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SourceFile</span><span class="p">:</span>
+        <span class="c1"># TODO: What if a Jupyter Notebook file</span>
         <span class="k">return</span> <span class="n">SourceFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Source.from_folder"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.from_folder">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_folder</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SourceFolder</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">SourceFolder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">SourceFolder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Source.from_jupyter"><a class="viewcode-back" href="../../../api/module_dependencies.source.factory.html#module_dependencies.source.factory.Source.from_jupyter">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_jupyter</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SourceJupyterNotebook</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SourceJupyterNotebook</span><span class="p">(</span><span class="n">source</span><span class="p">)</span></div></div>
 </pre></div>
 
         </div>
