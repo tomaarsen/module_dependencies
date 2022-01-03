@@ -431,6 +431,7 @@ class Module:
         limit: int = -1,
         max_depth: int = 4,
         transparant: bool = False,
+        show: bool = True,
     ) -> None:
         """Display a plotly Sunburst plot showing the frequency of use
         of different sections of this module.
@@ -487,25 +488,29 @@ class Module:
             limit_value = sorted_fobjs[limit]["val"]
             full_objects = [fobj for fobj in full_objects if fobj["val"] >= limit_value]
 
-        fig = go.Figure(
-            go.Sunburst(
-                # name=f"Usage of {self.module} visualised",
-                # legendrank=100,
-                ids=[fobj["obj"] for fobj in full_objects],
-                labels=[fobj["tok"][-1] for fobj in full_objects],
-                parents=[detokenize(fobj["tok"][:-1]) for fobj in full_objects],
-                values=[fobj["val"] for fobj in full_objects],
-                branchvalues="total",
-                insidetextorientation="radial",
-                maxdepth=max_depth,
-            ),
-            layout=go.Layout(
-                paper_bgcolor="rgba(0,0,0,0)" if transparant else None,
-                margin={"t": 0, "l": 0, "r": 0, "b": 0},
-            ),
-        )
+        parameters = {
+            "ids": [fobj["obj"] for fobj in full_objects],
+            "labels": [fobj["tok"][-1] for fobj in full_objects],
+            "parents": [detokenize(fobj["tok"][:-1]) for fobj in full_objects],
+            "values": [fobj["val"] for fobj in full_objects],
+        }
 
-        fig.show()
+        if show:
+            fig = go.Figure(
+                go.Sunburst(
+                    **parameters,
+                    branchvalues="total",
+                    insidetextorientation="radial",
+                    maxdepth=max_depth,
+                ),
+                layout=go.Layout(
+                    paper_bgcolor="rgba(0,0,0,0)" if transparant else None,
+                    margin={"t": 0, "l": 0, "r": 0, "b": 0},
+                ),
+            )
+            fig.show()
+        else:
+            return parameters
 
     def n_uses(self, obj: str = "") -> int:
         """Return the number of uses of the module.
