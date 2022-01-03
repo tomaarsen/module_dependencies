@@ -519,6 +519,7 @@
         <span class="n">threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">transparant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Display a plotly Sunburst plot showing the frequency of use</span>
 <span class="sd">        of different sections of this module.</span>
@@ -586,9 +587,13 @@
                 <span class="n">branchvalues</span><span class="o">=</span><span class="s2">&quot;total&quot;</span><span class="p">,</span>
                 <span class="n">insidetextorientation</span><span class="o">=</span><span class="s2">&quot;radial&quot;</span><span class="p">,</span>
                 <span class="n">maxdepth</span><span class="o">=</span><span class="n">max_depth</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="p">),</span>
+            <span class="n">layout</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span>
+                <span class="n">paper_bgcolor</span><span class="o">=</span><span class="s2">&quot;rgba(0,0,0,0)&quot;</span> <span class="k">if</span> <span class="n">transparant</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+            <span class="p">),</span>
         <span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+
         <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Module.n_uses"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_uses">[docs]</a>    <span class="k">def</span> <span class="nf">n_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
