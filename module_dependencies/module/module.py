@@ -429,6 +429,7 @@ class Module:
         threshold: int = 0,
         limit: int = -1,
         max_depth: int = 4,
+        transparant: bool = False,
     ) -> None:
         """Display a plotly Sunburst plot showing the frequency of use
         of different sections of this module.
@@ -496,9 +497,13 @@ class Module:
                 branchvalues="total",
                 insidetextorientation="radial",
                 maxdepth=max_depth,
-            )
+            ),
+            layout=go.Layout(
+                paper_bgcolor="rgba(0,0,0,0)" if transparant else None,
+                margin={"t": 0, "l": 0, "r": 0, "b": 0},
+            ),
         )
-        fig.update_layout(margin={"t": 0, "l": 0, "r": 0, "b": 0})
+
         fig.show()
 
     def n_uses(self, obj: str = "") -> int:
