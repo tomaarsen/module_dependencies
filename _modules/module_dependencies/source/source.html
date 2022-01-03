@@ -82,6 +82,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.source.visitor.html">source.visitor module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/module_dependencies.util.html">Util package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.util.tokenize.html">util.tokenize module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
@@ -188,14 +192,61 @@
 <span class="sd">            &gt;&gt;&gt; src.imports()</span>
 <span class="sd">            [&#39;nltk&#39;]</span>
 
-<span class="sd">        :param src encoded: String with base64 encoded Python source code.</span>
+<span class="sd">        :param src filename: File path to a Python file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div></div>
 
 
 <div class="viewcode-block" id="SourceJupyterNotebook"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook">[docs]</a><span class="k">class</span> <span class="nc">SourceJupyterNotebook</span><span class="p">(</span><span class="n">SourceString</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads a string which represents a Jupyter Notebook,</span>
+<span class="sd">    and parses it for dependencies and import statements.&quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="SourceJupyterNotebook.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jupyter_source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Read a Jupyter Notebook.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Cells that contain un-compilable code (e.g. `print &#39;hello&#39;` from Python 2)</span>
+<span class="sd">            will be discarded. Cells that do compile will be kept to gather the dependencies</span>
+<span class="sd">            and imports from.</span>
+
+<span class="sd">        Example usage::</span>
+
+<span class="sd">            &gt;&gt;&gt; from module_dependencies import Source</span>
+<span class="sd">            &gt;&gt;&gt; src = Source.from_jupyter(r&#39;&#39;&#39;</span>
+<span class="sd">            ... {</span>
+<span class="sd">            ...  &quot;cells&quot;: [</span>
+<span class="sd">            ...   {</span>
+<span class="sd">            ...    &quot;cell_type&quot;: &quot;code&quot;,</span>
+<span class="sd">            ...    &quot;execution_count&quot;: null,</span>
+<span class="sd">            ...    &quot;metadata&quot;: {},</span>
+<span class="sd">            ...    &quot;outputs&quot;: [],</span>
+<span class="sd">            ...    &quot;source&quot;: [</span>
+<span class="sd">            ...     &quot;from nltk import word_tokenize\n&quot;,</span>
+<span class="sd">            ...     &quot;word_tokenize(&#39;Hello there!&#39;)&quot;</span>
+<span class="sd">            ...    ]</span>
+<span class="sd">            ...   }</span>
+<span class="sd">            ...  ],</span>
+<span class="sd">            ...  &quot;metadata&quot;: {</span>
+<span class="sd">            ...   &quot;language_info&quot;: {</span>
+<span class="sd">            ...    &quot;name&quot;: &quot;python&quot;</span>
+<span class="sd">            ...   },</span>
+<span class="sd">            ...   &quot;orig_nbformat&quot;: 4</span>
+<span class="sd">            ...  },</span>
+<span class="sd">            ...  &quot;nbformat&quot;: 4,</span>
+<span class="sd">            ...  &quot;nbformat_minor&quot;: 2</span>
+<span class="sd">            ... }</span>
+<span class="sd">            ... &#39;&#39;&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; src.dependencies()</span>
+<span class="sd">            [&#39;nltk.word_tokenize&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; src.imports()</span>
+<span class="sd">            [&#39;nltk&#39;]</span>
+
+<span class="sd">        :param str jupyter_source: A Jupyter Notebook as a string,</span>
+<span class="sd">            to be parsed with `json.loads`.</span>
+<span class="sd">        :raises SyntaxError: Raised whenever the string is not</span>
+<span class="sd">            a Jupyter Notebook with major versions 2, 3 or 4.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">notebook</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">jupyter_source</span><span class="p">)</span>
             <span class="n">version</span> <span class="o">=</span> <span class="n">notebook</span><span class="p">[</span><span class="s2">&quot;nbformat&quot;</span><span class="p">]</span>

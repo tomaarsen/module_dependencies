@@ -18,4 +18,5 @@ Subpackages
 
        module_dependencies.module
        module_dependencies.source
+       module_dependencies.util
 

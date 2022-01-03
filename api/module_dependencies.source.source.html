@@ -83,6 +83,10 @@
 <li class="toctree-l3"><a class="reference internal" href="module_dependencies.source.visitor.html">source.visitor module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="module_dependencies.util.html">Util package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="module_dependencies.util.tokenize.html">util.tokenize module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
@@ -439,10 +443,7 @@ and import statements.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>encoded</strong> (<em>src</em>) – String with base64 encoded Python source code.</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>filename</strong> (<em>src</em>) – File path to a Python file.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
@@ -581,25 +582,70 @@ are returned. Defaults to None.</p>
 <dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.source.</span></span><span class="sig-name descname"><span class="pre">SourceJupyterNotebook</span></span><a class="reference internal" href="../_modules/module_dependencies/source/source.html#SourceJupyterNotebook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#module_dependencies.source.source.SourceString" title="module_dependencies.source.source.SourceString"><code class="xref py py-class docutils literal notranslate"><span class="pre">module_dependencies.source.source.SourceString</span></code></a></p>
+<p>Reads a string which represents a Jupyter Notebook,
+and parses it for dependencies and import statements.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.source.SourceJupyterNotebook.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jupyter_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/source.html#SourceJupyterNotebook.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.source.SourceJupyterNotebook.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a string with Python source code.</p>
+<dd><p>Read a Jupyter Notebook.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cells that contain un-compilable code (e.g. <cite>print ‘hello’</cite> from Python 2)
+will be discarded. Cells that do compile will be kept to gather the dependencies
+and imports from.</p>
+</div>
 <p>Example usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Source</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="s2">&quot;from nltk import word_tokenize</span><span class="se">\n</span><span class="s2">word_tokenize(&#39;Hello there!&#39;)&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="o">.</span><span class="n">dependencies</span><span class="p">()</span>
-<span class="go">[&#39;nltk.word_tokenize&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="o">.</span><span class="n">imports</span><span class="p">()</span>
-<span class="go">[&#39;nltk&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_jupyter</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">... </span><span class="s1">{</span>
+<span class="gp">... </span><span class="s1"> &quot;cells&quot;: [</span>
+<span class="gp">... </span><span class="s1">  {</span>
+<span class="gp">... </span><span class="s1">   &quot;cell_type&quot;: &quot;code&quot;,</span>
+<span class="gp">... </span><span class="s1">   &quot;execution_count&quot;: null,</span>
+<span class="gp">... </span><span class="s1">   &quot;metadata&quot;: </span><span class="si">{}</span><span class="s1">,</span>
+<span class="gp">... </span><span class="s1">   &quot;outputs&quot;: [],</span>
+<span class="gp">... </span><span class="s1">   &quot;source&quot;: [</span>
+<span class="gp">... </span><span class="s1">    &quot;from nltk import word_tokenize</span>
 </pre></div>
 </div>
+</div></blockquote>
+<dl>
+<dt>“,</dt><dd><blockquote>
+<div><p>…     “word_tokenize(‘Hello there!’)”
+…    ]
+…   }
+…  ],
+…  “metadata”: {
+…   “language_info”: {
+…    “name”: “python”
+…   },
+…   “orig_nbformat”: 4
+…  },
+…  “nbformat”: 4,
+…  “nbformat_minor”: 2
+… }
+… ‘’’)
+&gt;&gt;&gt; src.dependencies()
+[‘nltk.word_tokenize’]
+&gt;&gt;&gt; src.imports()
+[‘nltk’]</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">param str jupyter_source</dt>
+<dd class="field-odd"><p>A Jupyter Notebook as a string,
+to be parsed with <cite>json.loads</cite>.</p>
+</dd>
+<dt class="field-even">raises SyntaxError</dt>
+<dd class="field-even"><p>Raised whenever the string is not
+a Jupyter Notebook with major versions 2, 3 or 4.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<em>src</em>) – String with Python source code.</p></li>
-<li><p><strong>jupyter_source</strong> (<em>str</em>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>jupyter_source</strong> (<em>str</em>) – </p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>None</p>
