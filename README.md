@@ -52,7 +52,7 @@ Parsing Files: 100%|████████████████████
 And then opens an interactive version of the following plot:
 ![usage](https://user-images.githubusercontent.com/37621491/147952784-57691744-b0e9-4ef1-a970-fe528bf1f029.png)
 
-(Note that the true plot is interactive, but this copy for GitHub is just a png)
+(Note that the true plot [is interactive](https://tomaarsen.github.io/module_dependencies/), but this copy for GitHub is just a png)
 
 With the methods provided in the ``Module`` class, it becomes elementary to see which sections of code are frequently used, allowing you to prioritise these sections over rarely used sections.
 
@@ -80,7 +80,7 @@ This program outputs:
 ---
 
 ## Documentation
-More detailed documentation, including examples and an API Reference, can be found in the [online documentation]().
+More detailed documentation, including examples and an API Reference, can be found in the [online documentation](https://tomaarsen.github.io/module_dependencies/).
 
 ## Installation
 ``module_dependencies`` can be installed directly via pip. It is recommended to set up a virtualenvironment before installation, although this is not strictly a requirement.
