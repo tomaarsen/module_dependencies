@@ -1,2 +1,3 @@
+plotly
 requests
 tqdm
