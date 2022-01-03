@@ -83,14 +83,61 @@ class SourceFile(SourceString):
             >>> src.imports()
             ['nltk']
 
-        :param src encoded: String with base64 encoded Python source code.
+        :param src filename: File path to a Python file.
         """
         with open(filename, encoding="utf8") as file:
             super().__init__(file.read())
 
 
 class SourceJupyterNotebook(SourceString):
+    """Reads a string which represents a Jupyter Notebook,
+    and parses it for dependencies and import statements."""
+
     def __init__(self, jupyter_source: str) -> None:
+        """Read a Jupyter Notebook.
+
+        .. note::
+            Cells that contain un-compilable code (e.g. `print 'hello'` from Python 2)
+            will be discarded. Cells that do compile will be kept to gather the dependencies
+            and imports from.
+
+        Example usage::
+
+            >>> from module_dependencies import Source
+            >>> src = Source.from_jupyter(r'''
+            ... {
+            ...  "cells": [
+            ...   {
+            ...    "cell_type": "code",
+            ...    "execution_count": null,
+            ...    "metadata": {},
+            ...    "outputs": [],
+            ...    "source": [
+            ...     "from nltk import word_tokenize\n",
+            ...     "word_tokenize('Hello there!')"
+            ...    ]
+            ...   }
+            ...  ],
+            ...  "metadata": {
+            ...   "language_info": {
+            ...    "name": "python"
+            ...   },
+            ...   "orig_nbformat": 4
+            ...  },
+            ...  "nbformat": 4,
+            ...  "nbformat_minor": 2
+            ... }
+            ... ''')
+            >>> src.dependencies()
+            ['nltk.word_tokenize']
+            >>> src.imports()
+            ['nltk']
+
+        :param str jupyter_source: A Jupyter Notebook as a string,
+            to be parsed with `json.loads`.
+        :raises SyntaxError: Raised whenever the string is not
+            a Jupyter Notebook with major versions 2, 3 or 4.
+        """
         try:
             notebook = json.loads(jupyter_source)
             version = notebook["nbformat"]
