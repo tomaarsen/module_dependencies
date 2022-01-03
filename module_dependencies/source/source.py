@@ -97,7 +97,7 @@ class SourceJupyterNotebook(SourceString):
         """Read a Jupyter Notebook.
 
         .. note::
-            Cells that contain un-compilable code (e.g. `print 'hello'` from Python 2)
+            Cells that contain un-compilable code (e.g. ``print 'hello'`` from Python 2)
             will be discarded. Cells that do compile will be kept to gather the dependencies
             and imports from.
 
