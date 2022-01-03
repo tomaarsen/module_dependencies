@@ -31,12 +31,13 @@ jobs:
         id: restore-cache
         with:
           path: ${{ env.pythonLocation }}
-          key: python-dependencies-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}-${{ env.pythonLocation }}
+          key: python-dependencies-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}-${{ env.pythonLocation }}
 
       - name: Install dependencies on cache miss
         run: |
           pip install --no-cache-dir --upgrade pip
           pip install --no-cache-dir --upgrade --requirement requirements.txt
+          pip install --no-cache-dir --upgrade --requirement requirements-dev.txt
         if: steps.restore-cache.outputs.cache-hit != 'true'
 
       - name: Run test suite
