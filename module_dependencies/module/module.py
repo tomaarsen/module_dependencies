@@ -33,14 +33,15 @@ class Module:
             n_files()
             n_repositories()
 
-        TODO: Alert users of `alert`, output `limitHit`
-        TODO: Something with percentages?
-        TODO: Info on just one object, e.g.
-        >>> module.use("nltk.tokenize")
-        "802 occurrences out of 83530 (0.96%)"
-        TODO: Biggest repositories relying on some subsection.
-              Perhaps an extension to `repositories()`?
-              Add this to n_uses, n_files and n_repositories, too
+        ..
+            TODO: Alert users of `alert`, output `limitHit`
+            TODO: Something with percentages?
+            TODO: Info on just one object, e.g.
+            >>> module.use("nltk.tokenize")
+            "802 occurrences out of 83530 (0.96%)"
+            TODO: Biggest repositories relying on some subsection.
+                Perhaps an extension to `repositories()`?
+                Add this to n_uses, n_files and n_repositories, too
 
         :param module: The name of a Python module of which to find
             the frequently used objects, e.g. `"nltk"`.

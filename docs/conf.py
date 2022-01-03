@@ -31,7 +31,7 @@ release = "0.1.5"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode"]
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode", "sphinx.ext.todo"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -49,7 +49,7 @@ exclude_patterns = ["api/modules.rst"]
 #
 html_theme = "nltk_theme"
 
-html_theme_options = {"navigation_depth": 1}
+html_theme_options = {"navigation_depth": 3}
 # Required for the theme, used for linking to a specific tag in the website footer
 html_context = {"github_user": "tomaarsen", "github_repo": "module_dependencies"}
 

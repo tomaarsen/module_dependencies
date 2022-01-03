@@ -1,21 +1,7 @@
 """
-The ``module_dependencies`` module has been split into two main sections: ``Source`` and ``Module``. The former, ``Source``, supports functionality for mapping Python source code to the dependencies and imports within that file, for example::
-
-    from module_dependencies import Source
-    from pprint import pprint
-
-    # This creates a Source instance for this file itself
-    src = Source.from_file(__file__)
-
-    pprint(src.dependencies())
-    pprint(src.imports())
-
-This program outputs::
-
-    ['module_dependencies.Source.from_file', 'pprint.pprint']
-    ['module_dependencies', 'pprint']
-
-The latter section, ``Module``, supports functionality for mapping a module name to the usage of that module within open source repositories. This is very useful when we are interested in determining which sections of a Python module is most frequently used. For example::
+The ``module_dependencies`` module has been split into two main sections: ``Module`` and ``Source``.
+The former, ``Module``, supports functionality for mapping a module name to the usage of that module within open source repositories.
+This is very useful when we are interested in determining which sections of a Python module is most frequently used. For example::
 
     from module_dependencies import Module
     from pprint import pprint
@@ -62,6 +48,25 @@ And then opens the following interactive plot:
 
 .. raw:: html
    :file: ../docs/images/nltk_usage.html
+
+With the methods provided in the ``Module`` class, it becomes elementary to see which sections of
+code are frequently used, allowing you to prioritise these sections over rarely used sections.
+
+The latter section, ``Source``, supports functionality for mapping Python source code to the dependencies and imports within that file, for example::
+
+    from module_dependencies import Source
+    from pprint import pprint
+
+    # This creates a Source instance for this file itself
+    src = Source.from_file(__file__)
+
+    pprint(src.dependencies())
+    pprint(src.imports())
+
+This program outputs::
+
+    ['module_dependencies.Source.from_file', 'pprint.pprint']
+    ['module_dependencies', 'pprint']
 """
 
 import logging

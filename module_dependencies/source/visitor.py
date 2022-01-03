@@ -99,29 +99,30 @@ class ParserVisitor(ParentedNodeVisitor):
         :var Set[Variable] uses:
             Set of objects from ``module`` used in an AST.
 
-        TODO: Some kind of warning when ``from nltk import *`` is used
-        TODO: Tests for ``from .mongo import db`` and ``from .. import mongo``
-        TODO: value[0] = ...
-        TODO: value["hello"] = ...
-        TODO: a, b = ...
-        TODO: What if a user does:
-        import module
-        ...
-        module = ...
-        Solution: Maybe add to ``self.uses`` sometimes?
-        This might happen in practice with:
-        ```
-        def ...():
-            from nltk.corpus import words
+        ..
+            TODO: Some kind of warning when ``from nltk import *`` is used
+            TODO: Tests for ``from .mongo import db`` and ``from .. import mongo``
+            TODO: value[0] = ...
+            TODO: value["hello"] = ...
+            TODO: a, b = ...
+            TODO: What if a user does:
+            import module
             ...
+            module = ...
+            Solution: Maybe add to ``self.uses`` sometimes?
+            This might happen in practice with:
+            ```
+            def ...():
+                from nltk.corpus import words
+                ...
 
-        def ...():
-            words = ...
-            words.split()
-        ```
-        Solution: Maybe add and then remove when we leave the recursion
-        Maybe clear everything when leaving a ClassDef or FuncDef
-        Solution: Map all variables to types, which are appropriately scoped
+            def ...():
+                words = ...
+                words.split()
+            ```
+            Solution: Maybe add and then remove when we leave the recursion
+            Maybe clear everything when leaving a ClassDef or FuncDef
+            Solution: Map all variables to types, which are appropriately scoped
         """
         super().__init__()
         self.import_names: Set[Variable] = set()

@@ -1,5 +1,5 @@
 """
-Expected usage of module_dependencies::
+Expected usage of module_dependencies' ``Source``::
 
     >>> from module_dependencies import Source
     >>> src = Source.from_folder("my_folder")
@@ -11,6 +11,7 @@ Now we know which objects from the "ast" module are used in all code from ``"my_
 How to initialize a Source instance:
 
     >>> src = Source.from_string(...)
+    >>> src = Source.from_jupyter(...)
     >>> src = Source.from_base64(...)
     >>> src = Source.from_file(...)
     >>> src = Source.from_folder(...)
@@ -32,14 +33,8 @@ If the input was a folder, then the following methods are also defined:
     >>> src.imports_mapping()
 """
 
-from module_dependencies.source.factory import Source
-
-from module_dependencies.source.source import (  # isort:skip
-    SourceBase64,
-    SourceFile,
-    SourceFolder,
-    SourceString,
-)
+from .factory import Source
+from .source import SourceBase64, SourceFile, SourceFolder, SourceString
 
 __all__ = [
     "Source",
