@@ -34,7 +34,14 @@ If the input was a folder, then the following methods are also defined:
 """
 
 from .factory import Source
-from .source import SourceBase64, SourceFile, SourceFolder, SourceString
+
+from .source import (  # isort:skip
+    SourceBase64,
+    SourceFile,
+    SourceFolder,
+    SourceJupyterNotebook,
+    SourceString,
+)
 
 __all__ = [
     "Source",
@@ -42,4 +49,5 @@ __all__ = [
     "SourceBase64",
     "SourceFolder",
     "SourceString",
+    "SourceJupyterNotebook",
 ]

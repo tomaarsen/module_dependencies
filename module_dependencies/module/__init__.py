@@ -93,3 +93,5 @@ Alternatively, we can simply plot this data in a very useful interactive Sunburs
 """
 
 from .module import Module
+
+__all__ = ["Module"]

@@ -83,6 +83,7 @@ from module_dependencies.source import (  # isort:skip
     SourceFile,
     SourceFolder,
     SourceString,
+    SourceJupyterNotebook,
 )
 from module_dependencies.module import Module
 
@@ -93,4 +94,5 @@ __all__ = [
     "SourceBase64",
     "SourceFolder",
     "SourceString",
+    "SourceJupyterNotebook",
 ]
