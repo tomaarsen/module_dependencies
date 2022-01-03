@@ -1,13 +1,10 @@
-import json
 import logging
+import warnings
 from collections import Counter, defaultdict
 from functools import cached_property, lru_cache
 from typing import Any, Dict, List, Tuple, Union
 
-from tqdm import tqdm
-
 from module_dependencies.module.session import ModuleSession
-from module_dependencies.source import Source
 from module_dependencies.util.tokenize import detokenize, tokenize
 
 logger = logging.getLogger(__name__)
@@ -17,10 +14,11 @@ class Module:
     def __init__(
         self,
         module: str,
-        count: Union[int, str] = "all",
-        timeout: Union[int, str] = "10s",
+        count: Union[int, str] = "25000",
         verbose: bool = True,
         lazy: bool = True,
+        python: bool = True,
+        jupyter: bool = True,
     ) -> None:
         """Create a Module instance that can be used to find
         which sections of a Python module are most frequently used.
@@ -42,6 +40,7 @@ class Module:
         "802 occurrences out of 83530 (0.96%)"
         TODO: Biggest repositories relying on some subsection.
               Perhaps an extension to `repositories()`?
+              Add this to n_uses, n_files and n_repositories, too
 
         :param module: The name of a Python module of which to find
             the frequently used objects, e.g. `"nltk"`.
@@ -49,14 +48,8 @@ class Module:
         :param count: The maximum number of times an import of `module`
             should be fetched. Roughly equivalent to the number of fetched
             files. Either an integer, a string representing an integer,
-            or "all", defaults to "all".
+            or "all", defaults to "25000".
         :type count: Union[int, str], optional
-        :param timeout: Timeout for the source code API. Does not correspond
-            to the timeout for any of the functions as a whole. The timeout
-            can be an integer or a string with some digits and then a time
-            unit, e.g. "10s", "100ms". If an integer instead, then parsed as
-            number of milliseconds. Cannot exceed 1 minute. Defaults to "10s".
-        :type timeout: Union[int, str], optional
         :param verbose: If True, set the logging level to INFO, otherwise to
             WARNING. True implies that there is some data printed to sys.out,
             while False makes the class quiet. Defaults to True.
@@ -67,8 +60,15 @@ class Module:
         """
         self.module = module
         self.count = count
-        self.timeout = timeout
+        self.timeout = "10s"
         self.verbose = verbose
+
+        languages = []
+        if python:
+            languages.append("Python")
+        if jupyter:
+            languages.append("Jupyter Notebook")
+        self.languages = tuple(languages)
 
         if verbose:
             logger.setLevel(logging.INFO)
@@ -104,64 +104,43 @@ class Module:
         :return: The cached, parsed SourceGraph API data.
         :rtype: Dict
         """
+        return ModuleSession().fetch_and_parse(
+            self.module, self.count, self.timeout, self.verbose, self.languages
+        )
 
-        def parse_raw_response(results: Dict, module: str):
-            """Strip `content` from the raw input data, and replace it with
-            `dependencies` and `parse_error`.
+    @staticmethod
+    def is_subsection_of(var_one: Tuple[str], var_two: Tuple[str]) -> bool:
+        """Check whether `var_one` is a subsection of `var_two`. This means
+        that `var_two` can be created by inserting strings into the tuple of
+        `var_one`. For example, `var_two` as `('nltk', 'tokenize', 'word_tokenize')`
+        can be created by inserting `'tokenize'` into a `var_one` as
+        `('nltk', 'word_tokenize')`, so this function returns True.
 
-            :param results: Raw output from `session.post(self.module, ...)`
-            :type results: Dict
-            :param module: String of the module we are interested in,
-                e.g. "nltk" or "nltk.tokenize".
-            :type module: str
-            :return: Modified output of `results`, with file `content` stripped,
-                and `dependencies` and `parse_error` added.
-            :rtype: Dict
-            """
-            logger.info(
-                f"Extracting dependencies of {len(results['results']):,} files of source code..."
-            )
-            if self.verbose:
-                iterator = tqdm(results["results"], desc="Parsing Files", unit="file")
-            else:
-                iterator = results["results"]
-            for result in iterator:
-                content = result["file"]["content"]
-                del result["file"]["content"]
-                error_name = None
-                try:
-                    dependencies = Source.from_string(content).dependencies(module)
-                except (SyntaxError, RecursionError) as e:
-                    dependencies = []
-                    error_name = e.__class__.__name__
-                result["file"]["dependencies"] = dependencies
-                result["file"]["parse_error"] = error_name
-            logger.info(
-                f"Extracted dependencies of {len(results['results']):,} files of source code."
-            )
-            return results
-
-        with ModuleSession() as session:
-            logger.info(
-                f"Fetching source code containing imports of `{self.module}`..."
-            )
-            response = session.post(self.module, count=self.count, timeout=self.timeout)
-            response.raise_for_status()
-            logger.info(
-                f"Fetched source code containing imports of `{self.module}` "
-                f"(status code {response.status_code})"
-            )
-            logger.info(
-                f"Parsing {len(response.content):,} bytes of source code as JSON..."
-            )
-            data = json.loads(response.content)
-            logger.info(
-                f"Parsed {len(response.content):,} bytes of source code as JSON..."
-            )
-        return parse_raw_response(data["data"]["search"]["results"], self.module)
+        :param var_one: Tuple of strings representing the path to a Python
+            object, e.g. `('nltk', 'word_tokenize')`.
+        :type var_one: Tuple[str]
+        :param var_two: Tuple of strings representing the path to a Python
+            object, e.g. `('nltk', 'tokenize', 'word_tokenize')`.
+        :type var_two: Tuple[str]
+        :return: True if `var_one` is a subsection of `var_two`.
+        :rtype: bool
+        """
+        try:
+            i = 0
+            for section in var_two:
+                if section == var_one[i]:
+                    i += 1
+        except IndexError:
+            # e.g. with ('nltk', 'corpus', 'words') and ('nltk', 'corpus', 'words', 'words'),
+            # TODO: False isnt really appropriate. This algorithm simply doesn't
+            # work well with repeat words.
+            return True
+        return i == len(var_one)
 
     @lru_cache(maxsize=1)
-    def usage(self, merge: bool = True) -> List[Tuple[str, int]]:
+    def usage(
+        self, merge: bool = True, cumulative: bool = False
+    ) -> List[Tuple[str, int]]:
         """Get a list of object-occurrence tuples, sorted by most to least frequent.
 
         Example usage::
@@ -186,34 +165,6 @@ class Module:
         # uses
         # frequency
 
-        def is_subsection_of(var_one: Tuple[str], var_two: Tuple[str]) -> bool:
-            """Check whether `var_one` is a subsection of `var_two`. This means
-            that `var_two` can be created by inserting strings into the tuple of
-            `var_one`. For example, `var_two` as `('nltk', 'tokenize', 'word_tokenize')`
-            can be created by inserting `'tokenize'` into a `var_one` as
-            `('nltk', 'word_tokenize')`, so this function returns True.
-
-            :param var_one: Tuple of strings representing the path to a Python
-                object, e.g. `('nltk', 'word_tokenize')`.
-            :type var_one: Tuple[str]
-            :param var_two: Tuple of strings representing the path to a Python
-                object, e.g. `('nltk', 'tokenize', 'word_tokenize')`.
-            :type var_two: Tuple[str]
-            :return: True if `var_one` is a subsection of `var_two`.
-            :rtype: bool
-            """
-            try:
-                i = 0
-                for section in var_two:
-                    if section == var_one[i]:
-                        i += 1
-            except IndexError:
-                # e.g. with ('nltk', 'corpus', 'words') and ('nltk', 'corpus', 'words', 'words'),
-                # TODO: False isnt really appropriate. This algorithm simply doesn't
-                # work well with repeat words.
-                return False
-            return i == len(var_one)
-
         def merge_one(usage: List[Tuple[Tuple[str], int]]) -> List[Tuple[str, int]]:
             """Merge a list of similar tuples, combining on "paths" that likely
             refer to the same object, e.g. `"nltk.word_tokenize"` and
@@ -236,10 +187,11 @@ class Module:
             # Sort `usage` on longest to shortest paths
             for obj, occ in sorted(usage, key=lambda x: len(x[0]), reverse=True):
                 # Get the list of object/occurrence tuples that `obj` can expand to become
+                # Note that in order to expand to something, it must have occurred more than once
                 options = [
                     (o_key, o_occ)
                     for o_key, o_occ in merged.items()
-                    if is_subsection_of(obj, o_key)
+                    if Module.is_subsection_of(obj, o_key) and o_occ > 1
                 ]
                 if options:
                     # Get the most likely expansion, e.g.
@@ -281,6 +233,14 @@ class Module:
             # Sort the usage data from most to least occurring
             return sorted(merged, key=lambda x: x[1], reverse=True)
 
+        def cumulate(usage: List[Tuple[str, int]]) -> List[Tuple[str, int]]:
+            usage = defaultdict(lambda: 0, {tokenize(obj): occ for obj, occ in usage})
+            for tok_obj, occ in usage.copy().items():
+                for i in range(1, len(tok_obj)):
+                    usage[tok_obj[:i]] += occ
+            usage = [(detokenize(tok_obj), occ) for tok_obj, occ in usage.items()]
+            return sorted(usage, key=lambda x: x[1], reverse=True)
+
         counter = Counter(
             use
             for result in self.data["results"]
@@ -289,6 +249,8 @@ class Module:
         usage = counter.most_common()
         if merge:
             usage = merge_all(usage)
+        if cumulative:
+            usage = cumulate(usage)
         return usage
 
     @lru_cache(maxsize=1)
@@ -329,6 +291,8 @@ class Module:
                     }
                 }
             }
+
+        TODO: Optimize this by relying on usage() better for cumulative
 
         :param full_name: Whether each dictionary key should be the full path,
             e.g. `"nltk.tokenize"`, rather than just the right-most section.
@@ -375,7 +339,7 @@ class Module:
         return nested
 
     @lru_cache(maxsize=1)
-    def repositories(self) -> Dict[str, Dict[str, Any]]:
+    def repositories(self, obj: str = "") -> Dict[str, Dict[str, Any]]:
         """Return a mapping of repository names to repository information
         that were fetched and parsed. Contains "description", "stars", "isFork" keys,
         plus a list of "files" with "name", "path", "url", "dependencies" and
@@ -429,17 +393,43 @@ class Module:
         :return: A mapping of repositories
         :rtype: Dict[str, Dict[str, Any]]
         """
+        if obj:
+            tok_obj = tokenize(obj)
+            objects = {
+                potential_obj
+                for potential_obj, _ in self.usage(merge=False, cumulative=True)
+                if Module.is_subsection_of(tok_obj, tokenize(potential_obj))
+            }
+            if not objects:
+                warnings.warn(
+                    f"No instance of {obj!r} was found in the fetched files!",
+                    stacklevel=2,
+                )
+
         projects = {}
         for result in self.data["results"]:
-            name = result["repository"]["name"]
-            del result["repository"]["name"]
-            if name in projects:
-                projects[name]["files"].append(result["file"])
-            else:
-                projects[name] = {**result["repository"], "files": [result["file"]]}
-        return projects
+            # Add this result if we want all results,
+            # or if this result contains dependencies that match `obj`
+            if not obj or set(result["file"]["dependencies"]).intersection(objects):
+                name = result["repository"]["name"]
+                del result["repository"]["name"]
+                if name in projects:
+                    projects[name]["files"].append(result["file"])
+                else:
+                    projects[name] = {**result["repository"], "files": [result["file"]]}
+        return dict(
+            sorted(
+                projects.items(), key=lambda project: project[1]["stars"], reverse=True
+            )
+        )
 
-    def plot(self, merge: bool = True) -> None:
+    def plot(
+        self,
+        merge: bool = True,
+        threshold: int = 0,
+        limit: int = -1,
+        max_depth: int = 4,
+    ) -> None:
         """Display a plotly Sunburst plot showing the frequency of use
         of different sections of this module.
 
@@ -477,24 +467,41 @@ class Module:
         objects = set()
         for obj, _ in usage:
             tok_obj = tokenize(obj)
-            objects |= {detokenize(tok_obj[:i]) for i in range(1, len(tok_obj) + 1)}
-        objects = sorted(objects)
-        tok_objects = [tokenize(obj) for obj in objects]
+            objects |= {
+                (detokenize(tok_obj[:i]), tok_obj[:i])
+                for i in range(1, len(tok_obj) + 1)
+            }
+
+        full_objects = [
+            {"obj": obj, "tok": tok_obj, "val": get_value(nested_usage, tok_obj)}
+            for obj, tok_obj in objects
+        ]
+        if threshold:
+            full_objects = [fobj for fobj in full_objects if fobj["val"] > threshold]
+        if limit > 0:
+            sorted_fobjs = sorted(
+                full_objects, key=lambda fobj: fobj["val"], reverse=True
+            )
+            limit_value = sorted_fobjs[limit]["val"]
+            full_objects = [fobj for fobj in full_objects if fobj["val"] >= limit_value]
 
         fig = go.Figure(
             go.Sunburst(
-                ids=objects,
-                labels=[tok_obj[-1] for tok_obj in tok_objects],
-                parents=[detokenize(tok_obj[:-1]) for tok_obj in tok_objects],
-                values=[get_value(nested_usage, tok_obj) for tok_obj in tok_objects],
+                # name=f"Usage of {self.module} visualised",
+                # legendrank=100,
+                ids=[fobj["obj"] for fobj in full_objects],
+                labels=[fobj["tok"][-1] for fobj in full_objects],
+                parents=[detokenize(fobj["tok"][:-1]) for fobj in full_objects],
+                values=[fobj["val"] for fobj in full_objects],
                 branchvalues="total",
                 insidetextorientation="radial",
+                maxdepth=max_depth,
             )
         )
         fig.update_layout(margin={"t": 0, "l": 0, "r": 0, "b": 0})
         fig.show()
 
-    def n_uses(self) -> int:
+    def n_uses(self, obj: str = "") -> int:
         """Return the number of uses of the module.
 
         Example usage::
@@ -508,7 +515,18 @@ class Module:
             `self.module` was used in the fetched files.
         :rtype: int
         """
-        return sum(occ for _, occ in self.usage())
+        if obj:
+            tok_obj = tokenize(obj)
+            objects = {
+                potential_obj
+                for potential_obj, _ in self.usage(merge=False, cumulative=True)
+                if Module.is_subsection_of(tok_obj, tokenize(potential_obj))
+            }
+            # print(objects)
+            usages = defaultdict(lambda: 0, self.usage(merge=False, cumulative=False))
+            # print([usages[potential_obj] for potential_obj in objects])
+            return sum(usages[potential_obj] for potential_obj in objects)
+        return sum(occ for _, occ in self.usage(merge=False, cumulative=False))
 
     def n_files(self) -> int:
         """Return the number of files fetched.
@@ -536,6 +554,8 @@ class Module:
             >>> module = Module("nltk", count="100")
             >>> module.n_repositories()
             52
+
+        TODO: Exclude errorred code
 
         :return: The number of fetched repositories in which `self.module`
             was imported.

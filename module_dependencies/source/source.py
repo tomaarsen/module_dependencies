@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import base64
+import json
 import os
 from glob import glob
 from typing import Dict, Iterable, List, Union
@@ -86,6 +87,89 @@ class SourceFile(SourceString):
         """
         with open(filename, encoding="utf8") as file:
             super().__init__(file.read())
+
+
+class SourceJupyterNotebook(SourceString):
+    def __init__(self, jupyter_source: str) -> None:
+        try:
+            notebook = json.loads(jupyter_source)
+            version = notebook["nbformat"]
+        except Exception as e:
+            raise SyntaxError from e
+
+        try:
+            if version == 4:
+                cells = [
+                    "".join(
+                        line
+                        for line in cell["source"]
+                        if not line.startswith(("%", "!"))
+                    )
+                    for cell in notebook["cells"]
+                    if cell["cell_type"] == "code"
+                    and cell["source"]
+                    and not cell["source"][0].startswith(
+                        (
+                            "%%bash",
+                            "%%html",
+                            "%%javascript",
+                            "%%js",
+                            "%%latex",
+                            "%%markdown",
+                            "%%perl",
+                            "%%ruby",
+                            "%%script",
+                            "%%sh",
+                            "%%svg",
+                        )
+                    )
+                ]
+            elif version in (2, 3):
+                line_sep = "" if version == 3 else "\n"
+                cells = [
+                    line_sep.join(
+                        line
+                        for line in cell["input"]
+                        if not line.startswith(("%", "!"))
+                    )
+                    for worksheet in notebook["worksheets"]
+                    for cell in worksheet["cells"]
+                    if cell["cell_type"] == "code"
+                    and cell["input"]
+                    and not cell["input"][0].startswith(
+                        (
+                            "%%bash",
+                            "%%html",
+                            "%%javascript",
+                            "%%js",
+                            "%%latex",
+                            "%%markdown",
+                            "%%perl",
+                            "%%ruby",
+                            "%%script",
+                            "%%sh",
+                            "%%svg",
+                        )
+                    )
+                ]
+            else:
+                raise SyntaxError(f"Unsupported Jupyter Notebook version: {version!r}")
+
+        except (KeyError, IndexError) as e:
+            raise SyntaxError from e
+
+        def valid_cell(cell: str) -> bool:
+            try:
+                ast.parse(cell)
+            except:
+                return False
+            return True
+
+        # Merge cells, ignoring cells that don't compile
+        source = "\n".join([cell for cell in cells if valid_cell(cell)])
+        # https://ipython.readthedocs.io/en/stable/interactive/magics.html#cell-magics
+        # This allows "%%pypy", "%%python", "%%python2", "%%python3" and "%%writefile"
+        super().__init__(source)
 
 
 class SourceFolder(SourceI):

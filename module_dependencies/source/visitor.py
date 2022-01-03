@@ -13,22 +13,36 @@ class ParentedNodeVisitor(ast.NodeVisitor):
     to every node traversed via ``generic_visit``. This attribute
     points to the parent node in the AST."""
 
+    def __init__(self) -> None:
+        super().__init__()
+        # Track the depth of recursion
+        self.depth = 0
+
     def generic_visit(self, node: ast.AST):
         """Called if no explicit visitor function exists for a node.
         Places ``parent`` attribute on the child node.
 
         :param ast.AST node: Node in an AST.
         """
-        for _field, value in ast.iter_fields(node):
-            if isinstance(value, list):
-                for item in value:
-                    if isinstance(item, ast.AST):
-                        item.parent = node
-                        self.visit(item)
-            else:
-                if isinstance(value, ast.AST):
-                    value.parent = node
-                    self.visit(value)
+        self.depth += 1
+
+        if self.depth > 800:
+            # At a depth of 1000, this will cause a program crash on Windows.
+            raise RecursionError
+
+        try:
+            for _field, value in ast.iter_fields(node):
+                if isinstance(value, list):
+                    for item in value:
+                        if isinstance(item, ast.AST):
+                            item.parent = node
+                            self.visit(item)
+                else:
+                    if isinstance(value, ast.AST):
+                        value.parent = node
+                        self.visit(value)
+        finally:
+            self.depth = 0
 
 
 class ParserVisitor(ParentedNodeVisitor):
@@ -109,6 +123,7 @@ class ParserVisitor(ParentedNodeVisitor):
         Maybe clear everything when leaving a ClassDef or FuncDef
         Solution: Map all variables to types, which are appropriately scoped
         """
+        super().__init__()
         self.import_names: Set[Variable] = set()
         self.import_modules = set()
         self.prefixes = {}

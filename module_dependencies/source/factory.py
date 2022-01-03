@@ -8,6 +8,7 @@ from module_dependencies.source.source import (  # isort:skip
     SourceFile,
     SourceFolder,
     SourceString,
+    SourceJupyterNotebook,
 )
 
 
@@ -59,8 +60,13 @@ class Source(SourceI):
 
     @classmethod
     def from_file(cls, filename: str) -> SourceFile:
+        # TODO: What if a Jupyter Notebook file
         return SourceFile(filename)
 
     @classmethod
     def from_folder(cls, path: str) -> SourceFolder:
         return SourceFolder(path)
+
+    @classmethod
+    def from_jupyter(cls, source: str) -> SourceJupyterNotebook:
+        return SourceJupyterNotebook(source)
