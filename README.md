@@ -1,4 +1,5 @@
 # Module Dependencies
+## Brief overview
 The ``module_dependencies`` Python module allows you to gather the dependencies of specific modules in source code. It has been split into two main sections: ``Module`` and ``Source``.
 
 The former, ``Module``, supports functionality for mapping a module name to the usage of that module within open source repositories.
@@ -8,8 +9,8 @@ This is very useful when we are interested in determining which sections of a Py
 from module_dependencies import Module
 from pprint import pprint
 
-# Count attepts to find 1000 imports in Python files
-# and 1000 imports in Jupyter Notebooks
+# Attempt to find 1000 imports of the "nltk" module
+# in both Python files and Jupyter Notebooks each
 module = Module("nltk", count="1000")
 print(module.usage())
 module.plot()
@@ -48,14 +49,16 @@ Parsing Files: 100%|████████████████████
 ('nltk.translate.bleu_score.corpus_bleu', 29)]
 ```
 
-And then opens the following plot:
+And then opens an interactive version of the following plot:
+![usage](https://user-images.githubusercontent.com/37621491/147952784-57691744-b0e9-4ef1-a970-fe528bf1f029.png)
 
+(Note that the true plot is interactive, but this copy for GitHub is just a png)
 
 With the methods provided in the ``Module`` class, it becomes elementary to see which sections of code are frequently used, allowing you to prioritise these sections over rarely used sections.
 
 ---
 
-The latter section, ``Source``, supports functionality for mapping Python source code to the dependencies and imports within that file, for example:
+``module_dependencies`` also provides ``Source``, wich implements functionality for mapping Python source code to the dependencies and imports within that file. For example:
 
 ```python
 from module_dependencies import Source
@@ -76,10 +79,10 @@ This program outputs:
 
 ---
 
-### Documentation
+## Documentation
 More detailed documentation, including examples and an API Reference, can be found in the [online documentation]().
 
-### Installation
+## Installation
 ``module_dependencies`` can be installed directly via pip. It is recommended to set up a virtualenvironment before installation, although this is not strictly a requirement.
 
 The command to install ``module_dependencies`` is:
