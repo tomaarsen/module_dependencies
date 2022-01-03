@@ -1,0 +1,3 @@
+graft module_dependencies
+
+global-exclude *.py[cod]
