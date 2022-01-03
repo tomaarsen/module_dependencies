@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2D2D2D" />
   
-  <title>Home :: module_dependencies.source package</title>
+  <title>Home :: Source package</title>
   
   <link rel="index" title="Index" href="../genindex.html"/>
 
@@ -69,13 +69,28 @@
   
     <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="module_dependencies.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="module_dependencies.module.html">Module package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="module_dependencies.module.module.html">module.module module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_dependencies.module.session.html">module.session module</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Source package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="module_dependencies.source.api.html">source.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_dependencies.source.factory.html">source.factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_dependencies.source.source.html">source.source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="module_dependencies.source.visitor.html">source.visitor module</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing via <code class="docutils literal notranslate"><span class="pre">pip</span></code></a></li>
 </ul>
 
   
@@ -89,8 +104,8 @@
         <div id="main-content" role="main">
           
   <section id="module-module_dependencies.source">
-<span id="module-dependencies-source-package"></span><h1>module_dependencies.source package<a class="headerlink" href="#module-module_dependencies.source" title="Permalink to this headline">¶</a></h1>
-<p>Expected usage of module_dependencies:</p>
+<span id="source-package"></span><h1>Source package<a class="headerlink" href="#module-module_dependencies.source" title="Permalink to this headline">¶</a></h1>
+<p>Expected usage of module_dependencies’ <code class="docutils literal notranslate"><span class="pre">Source</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">module_dependencies</span> <span class="kn">import</span> <span class="n">Source</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="s2">&quot;my_folder&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">src</span><span class="o">.</span><span class="n">dependencies</span><span class="p">(</span><span class="s2">&quot;ast&quot;</span><span class="p">)</span>
@@ -100,6 +115,7 @@
 <p>Now we know which objects from the “ast” module are used in all code from <code class="docutils literal notranslate"><span class="pre">&quot;my_folder&quot;</span></code>.</p>
 <p>How to initialize a Source instance:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_jupyter</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_base64</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -126,10 +142,10 @@ a filename, a folder name)</p>
 <blockquote>
 <div><div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.api.html">module_dependencies.source.api module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.factory.html">module_dependencies.source.factory module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.source.html">module_dependencies.source.source module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.visitor.html">module_dependencies.source.visitor module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.api.html">source.api module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.factory.html">source.factory module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.source.html">source.source module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_dependencies.source.visitor.html">source.visitor module</a></li>
 </ul>
 </div>
 </div></blockquote>

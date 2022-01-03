@@ -1,1 +1,4 @@
-/* For overriding purposes */
+
+#side-menu-container {
+    width: 350px;
+}

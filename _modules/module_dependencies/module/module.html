@@ -68,13 +68,28 @@
   
     <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/module_dependencies.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/module_dependencies.module.html">Module package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.module.module.html">module.module module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.module.session.html">module.session module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/module_dependencies.source.html">Source package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.source.api.html">source.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.source.factory.html">source.factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.source.source.html">source.source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/module_dependencies.source.visitor.html">source.visitor module</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing via <code class="docutils literal notranslate"><span class="pre">pip</span></code></a></li>
 </ul>
 
   
@@ -123,14 +138,15 @@
 <span class="sd">            n_files()</span>
 <span class="sd">            n_repositories()</span>
 
-<span class="sd">        TODO: Alert users of `alert`, output `limitHit`</span>
-<span class="sd">        TODO: Something with percentages?</span>
-<span class="sd">        TODO: Info on just one object, e.g.</span>
-<span class="sd">        &gt;&gt;&gt; module.use(&quot;nltk.tokenize&quot;)</span>
-<span class="sd">        &quot;802 occurrences out of 83530 (0.96%)&quot;</span>
-<span class="sd">        TODO: Biggest repositories relying on some subsection.</span>
-<span class="sd">              Perhaps an extension to `repositories()`?</span>
-<span class="sd">              Add this to n_uses, n_files and n_repositories, too</span>
+<span class="sd">        ..</span>
+<span class="sd">            TODO: Alert users of `alert`, output `limitHit`</span>
+<span class="sd">            TODO: Something with percentages?</span>
+<span class="sd">            TODO: Info on just one object, e.g.</span>
+<span class="sd">            &gt;&gt;&gt; module.use(&quot;nltk.tokenize&quot;)</span>
+<span class="sd">            &quot;802 occurrences out of 83530 (0.96%)&quot;</span>
+<span class="sd">            TODO: Biggest repositories relying on some subsection.</span>
+<span class="sd">                Perhaps an extension to `repositories()`?</span>
+<span class="sd">                Add this to n_uses, n_files and n_repositories, too</span>
 
 <span class="sd">        :param module: The name of a Python module of which to find</span>
 <span class="sd">            the frequently used objects, e.g. `&quot;nltk&quot;`.</span>

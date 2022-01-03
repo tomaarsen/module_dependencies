@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2D2D2D" />
   
-  <title>Home :: Installing</title>
+  <title>Home :: Installing via pip</title>
   
   <link rel="index" title="Index" href="genindex.html"/>
 
@@ -69,13 +69,28 @@
   
     <p class="caption" role="heading"><span class="caption-text">module_dependencies</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api/module_dependencies.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/module_dependencies.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/module_dependencies.module.html">Module package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/module_dependencies.module.module.html">module.module module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/module_dependencies.module.session.html">module.session module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/module_dependencies.source.html">Source package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/module_dependencies.source.api.html">source.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/module_dependencies.source.factory.html">source.factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/module_dependencies.source.source.html">source.source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/module_dependencies.source.visitor.html">source.visitor module</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/tomaarsen/module_dependencies">GitHub</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing via <code class="docutils literal notranslate"><span class="pre">pip</span></code></a></li>
 </ul>
 
   
@@ -88,12 +103,16 @@
       <div id="main-content-container">
         <div id="main-content" role="main">
           
-  <section id="installing">
-<h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
-<p><cite>module_dependencies</cite> can be installed via pip. It is recommended to set up a virtualenvironment before installation, although this is not strictly a requirement.</p>
-<blockquote>
-<div><p>pip install module_dependencies</p>
-</div></blockquote>
+  <section id="installing-via-pip">
+<h1>Installing via <code class="docutils literal notranslate"><span class="pre">pip</span></code><a class="headerlink" href="#installing-via-pip" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">module_dependencies</span></code> can be installed via pip. It is recommended to set up a virtualenvironment before installation, although this is not strictly a requirement.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">module_dependencies</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">module_dependencies</span></code> requires Python 3.8 onwards.</p>
+</div>
 </section>
 
 
