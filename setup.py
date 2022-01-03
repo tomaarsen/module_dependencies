@@ -1,9 +1,17 @@
 from setuptools import find_packages, setup
 
+with open("requirements.txt") as f:
+    required = f.read().splitlines()
+
 setup(
     name="module_dependencies",
     version="0.2.2",
     url="https://github.com/tomaarsen/module_dependencies",
+    project_urls={
+        "Documentation": "https://tomaarsen.github.io/module_dependencies/",
+        "Source Code": "https://github.com/tomaarsen/module_dependencies",
+        "Issue Tracker": "https://github.com/tomaarsen/module_dependencies/issues",
+    },
     license="MIT",
     author="Tom Aarsen",
     author_email="ta.aarsen@gmail.com",
@@ -11,6 +19,7 @@ setup(
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     python_requires=">=3.8",
+    install_requires=required,
     zip_safe=False,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     include_package_data=True,
