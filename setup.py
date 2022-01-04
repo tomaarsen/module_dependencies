@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="module_dependencies",
-    version="0.2.4",
+    version="0.2.5",
     url="https://github.com/tomaarsen/module_dependencies",
     project_urls={
         "Documentation": "https://tomaarsen.github.io/module_dependencies/",
