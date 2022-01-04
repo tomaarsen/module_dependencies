@@ -8,4 +8,4 @@ Installing via ``pip``
     pip install module_dependencies
 
 .. note::
-    Note that ``module_dependencies`` requires Python 3.8 onwards.
+    Note that ``module_dependencies`` requires Python 3.7 onwards.
