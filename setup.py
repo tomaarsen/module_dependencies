@@ -18,7 +18,7 @@ setup(
     description="Gather module dependencies of source code",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    python_requires=">=3.8",
+    python_requires=">=3.7",
     install_requires=required,
     zip_safe=False,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),

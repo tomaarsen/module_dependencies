@@ -1,7 +1,12 @@
 import logging
 import warnings
 from collections import Counter, defaultdict
-from functools import cached_property, lru_cache
+from functools import lru_cache
+
+try:
+    from functools import cached_property
+except ImportError:
+    cached_property = lambda f: property(lru_cache()(f))
 from typing import Any, Dict, List, Tuple, Union
 
 from module_dependencies.module.session import ModuleSession

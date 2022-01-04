@@ -90,4 +90,4 @@ The command to install ``module_dependencies`` is:
 pip install module_dependencies
 ```
 
-Note that ``module_dependencies`` requires Python 3.8 onwards.
+Note that ``module_dependencies`` requires Python 3.7 onwards.
