@@ -12,7 +12,7 @@ from pprint import pprint
 # Attempt to find 1000 imports of the "nltk" module
 # in both Python files and Jupyter Notebooks each
 module = Module("nltk", count="1000")
-print(module.usage())
+pprint(module.usage()[:15])
 module.plot()
 ```
 
