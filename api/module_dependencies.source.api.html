@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2D2D2D" />
@@ -17,6 +17,7 @@
       <script type="text/javascript" src="../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
   
 
@@ -108,7 +109,7 @@
         <div id="main-content" role="main">
           
   <section id="module-module_dependencies.source.api">
-<span id="source-api-module"></span><h1>source.api module<a class="headerlink" href="#module-module_dependencies.source.api" title="Permalink to this headline">¶</a></h1>
+<span id="source-api-module"></span><h1>source.api module<a class="headerlink" href="#module-module_dependencies.source.api" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="module_dependencies.source.api.SourceI">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.api.</span></span><span class="sig-name descname"><span class="pre">SourceI</span></span><a class="reference internal" href="../_modules/module_dependencies/source/api.html#SourceI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.api.SourceI" title="Permalink to this definition">¶</a></dt>
@@ -151,10 +152,10 @@ Provides the following methods:</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Mapping of filenames to <code class="docutils literal notranslate"><span class="pre">Source.from_file(filename).imports()</span></code>.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dict[str, List[str]]</p>
 </dd>
 </dl>
@@ -172,10 +173,10 @@ Provides the following methods:</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of modules</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>List[str]</p>
 </dd>
 </dl>
@@ -205,16 +206,16 @@ originating from <code class="docutils literal notranslate"><span class="pre">mo
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>module</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Module string or list of module strings.
 For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
 are returned. Defaults to None.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Mapping of filenames to <code class="docutils literal notranslate"><span class="pre">Source.from_file(filename).dependencies(module)</span></code>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, List[str]]</p>
 </dd>
 </dl>
@@ -231,16 +232,16 @@ are returned. Defaults to None.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>module</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Module string or list of module strings.
 For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
 are returned. Defaults to None.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>List of dot-separated modules, variables, functions and classes.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>

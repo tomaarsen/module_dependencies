@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2D2D2D" />
@@ -17,6 +17,7 @@
       <script type="text/javascript" src="../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
   
 
@@ -108,11 +109,11 @@
         <div id="main-content" role="main">
           
   <section id="module-module_dependencies.source.visitor">
-<span id="source-visitor-module"></span><h1>source.visitor module<a class="headerlink" href="#module-module_dependencies.source.visitor" title="Permalink to this headline">¶</a></h1>
+<span id="source-visitor-module"></span><h1>source.visitor module<a class="headerlink" href="#module-module_dependencies.source.visitor" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParentedNodeVisitor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.visitor.</span></span><span class="sig-name descname"><span class="pre">ParentedNodeVisitor</span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParentedNodeVisitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ast.NodeVisitor</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeVisitor</span></code></p>
 <p>Subclass of NodeVisitor which adds the <code class="docutils literal notranslate"><span class="pre">parent</span></code> attribute
 to every node traversed via <code class="docutils literal notranslate"><span class="pre">generic_visit</span></code>. This attribute
 points to the parent node in the AST.</p>
@@ -120,7 +121,7 @@ points to the parent node in the AST.</p>
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParentedNodeVisitor.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParentedNodeVisitor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
@@ -128,11 +129,11 @@ points to the parent node in the AST.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParentedNodeVisitor.generic_visit">
-<span class="sig-name descname"><span class="pre">generic_visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParentedNodeVisitor.generic_visit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor.generic_visit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">generic_visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AST</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParentedNodeVisitor.generic_visit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParentedNodeVisitor.generic_visit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called if no explicit visitor function exists for a node.
 Places <code class="docutils literal notranslate"><span class="pre">parent</span></code> attribute on the child node.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>) – Node in an AST.</p>
 </dd>
 </dl>
@@ -154,23 +155,23 @@ Places <code class="docutils literal notranslate"><span class="pre">parent</span
 <dl class="py class">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.visitor.</span></span><span class="sig-name descname"><span class="pre">ParserVisitor</span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#module_dependencies.source.visitor.ParentedNodeVisitor" title="module_dependencies.source.visitor.ParentedNodeVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">module_dependencies.source.visitor.ParentedNodeVisitor</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#module_dependencies.source.visitor.ParentedNodeVisitor" title="module_dependencies.source.visitor.ParentedNodeVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParentedNodeVisitor</span></code></a></p>
 <p>An AST NodeVisitor for determining usage of a module.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AST</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize a ParserVisitor responsible for determining usage of
 the <code class="docutils literal notranslate"><span class="pre">module</span></code> module in an AST.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>module</strong> (<em>str</em>) – The name of the module to determine the usage of, e.g.
 <code class="docutils literal notranslate"><span class="pre">&quot;nltk&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;nltk.tokenize&quot;</span></code>, optional.
 If None, then the usage of all imported modules is gathered.</p></li>
-<li><p><strong>tree</strong> (<em>ast.AST</em>) – </p></li>
+<li><p><strong>tree</strong> (<em>AST</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Variables</dt>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>import_names</strong> (<em>Set</em><em>[</em><em>Variable</em><em>]</em>) – <p>Set of names of imported objects, e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="s1">&#39;product&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;chain&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;groupby&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;np&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s1">&#39;word_tokenize&#39;</span><span class="p">,)}</span>
@@ -224,29 +225,29 @@ If None, then the usage of all imported modules is gathered.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.propagate_attributes">
-<span class="sig-name descname"><span class="pre">propagate_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.propagate_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.propagate_attributes" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">propagate_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AST</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.propagate_attributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.propagate_attributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively propagate upwards through the AST starting from <code class="docutils literal notranslate"><span class="pre">node</span></code>,
 gathering the full name of the variable. This method is meant to be called
 from the parent of an <code class="docutils literal notranslate"><span class="pre">ast.Name</span></code> node, which helps produce e.g.
 <code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'tokenize',</span> <span class="pre">'PunktSentenceTokenizer')</span></code> when the <code class="docutils literal notranslate"><span class="pre">ast.Name</span></code> only
 contained <code class="docutils literal notranslate"><span class="pre">'PunktSentenceTokenizer'</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>) – The node where we start propogating upwards.</p>
 </dd>
-<dt class="field-even">Return Variable</dt>
+<dt class="field-even">Return Variable<span class="colon">:</span></dt>
 <dd class="field-even"><p>The names of the tokens that occur before <code class="docutils literal notranslate"><span class="pre">node</span></code>,
 if any.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[str, …]</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Tuple</em>[str, …]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit_Import">
-<span class="sig-name descname"><span class="pre">visit_Import</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.Import</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_Import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_Import" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">visit_Import</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Import</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_Import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_Import" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when encountering an Import node, e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </pre></div>
@@ -255,7 +256,7 @@ if any.</p>
 <code class="docutils literal notranslate"><span class="pre">('np',)</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.import_names</span></code>, and the mapping of
 <code class="docutils literal notranslate"><span class="pre">('numpy',)</span></code> to <code class="docutils literal notranslate"><span class="pre">('np',)</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.aliases</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.Import</em>) – The node with the import information.</p>
 </dd>
 </dl>
@@ -263,7 +264,7 @@ if any.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit_ImportFrom">
-<span class="sig-name descname"><span class="pre">visit_ImportFrom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.ImportFrom</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_ImportFrom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_ImportFrom" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">visit_ImportFrom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ImportFrom</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_ImportFrom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_ImportFrom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when encountering an ImportFrom node, e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">wordnet</span> <span class="k">as</span> <span class="n">wn</span>
 </pre></div>
@@ -273,7 +274,7 @@ if any.</p>
 to <code class="docutils literal notranslate"><span class="pre">('wordnet',)</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.aliases</span></code>, and the mapping of
 <code class="docutils literal notranslate"><span class="pre">('wordnet',)</span></code> to <code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'corpus')</span></code> is added to <code class="docutils literal notranslate"><span class="pre">self.prefixes</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.ImportFrom</em>) – The node with the import-from information.</p>
 </dd>
 </dl>
@@ -281,7 +282,7 @@ to <code class="docutils literal notranslate"><span class="pre">('wordnet',)</sp
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.visit_Name">
-<span class="sig-name descname"><span class="pre">visit_Name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.Name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_Name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_Name" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">visit_Name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/module_dependencies/source/visitor.html#ParserVisitor.visit_Name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.visit_Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when encountering a Name node, which exists whenever
 a variable is used in some capacity. This Name node consists
 only of the most left-most part of a variable, e.g. <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>
@@ -293,7 +294,7 @@ deal with aliases (e.g. <code class="docutils literal notranslate"><span class="
 prefixes, e.g. <code class="docutils literal notranslate"><span class="pre">('word_tokenize',)</span></code> to
 <code class="docutils literal notranslate"><span class="pre">('nltk',</span> <span class="pre">'tokenize',</span> <span class="pre">'word_tokenize')</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.Name</em>) – The Name node representing the use of a
 variable in an AST.</p>
 </dd>
@@ -314,10 +315,10 @@ variable in an AST.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Set of names of modules from which objects are imported.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Set[Variable]</p>
 </dd>
 </dl>
@@ -339,41 +340,41 @@ variable in an AST.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">param module</dt>
+<dt class="field-odd">param module<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Module string or list of module strings.
 For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
 are returned. Defaults to None.</p>
 </dd>
-<dt class="field-even">type module</dt>
+<dt class="field-even">type module<span class="colon">:</span></dt>
 <dd class="field-even"><p>Union[Iterable[str], str], optional</p>
 </dd>
-<dt class="field-odd">yield</dt>
+<dt class="field-odd">yield<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A tuple of tokens representing the use of an imported object.</p>
 </dd>
-<dt class="field-even">rtype</dt>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
 <dd class="field-even"><p>Iterator[Variable]</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>modules</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>]</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Iterator[Tuple[str, …]]</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Iterator</em>[<em>Tuple</em>[str, …]]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.visitor.ParserVisitor.generic_visit">
-<span class="sig-name descname"><span class="pre">generic_visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ast.AST</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.generic_visit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">generic_visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AST</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#module_dependencies.source.visitor.ParserVisitor.generic_visit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called if no explicit visitor function exists for a node.
 Places <code class="docutils literal notranslate"><span class="pre">parent</span></code> attribute on the child node.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>node</strong> (<em>ast.AST</em>) – Node in an AST.</p>
 </dd>
 </dl>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2D2D2D" />
@@ -17,6 +17,7 @@
       <script type="text/javascript" src="../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
   
 
@@ -108,11 +109,11 @@
         <div id="main-content" role="main">
           
   <section id="module-module_dependencies.source.factory">
-<span id="source-factory-module"></span><h1>source.factory module<a class="headerlink" href="#module-module_dependencies.source.factory" title="Permalink to this headline">¶</a></h1>
+<span id="source-factory-module"></span><h1>source.factory module<a class="headerlink" href="#module-module_dependencies.source.factory" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="module_dependencies.source.factory.Source">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.source.factory.</span></span><span class="sig-name descname"><span class="pre">Source</span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="module_dependencies.source.api.html#module_dependencies.source.api.SourceI" title="module_dependencies.source.api.SourceI"><code class="xref py py-class docutils literal notranslate"><span class="pre">module_dependencies.source.api.SourceI</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="module_dependencies.source.api.html#module_dependencies.source.api.SourceI" title="module_dependencies.source.api.SourceI"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourceI</span></code></a></p>
 <p>Factory class for instances of the <code class="docutils literal notranslate"><span class="pre">SourceI</span></code> interface.
 The specific subclass of <code class="docutils literal notranslate"><span class="pre">SourceI</span></code> is chosen based on the
 contents of the <code class="docutils literal notranslate"><span class="pre">source</span></code> input parameter.</p>
@@ -138,10 +139,10 @@ specific subclasses of the <code class="docutils literal notranslate"><span clas
 <dt class="sig sig-object py" id="module_dependencies.source.factory.Source.__new__">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.__new__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.__new__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -149,65 +150,65 @@ specific subclasses of the <code class="docutils literal notranslate"><span clas
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.factory.Source.from_string">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceString" title="module_dependencies.source.source.SourceString"><span class="pre">module_dependencies.source.source.SourceString</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_string" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceString" title="module_dependencies.source.source.SourceString"><span class="pre">SourceString</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_string" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceString" title="module_dependencies.source.source.SourceString">module_dependencies.source.source.SourceString</a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceString" title="module_dependencies.source.source.SourceString"><em>SourceString</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.factory.Source.from_base64">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_base64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64" title="module_dependencies.source.source.SourceBase64"><span class="pre">module_dependencies.source.source.SourceBase64</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_base64"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_base64" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_base64</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64" title="module_dependencies.source.source.SourceBase64"><span class="pre">SourceBase64</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_base64"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_base64" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>encoded</strong> (<em>str</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64" title="module_dependencies.source.source.SourceBase64">module_dependencies.source.source.SourceBase64</a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64" title="module_dependencies.source.source.SourceBase64"><em>SourceBase64</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.factory.Source.from_file">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFile" title="module_dependencies.source.source.SourceFile"><span class="pre">module_dependencies.source.source.SourceFile</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_file" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFile" title="module_dependencies.source.source.SourceFile"><span class="pre">SourceFile</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_file" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFile" title="module_dependencies.source.source.SourceFile">module_dependencies.source.source.SourceFile</a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFile" title="module_dependencies.source.source.SourceFile"><em>SourceFile</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.factory.Source.from_folder">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder" title="module_dependencies.source.source.SourceFolder"><span class="pre">module_dependencies.source.source.SourceFolder</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_folder" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder" title="module_dependencies.source.source.SourceFolder"><span class="pre">SourceFolder</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_folder" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder" title="module_dependencies.source.source.SourceFolder">module_dependencies.source.source.SourceFolder</a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder" title="module_dependencies.source.source.SourceFolder"><em>SourceFolder</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="module_dependencies.source.factory.Source.from_jupyter">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_jupyter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook" title="module_dependencies.source.source.SourceJupyterNotebook"><span class="pre">module_dependencies.source.source.SourceJupyterNotebook</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_jupyter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_jupyter" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_jupyter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook" title="module_dependencies.source.source.SourceJupyterNotebook"><span class="pre">SourceJupyterNotebook</span></a></span></span><a class="reference internal" href="../_modules/module_dependencies/source/factory.html#Source.from_jupyter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.source.factory.Source.from_jupyter" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook" title="module_dependencies.source.source.SourceJupyterNotebook">module_dependencies.source.source.SourceJupyterNotebook</a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook" title="module_dependencies.source.source.SourceJupyterNotebook"><em>SourceJupyterNotebook</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -223,16 +224,16 @@ specific subclasses of the <code class="docutils literal notranslate"><span clas
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>module</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Module string or list of module strings.
 For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
 are returned. Defaults to None.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>List of dot-separated modules, variables, functions and classes.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
@@ -262,16 +263,16 @@ originating from <code class="docutils literal notranslate"><span class="pre">mo
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>module</strong> (<em>Union</em><em>[</em><em>Iterable</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Module string or list of module strings.
 For example: <code class="docutils literal notranslate"><span class="pre">'nltk'</span></code>, <code class="docutils literal notranslate"><span class="pre">'nltk.parse'</span></code> or <code class="docutils literal notranslate"><span class="pre">['nltk.parse',</span> <span class="pre">'nltk.stem']</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">module</span></code> is None, then all uses of imported variables, functions and classes
 are returned. Defaults to None.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Mapping of filenames to <code class="docutils literal notranslate"><span class="pre">Source.from_file(filename).dependencies(module)</span></code>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, List[str]]</p>
 </dd>
 </dl>
@@ -289,10 +290,10 @@ are returned. Defaults to None.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List of modules</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>List[str]</p>
 </dd>
 </dl>
@@ -328,10 +329,10 @@ are returned. Defaults to None.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Mapping of filenames to <code class="docutils literal notranslate"><span class="pre">Source.from_file(filename).imports()</span></code>.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dict[str, List[str]]</p>
 </dd>
 </dl>

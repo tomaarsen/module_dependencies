@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#2D2D2D" />
@@ -17,6 +17,7 @@
       <script type="text/javascript" src="../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
   
 
@@ -108,7 +109,7 @@
         <div id="main-content" role="main">
           
   <section id="module-module_dependencies.module.module">
-<span id="module-module-module"></span><h1>module.module module<a class="headerlink" href="#module-module_dependencies.module.module" title="Permalink to this headline">¶</a></h1>
+<span id="module-module-module"></span><h1>module.module module<a class="headerlink" href="#module-module_dependencies.module.module" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="module_dependencies.module.module.Module">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module_dependencies.module.module.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><a class="reference internal" href="../_modules/module_dependencies/module/module.html#Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module_dependencies.module.module.Module" title="Permalink to this definition">¶</a></dt>
@@ -129,7 +130,7 @@ which sections of a Python module are most frequently used.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>module</strong> (<em>str</em>) – The name of a Python module of which to find
 the frequently used objects, e.g. <cite>“nltk”</cite>.</p></li>
@@ -146,7 +147,7 @@ the data is required. Defaults to True.</p></li>
 <li><p><strong>jupyter</strong> (<em>bool</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -176,10 +177,10 @@ and then parses it using <cite>Source(…).dependencies()</cite>.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The cached, parsed SourceGraph API data.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dict</p>
 </dd>
 </dl>
@@ -194,7 +195,7 @@ that <cite>var_two</cite> can be created by inserting strings into the tuple of
 can be created by inserting <cite>‘tokenize’</cite> into a <cite>var_one</cite> as
 <cite>(‘nltk’, ‘word_tokenize’)</cite>, so this function returns True.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>var_one</strong> (<em>Tuple</em><em>[</em><em>str</em><em>]</em>) – Tuple of strings representing the path to a Python
 object, e.g. <cite>(‘nltk’, ‘word_tokenize’)</cite>.</p></li>
@@ -202,10 +203,10 @@ object, e.g. <cite>(‘nltk’, ‘word_tokenize’)</cite>.</p></li>
 object, e.g. <cite>(‘nltk’, ‘tokenize’, ‘word_tokenize’)</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if <cite>var_one</cite> is a subsection of <cite>var_two</cite>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -225,7 +226,7 @@ object, e.g. <cite>(‘nltk’, ‘tokenize’, ‘word_tokenize’)</cite>.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
 into <cite>“nltk.tokenize.word_tokenize”</cite>. May give incorrect results
@@ -236,10 +237,10 @@ longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 <li><p><strong>cumulative</strong> (<em>bool</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of object-occurrence tuples, sorted by most to least frequent.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[Tuple[str, int]]</p>
 </dd>
 </dl>
@@ -284,7 +285,7 @@ and the object’s children.</p>
 </div>
 <p>TODO: Optimize this by relying on usage() better for cumulative</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>full_name</strong> (<em>bool</em>) – Whether each dictionary key should be the full path,
 e.g. <cite>“nltk.tokenize”</cite>, rather than just the right-most section.
@@ -301,11 +302,11 @@ longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 <li><p><strong>cumulative</strong> – bool</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary mapping objects to how often that object occurred
 in the parsed source code.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[str, Union[Dict, int]]</p>
 </dd>
 </dl>
@@ -364,13 +365,13 @@ This might happen when a Python 2 file was fetched.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A mapping of repositories</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dict[str, Dict[str, Any]]</p>
 </dd>
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obj</strong> (<em>str</em>) – </p>
 </dd>
 </dl>
@@ -382,7 +383,7 @@ This might happen when a Python 2 file was fetched.</p>
 <dd><p>Display a plotly Sunburst plot showing the frequency of use
 of different sections of this module.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>merge</strong> (<em>bool</em>) – Whether to attempt to merge e.g. <cite>“nltk.word_tokenize”</cite>
 into <cite>“nltk.tokenize.word_tokenize”</cite>. May give incorrect results
@@ -397,7 +398,7 @@ longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 <li><p><strong>show</strong> (<em>bool</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -415,14 +416,14 @@ longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The number of uses, i.e. the number of times
 <cite>self.module</cite> was used in the fetched files.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
 </dd>
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>obj</strong> (<em>str</em>) – </p>
 </dd>
 </dl>
@@ -440,12 +441,12 @@ longer paths, e.g. <cite>“tensorflow.float32”</cite> will become
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The number of fetched files in which <cite>self.module</cite> was
 imported. Generally equivalent or similar to <cite>count</cite> if it
 was provided.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
@@ -464,11 +465,11 @@ was provided.</p>
 </div>
 <p>TODO: Exclude errorred code</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The number of fetched repositories in which <cite>self.module</cite>
 was imported.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
