@@ -80,7 +80,7 @@ This program outputs:
 ---
 
 ## Documentation
-More detailed documentation, including examples and an API Reference, can be found in the [online documentation](https://tomaarsen.github.io/module_dependencies/).
+More detailed documentation, including examples and an API Reference, can be found in the [online documentation](https://tomaarsen.github.io/module_dependencies/). I also wrote a [paper](https://github.com/tomaarsen/module_dependencies/blob/main/paper.pdf) about `module_dependencies`.
 
 ## Installation
 ``module_dependencies`` can be installed directly via pip. It is recommended to set up a virtualenvironment before installation, although this is not strictly a requirement.
