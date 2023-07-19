@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import time
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple, Union, Optional
 
 import requests
 
@@ -12,7 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class ModuleSession(requests.Session):
-    def __init__(self) -> None:
+    def __init__(self, token: Optional[str]=None) -> None:
+        """
+        :param token: Sourcegraph API token to avoid rate-limiting 429 error
+        :type token: str, optional
+        """
         super().__init__()
 
         # The API URL to query
@@ -41,6 +45,8 @@ class ModuleSession(requests.Session):
         # self.base_import_format = r'"{module}"'
         subpackage_import_format = r'"{module}[\\s\\.,$]"'  # TODO: Check performance of this vs using base_import_format with left-most module
 
+        self.token = token
+        
         # The supported languages to fetch
         self.config = {
             "Python": {
@@ -266,4 +272,8 @@ class ModuleSession(requests.Session):
         payload = self.construct_payload(
             module, count=count, timeout=timeout, language=language
         )
-        return super().post(self.url, json=payload)
+        if self.token is not None:
+            logger.info('Using Sourcegraph API token')
+            return super().post(self.url, json=payload, headers={"Authorization": f"token {self.token}"})
+        else:
+            return super().post(self.url, json=payload)

@@ -2,6 +2,7 @@ import logging
 import warnings
 from collections import Counter, defaultdict
 from functools import lru_cache
+from typing import Optional
 
 try:
     from functools import cached_property
@@ -19,11 +20,12 @@ class Module:
     def __init__(
         self,
         module: str,
+        token: Optional[str] = None,
         count: Union[int, str] = "25000",
         verbose: bool = True,
         lazy: bool = True,
         python: bool = True,
-        jupyter: bool = True,
+        jupyter: bool = True
     ) -> None:
         """Create a Module instance that can be used to find
         which sections of a Python module are most frequently used.
@@ -51,6 +53,8 @@ class Module:
         :param module: The name of a Python module of which to find
             the frequently used objects, e.g. `"nltk"`.
         :type module: str
+        :param token: Sourcegraph API token to avoid rate-limiting 429 error
+        :type token: str, optional
         :param count: The maximum number of times an import of `module`
             should be fetched. Roughly equivalent to the number of fetched
             files. Either an integer, a string representing an integer,
@@ -68,7 +72,8 @@ class Module:
         self.count = count
         self.timeout = "10s"
         self.verbose = verbose
-
+        self.token = token
+        
         languages = []
         if python:
             languages.append("Python")
@@ -110,7 +115,7 @@ class Module:
         :return: The cached, parsed SourceGraph API data.
         :rtype: Dict
         """
-        return ModuleSession().fetch_and_parse(
+        return ModuleSession(token=self.token).fetch_and_parse(
             self.module, self.count, self.timeout, self.verbose, self.languages
         )
 
