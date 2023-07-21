@@ -275,5 +275,4 @@ class ModuleSession(requests.Session):
         if self.token is not None:
             logger.info('Using Sourcegraph API token')
             return super().post(self.url, json=payload, headers={"Authorization": f"token {self.token}"})
-        else:
-            return super().post(self.url, json=payload)
+        return super().post(self.url, json=payload)
