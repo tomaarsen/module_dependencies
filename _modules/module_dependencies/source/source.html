@@ -14,10 +14,8 @@
 
   <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/sphinx_highlight.js"></script>
   
 
   <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
@@ -123,12 +121,12 @@
 
 
 <div class="viewcode-block" id="SourceString"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceString">[docs]</a><span class="k">class</span> <span class="nc">SourceString</span><span class="p">(</span><span class="n">SourceI</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implementation of ``SourceI`` interface. Reads a string which</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of ``SourceI`` interface. Reads a string which</span>
 <span class="sd">    represents Python source code, and parses it for dependencies</span>
 <span class="sd">    and import statements.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SourceString.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceString.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read a string with Python source code.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a string with Python source code.</span>
 
 <span class="sd">        Example usage::</span>
 
@@ -156,11 +154,11 @@
 
 
 <div class="viewcode-block" id="SourceBase64"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64">[docs]</a><span class="k">class</span> <span class="nc">SourceBase64</span><span class="p">(</span><span class="n">SourceString</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reads a base64 encoded string which represents Python source code,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a base64 encoded string which represents Python source code,</span>
 <span class="sd">    and parses it for dependencies and import statements.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SourceBase64.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceBase64.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read a string with base64 encoded Python source code.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a string with base64 encoded Python source code.</span>
 
 <span class="sd">        Example usage::</span>
 
@@ -178,11 +176,11 @@
 
 
 <div class="viewcode-block" id="SourceFile"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFile">[docs]</a><span class="k">class</span> <span class="nc">SourceFile</span><span class="p">(</span><span class="n">SourceString</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reads a path to a Python file, and parses it for dependencies</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a path to a Python file, and parses it for dependencies</span>
 <span class="sd">    and import statements.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SourceFile.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFile.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read a file path to a Python file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a file path to a Python file.</span>
 
 <span class="sd">        Example usage::</span>
 
@@ -200,11 +198,11 @@
 
 
 <div class="viewcode-block" id="SourceJupyterNotebook"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook">[docs]</a><span class="k">class</span> <span class="nc">SourceJupyterNotebook</span><span class="p">(</span><span class="n">SourceString</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reads a string which represents a Jupyter Notebook,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a string which represents a Jupyter Notebook,</span>
 <span class="sd">    and parses it for dependencies and import statements.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SourceJupyterNotebook.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceJupyterNotebook.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jupyter_source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read a Jupyter Notebook.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a Jupyter Notebook.</span>
 
 <span class="sd">        .. note::</span>
 <span class="sd">            Cells that contain un-compilable code (e.g. ``print &#39;hello&#39;`` from Python 2)</span>
@@ -330,11 +328,11 @@
 
 
 <div class="viewcode-block" id="SourceFolder"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder">[docs]</a><span class="k">class</span> <span class="nc">SourceFolder</span><span class="p">(</span><span class="n">SourceI</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reads a path to a folder, and parses each Python file for dependencies</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a path to a folder, and parses each Python file for dependencies</span>
 <span class="sd">    and import statements.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SourceFolder.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.source.source.html#module_dependencies.source.source.SourceFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Read a path to a folder containing Python file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a path to a folder containing Python file.</span>
 <span class="sd">        The Python files will be looked for recursively,</span>
 <span class="sd">        and the folder may contain non-Python files.</span>
 

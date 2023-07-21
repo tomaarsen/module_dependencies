@@ -14,10 +14,8 @@
 
   <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/sphinx_highlight.js"></script>
   
 
   <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
@@ -112,7 +110,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
 
@@ -122,7 +120,11 @@
 
 
 <div class="viewcode-block" id="ModuleSession"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession">[docs]</a><span class="k">class</span> <span class="nc">ModuleSession</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">):</span>
-<div class="viewcode-block" id="ModuleSession.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ModuleSession.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param token: Sourcegraph API token to avoid rate-limiting 429 error</span>
+<span class="sd">        :type token: str, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="c1"># The API URL to query</span>
@@ -151,6 +153,8 @@
         <span class="c1"># self.base_import_format = r&#39;&quot;{module}&quot;&#39;</span>
         <span class="n">subpackage_import_format</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;&quot;</span><span class="si">{module}</span><span class="s1">[</span><span class="se">\\</span><span class="s1">s</span><span class="se">\\</span><span class="s1">.,$]&quot;&#39;</span>  <span class="c1"># TODO: Check performance of this vs using base_import_format with left-most module</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        
         <span class="c1"># The supported languages to fetch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;Python&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -179,7 +183,7 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">languages</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the parsed data from the SourceGraph API.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the parsed data from the SourceGraph API.</span>
 <span class="sd">        This method loads the data once upon request and then parses it</span>
 <span class="sd">        using `Source(...).dependencies()`.</span>
 
@@ -206,7 +210,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">combine_results</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            {&#39;alert&#39;: None,</span>
 <span class="sd">            &#39;cloning&#39;: [],</span>
 <span class="sd">            &#39;elapsedMilliseconds&#39;: 569,</span>
@@ -272,7 +276,7 @@
 <div class="viewcode-block" id="ModuleSession.parse_raw_response"><a class="viewcode-back" href="../../../api/module_dependencies.module.session.html#module_dependencies.module.session.ModuleSession.parse_raw_response">[docs]</a>    <span class="k">def</span> <span class="nf">parse_raw_response</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">language</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Strip `content` from the raw input data, and replace it with</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Strip `content` from the raw input data, and replace it with</span>
 <span class="sd">        `dependencies` and `parse_error`.</span>
 
 <span class="sd">        :param results: Raw output from `session.post(self.module, ...)`</span>
@@ -321,7 +325,7 @@
         <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span><span class="p">,</span>
         <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct the payload to send to SourceGraph. The payload is a dictionary</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the payload to send to SourceGraph. The payload is a dictionary</span>
 <span class="sd">        with &quot;variables&quot; and &quot;query&quot; keys.</span>
 
 <span class="sd">        :param module: String of the module we are interested in,</span>
@@ -376,6 +380,9 @@
         <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct_payload</span><span class="p">(</span>
             <span class="n">module</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="n">language</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Using Sourcegraph API token&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;token </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">})</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span></div></div>
 </pre></div>
 

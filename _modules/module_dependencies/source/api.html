@@ -14,10 +14,8 @@
 
   <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/sphinx_highlight.js"></script>
   
 
   <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
@@ -112,7 +110,7 @@
 
 
 <div class="viewcode-block" id="SourceI"><a class="viewcode-back" href="../../../api/module_dependencies.source.api.html#module_dependencies.source.api.SourceI">[docs]</a><span class="k">class</span> <span class="nc">SourceI</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interface for ``Source`` classes.</span>
 <span class="sd">    Provides the following methods:</span>
 
@@ -123,7 +121,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SourceI.imports_mapping"><a class="viewcode-back" href="../../../api/module_dependencies.source.api.html#module_dependencies.source.api.SourceI.imports_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">imports_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a mapping from filenames to a list of modules that were imported from in ``source``.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a mapping from filenames to a list of modules that were imported from in ``source``.</span>
 
 <span class="sd">        Only defined for ``SourceFolder``, i.e. instances returned from ``Source.from_folder()``.</span>
 
@@ -157,7 +155,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="SourceI.imports"><a class="viewcode-back" href="../../../api/module_dependencies.source.api.html#module_dependencies.source.api.SourceI.imports">[docs]</a>    <span class="k">def</span> <span class="nf">imports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of modules that were imported from in ``source``.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of modules that were imported from in ``source``.</span>
 
 <span class="sd">        Example usage::</span>
 
@@ -174,7 +172,7 @@
 <div class="viewcode-block" id="SourceI.dependencies_mapping"><a class="viewcode-back" href="../../../api/module_dependencies.source.api.html#module_dependencies.source.api.SourceI.dependencies_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">dependencies_mapping</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a mapping from filenames to a list of variables, functions and classes</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a mapping from filenames to a list of variables, functions and classes</span>
 <span class="sd">        originating from ``module`` that were used in that file.</span>
 
 <span class="sd">        Only defined for ``SourceFolder``, i.e. instances returned from ``Source.from_folder()``.</span>
@@ -207,7 +205,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="SourceI.dependencies"><a class="viewcode-back" href="../../../api/module_dependencies.source.api.html#module_dependencies.source.api.SourceI.dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of variables, functions and classes originating from ``module``.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of variables, functions and classes originating from ``module``.</span>
 
 <span class="sd">        Example usage::</span>
 

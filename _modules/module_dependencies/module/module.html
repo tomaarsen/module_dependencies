@@ -14,10 +14,8 @@
 
   <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
       <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
-      <script type="text/javascript" src="../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/sphinx_highlight.js"></script>
   
 
   <script src="https://email.tl.fortawesome.com/c/eJxNjUEOgyAQAF8jR7Kw6wIHDh7sP1Cw2mgxgmn6-3JsMqc5zEQfE8dkxOY1KKMUOI3ACFKRJpSW2AAp7ontYIaxI6i7XPJVwyeVfCQ550Os3jLrGSNOLgbdAy6s0PBk2TFNjEbsfq31LB0OnX407pJa5v2faRadwSW63mn5KuLyR9j2tgx3zecanl-55R_-jjPs"></script> 
@@ -112,6 +110,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
@@ -129,13 +128,14 @@
 <div class="viewcode-block" id="Module.__init__"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">count</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;25000&quot;</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">lazy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">python</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">jupyter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">jupyter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a Module instance that can be used to find</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Module instance that can be used to find</span>
 <span class="sd">        which sections of a Python module are most frequently used.</span>
 
 <span class="sd">        This class exposes the following methods::</span>
@@ -161,6 +161,8 @@
 <span class="sd">        :param module: The name of a Python module of which to find</span>
 <span class="sd">            the frequently used objects, e.g. `&quot;nltk&quot;`.</span>
 <span class="sd">        :type module: str</span>
+<span class="sd">        :param token: Sourcegraph API token to avoid rate-limiting 429 error</span>
+<span class="sd">        :type token: str, optional</span>
 <span class="sd">        :param count: The maximum number of times an import of `module`</span>
 <span class="sd">            should be fetched. Roughly equivalent to the number of fetched</span>
 <span class="sd">            files. Either an integer, a string representing an integer,</span>
@@ -178,7 +180,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="s2">&quot;10s&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        
         <span class="n">languages</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">python</span><span class="p">:</span>
             <span class="n">languages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Python&quot;</span><span class="p">)</span>
@@ -196,7 +199,7 @@
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Cached property of a Module, containing the parsed data from</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cached property of a Module, containing the parsed data from</span>
 <span class="sd">        the SourceGraph API. This property lazily loads the data once upon request,</span>
 <span class="sd">        and then parses it using `Source(...).dependencies()`.</span>
 
@@ -220,13 +223,13 @@
 <span class="sd">        :return: The cached, parsed SourceGraph API data.</span>
 <span class="sd">        :rtype: Dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ModuleSession</span><span class="p">()</span><span class="o">.</span><span class="n">fetch_and_parse</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">ModuleSession</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">fetch_and_parse</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">languages</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Module.is_subsection_of"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.is_subsection_of">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">is_subsection_of</span><span class="p">(</span><span class="n">var_one</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">var_two</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check whether `var_one` is a subsection of `var_two`. This means</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether `var_one` is a subsection of `var_two`. This means</span>
 <span class="sd">        that `var_two` can be created by inserting strings into the tuple of</span>
 <span class="sd">        `var_one`. For example, `var_two` as `(&#39;nltk&#39;, &#39;tokenize&#39;, &#39;word_tokenize&#39;)`</span>
 <span class="sd">        can be created by inserting `&#39;tokenize&#39;` into a `var_one` as</span>
@@ -257,7 +260,7 @@
     <span class="k">def</span> <span class="nf">usage</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cumulative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Get a list of object-occurrence tuples, sorted by most to least frequent.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of object-occurrence tuples, sorted by most to least frequent.</span>
 
 <span class="sd">        Example usage::</span>
 
@@ -282,7 +285,7 @@
         <span class="c1"># frequency</span>
 
         <span class="k">def</span> <span class="nf">merge_one</span><span class="p">(</span><span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-            <span class="sd">&quot;&quot;&quot;Merge a list of similar tuples, combining on &quot;paths&quot; that likely</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Merge a list of similar tuples, combining on &quot;paths&quot; that likely</span>
 <span class="sd">            refer to the same object, e.g. `&quot;nltk.word_tokenize&quot;` and</span>
 <span class="sd">            `&quot;nltk.tokenize.word_tokenize&quot;`. `usage` is a list of potentially</span>
 <span class="sd">            combinable objects.</span>
@@ -322,7 +325,7 @@
             <span class="k">return</span> <span class="p">[(</span><span class="n">detokenize</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">occ</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">merged</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
 
         <span class="k">def</span> <span class="nf">merge_all</span><span class="p">(</span><span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-            <span class="sd">&quot;&quot;&quot;Merge a list of tuples, combining on &quot;paths&quot; that likely</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Merge a list of tuples, combining on &quot;paths&quot; that likely</span>
 <span class="sd">            refer to the same object, e.g. `&quot;nltk.word_tokenize&quot;` and</span>
 <span class="sd">            `&quot;nltk.tokenize.word_tokenize&quot;`.</span>
 
@@ -373,7 +376,7 @@
     <span class="k">def</span> <span class="nf">nested_usage</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">full_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cumulative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Get a (recursive) dictionary of objects mapped to occurrence of that object,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a (recursive) dictionary of objects mapped to occurrence of that object,</span>
 <span class="sd">        and the object&#39;s children.</span>
 
 <span class="sd">        Example usage::</span>
@@ -456,7 +459,7 @@
 
 <div class="viewcode-block" id="Module.repositories"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.repositories">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">repositories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a mapping of repository names to repository information</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a mapping of repository names to repository information</span>
 <span class="sd">        that were fetched and parsed. Contains &quot;description&quot;, &quot;stars&quot;, &quot;isFork&quot; keys,</span>
 <span class="sd">        plus a list of &quot;files&quot; with &quot;name&quot;, &quot;path&quot;, &quot;url&quot;, &quot;dependencies&quot; and</span>
 <span class="sd">        &quot;parse_error&quot; fields. The &quot;parse_error&quot; field lists the error that was</span>
@@ -548,7 +551,7 @@
         <span class="n">transparant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Display a plotly Sunburst plot showing the frequency of use</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display a plotly Sunburst plot showing the frequency of use</span>
 <span class="sd">        of different sections of this module.</span>
 
 <span class="sd">        :param merge: Whether to attempt to merge e.g. `&quot;nltk.word_tokenize&quot;`</span>
@@ -563,7 +566,7 @@
         <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
 
         <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="n">nested_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">tok_obj</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="sd">&quot;&quot;&quot;Recursively apply elements from `tok_obj` as keys in `nested_dict`,</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Recursively apply elements from `tok_obj` as keys in `nested_dict`,</span>
 <span class="sd">            and then gather the `occurrences`.</span>
 
 <span class="sd">            :param nested_dict: A dictionary with nested usages, generally taken</span>
@@ -628,7 +631,7 @@
             <span class="k">return</span> <span class="n">parameters</span></div>
 
 <div class="viewcode-block" id="Module.n_uses"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_uses">[docs]</a>    <span class="k">def</span> <span class="nf">n_uses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the number of uses of the module.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of uses of the module.</span>
 
 <span class="sd">        Example usage::</span>
 
@@ -655,7 +658,7 @@
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">occ</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">occ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Module.n_files"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_files">[docs]</a>    <span class="k">def</span> <span class="nf">n_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the number of files fetched.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of files fetched.</span>
 
 <span class="sd">        Example usage::</span>
 
@@ -672,7 +675,7 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Module.n_repositories"><a class="viewcode-back" href="../../../api/module_dependencies.module.module.html#module_dependencies.module.module.Module.n_repositories">[docs]</a>    <span class="k">def</span> <span class="nf">n_repositories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the number of repositories fetched.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of repositories fetched.</span>
 
 <span class="sd">        Example usage::</span>
 
